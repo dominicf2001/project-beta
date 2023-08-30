@@ -1,6 +1,5 @@
-name: Issue
+name: Feature
 description: Template for opening an issue
-title: "<title>"
 projects: ["dominicf2001/1"]
 body:
   - type: textarea
@@ -8,6 +7,7 @@ body:
     attributes:
       label: Description
       description: What does this issue entail in general?
+      placeholder: Update the menu to the new primary color and add a button to toggle the menu
 
   - type: textarea
     id: done
