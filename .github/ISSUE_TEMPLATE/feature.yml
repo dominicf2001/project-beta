@@ -1,0 +1,19 @@
+name: Issue
+description: Template for opening an issue
+title: "<title>"
+projects: ["dominicf2001/1"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does this issue entail in general?
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Done Criteria
+      description: What must be completed for this issue to be done?
+      placeholder: |
+        - [ ] 
+        - [ ] 
