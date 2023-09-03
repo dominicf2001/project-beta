@@ -14,6 +14,7 @@ class Tower {
         this.range = 50;
         this.damage = 1;
         this.fireRate = 1;
+        this.hover = false;
         towerLimit--;
     }
 
@@ -23,7 +24,9 @@ class Tower {
 
         stroke(255);
         noFill();
-        circle(this.x, this.y, this.range * 2)
+        if(this.hover) {
+            circle(this.x, this.y, this.range * 2);
+        }
         noStroke();
     }
 
@@ -95,12 +98,14 @@ function mousePressed(event) {
     for(let t = 0; t < towers.length; t++) {
         if (towers[t].mouseInside()) {
             dragTower = towers.splice(t, 1)[0];
+            dragTower.hover = true;
             towers.push(dragTower);
+            break;
         }
     }
 
     //Ignore touch events, only handle left mouse button
-    if (event.button === 0) {
+    if (event.button === 0 && !dragTower) {
         try {
             let t = new Tower(mouseX, mouseY);
             towers.push(t);
@@ -124,6 +129,22 @@ function mouseReleased() {
     if (dragTower) {
         dragTower.x = mouseX;
         dragTower.y = mouseY;
+        dragTower.hover = false;
         dragTower = null;
     }
+}
+
+function mouseMoved() {
+    // Change cursor if mouse is inside a tower
+    for(let t of towers) {
+        if (t.mouseInside()) {
+            t.hover = true;
+            cursor('grab');
+            return;
+        }
+    }
+    for(let t of towers) {
+        t.hover = false;
+    }
+    cursor();
 }
