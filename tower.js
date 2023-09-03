@@ -26,6 +26,10 @@ class Tower {
         circle(this.x, this.y, this.range * 2)
         noStroke();
     }
+
+    mouseInside() {
+        return mouseX > this.x - (TOWER_SIZE / 2) && mouseX < this.x + (TOWER_SIZE / 2) && mouseY > this.y - (TOWER_SIZE / 2) && mouseY < this.y + (TOWER_SIZE / 2);
+    }
 };
 
 class Bullet {
@@ -82,9 +86,20 @@ function draw() {
     }
 }
 
+let dragTower = null;
+
 function mousePressed(event) {
     console.log(event);
-    // Ignore touch events, only handle left mouse button
+
+    // Check if mouse is inside a tower
+    for(let t = 0; t < towers.length; t++) {
+        if (towers[t].mouseInside()) {
+            dragTower = towers.splice(t, 1)[0];
+            towers.push(dragTower);
+        }
+    }
+
+    //Ignore touch events, only handle left mouse button
     if (event.button === 0) {
         try {
             let t = new Tower(mouseX, mouseY);
@@ -93,5 +108,22 @@ function mousePressed(event) {
         } catch (e) {
             alert(e);
         }
+    }
+}
+
+function mouseDragged() {
+    // Move tower if it's being dragged
+    if(dragTower) {
+        dragTower.x = mouseX;
+        dragTower.y = mouseY;
+    }
+}
+
+function mouseReleased() {
+    // Stop dragging tower
+    if (dragTower) {
+        dragTower.x = mouseX;
+        dragTower.y = mouseY;
+        dragTower = null;
     }
 }
