@@ -38,8 +38,8 @@ export default class Enemy {
         }
     }
     /**
-     * Returns true if the enemy has reached the end of its path, else returns false
-     * @returns {boolean}
+     * Method to check if enemy has reached the end of the path
+     * @returns {boolean} boolean that if true, indicates the enemy is at the end of the path
      */
     hasReachedEnd() {
         return this.pathIndex === this.path.length - 1;
