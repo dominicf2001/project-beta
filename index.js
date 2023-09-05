@@ -121,6 +121,7 @@ window.draw = function() {
     }
     
     // draw path
+    push();
     strokeWeight(20);
     stroke(255);
     noFill();
@@ -129,6 +130,7 @@ window.draw = function() {
         vertex(point.x, point.y);
     }
     endShape();
+    pop();
     
     // draw or remove enemies
     for (const i in enemies) {

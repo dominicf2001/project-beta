@@ -17,6 +17,7 @@ export default class Enemy {
     draw() {
         // draw enemy
         // note: should eventually depend on the enemy type
+        push();
         fill(50);
         noStroke();
         ellipse(this.x, this.y, 20, 20);
@@ -36,6 +37,7 @@ export default class Enemy {
             this.y = this.path[this.pathIndex + 1].y;
             this.pathIndex++;
         }
+        pop();
     }
     /**
      * Method to check if enemy has reached the end of the path
