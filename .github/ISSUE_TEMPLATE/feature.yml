@@ -1,0 +1,21 @@
+name: Feature
+description: Template for opening an issue
+projects: ["dominicf2001/1"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does this issue entail in general?
+      placeholder: Update the menu to the new primary color and add a button to toggle the menu
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Done Criteria
+      description: What must be completed for this issue to be done?
+      value: |
+        - [ ] 
+      placeholder: |
+        - [ ] Add a button
+        - [ ] Update the menu color
