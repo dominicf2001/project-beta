@@ -106,18 +106,18 @@ window.setup = function() {
 window.draw = function() {
     background(200);
 
-    // Draw towers
-    for (const t of towers) {
-        t.draw();
-    }
-    
     // Draw bullets first, so they appear behind towers
     for (const i in bullets) {
         if (bullets[i].isOutOfRange()) {
-            bullets.splice(bullets.indexOf(this), 1);
+            bullets.splice(i, 1);
         } else {
             bullets[i].draw();   
         }
+    }
+
+    // Draw towers
+    for (const t of towers) {
+        t.draw();
     }
     
     // draw path
