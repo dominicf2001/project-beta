@@ -40,13 +40,12 @@ export class Tower {
 };
 
 export class Bullet {
-    constructor(tower) {
+    constructor(tower, enemyAngle) {
         this.x = tower.x;
         this.y = tower.y;
         this.range = tower.range;
 
-        // Generate random angle, and calculate x and y movement
-        this.angle = Math.random()*Math.PI*2;
+        this.angle = enemyAngle;
         this.xMove = Math.cos(this.angle);
         this.yMove = Math.sin(this.angle);
     }

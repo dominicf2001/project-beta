@@ -12,8 +12,8 @@ const path = [
 ];
 
 const enemies = [
-    new Enemy(2, path),
-    new Enemy(3, path)
+    new Enemy(0.2, path),
+    new Enemy(0.3, path)
 ];
 
 // tower variables
@@ -90,7 +90,25 @@ window.mouseMoved = function() {
 function fireBullets() {
     // Generate bullets for each tower
     for(let t of towers) {
-        bullets.push(new Bullet(t));
+        let enemyInDistance = false;
+        let shortestDistance = Infinity;
+        let enemyAngle = 0;
+        for(let e of enemies) {
+            let xDist = e.x - t.x;
+            let yDist = e.y - t.y;
+            let distance = sqrt(xDist * xDist + yDist * yDist);
+            enemyAngle = atan2(yDist, xDist);
+            if(distance < t.range) {
+                if(distance < shortestDistance) {
+                    shortestDistance = distance;
+                }
+                enemyInDistance = true;
+            }
+        }
+
+        if(enemyInDistance) {
+            bullets.push(new Bullet(t, enemyAngle));
+        }
     }
 }
 
@@ -105,20 +123,6 @@ window.setup = function() {
 
 window.draw = function() {
     background(200);
-
-    // Draw bullets first, so they appear behind towers
-    for (const i in bullets) {
-        if (bullets[i].isOutOfRange()) {
-            bullets.splice(i, 1);
-        } else {
-            bullets[i].draw();   
-        }
-    }
-
-    // Draw towers
-    for (const t of towers) {
-        t.draw();
-    }
     
     // draw path
     push();
@@ -139,6 +143,20 @@ window.draw = function() {
         } else {
             enemies[i].draw();
         }
+    }
+
+    // Draw bullets before towers
+    for (const i in bullets) {
+        if (bullets[i].isOutOfRange()) {
+            bullets.splice(i, 1);
+        } else {
+            bullets[i].draw();   
+        }
+    }
+
+    // Draw towers
+    for (const t of towers) {
+        t.draw();
     }
     
 }
