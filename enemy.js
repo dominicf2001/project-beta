@@ -23,6 +23,20 @@ export default class Enemy {
         noStroke();
         ellipse(this.x, this.y, 20, 20);
 
+        // health bar
+        let healthbarwidth = 0;
+        if (this.health > 30) { // max width
+            healthbarwidth = 30 % this.health;
+        } else {
+            healthbarwidth = this.health;
+        }
+        fill(0, 200, 0);
+        stroke(0, 180, 0);
+        rectMode(CENTER);
+        rect(this.x, this.y + 20, healthbarwidth, 5);
+        //text(this.health, this.x-5, this.y - 20);
+
+
         // calculate distance to next point
         let dx = this.path[this.pathIndex + 1].x - this.x;
         let dy = this.path[this.pathIndex + 1].y - this.y;
