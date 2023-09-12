@@ -1,0 +1,100 @@
+name: Auto Merge
+
+on:
+  push:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Release Branch
+        run: |
+          git checkout -b auto-release-${{github.run_attempt}}-${{github.run_number}}
+          git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
+      
+      - name: Changes in Towers
+        run: |
+          git checkout towers
+          git pull
+          git checkout auto-release-${{github.run_attempt}}-${{github.run_number}}
+          git merge towers
+          git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
+
+      - name: Chnages in Map
+        run: |
+          git checkout map
+          git pull
+          git checkout auto-release-${{github.run_attempt}}-${{github.run_number}}
+          git merge map
+          git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
+
+      - name: Changes in Enemies
+        run: |
+          git checkout enemies
+          git pull
+          git checkout auto-release-${{github.run_attempt}}-${{github.run_number}}
+          git merge enemies
+          git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
+      
+      - name: Chnages in UI
+        run: |
+          git checkout ui
+          git pull
+          git checkout auto-release-${{github.run_attempt}}-${{github.run_number}}
+          git merge ui
+          git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
+
+      - name: JS Docs
+        run: |
+          git checkout auto-release-${{github.run_attempt}}-${{github.run_number}}
+          npm install
+          npm install -g jsdoc
+          jsdoc -c jsdoc.json
+          git add docs
+          git commit -m "Update JS Docs"
+          git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
+
+      # - name: Merge to main
+      #   run: |
+      #     git checkout main
+      #     git pull
+      #     git merge auto-release-${{github.run_attempt}}-${{github.run_number}}
+      #     git push origin main
+
+      # - name: Delete Release Branch
+      #   run: |
+      #     git checkout main
+      #     git branch -D auto-release-${{github.run_attempt}}-${{github.run_number}}
+      #     git push origin --delete auto-release-${{github.run_attempt}}-${{github.run_number}}
+
+      # - name: Update Tower Branch
+      #   run: |
+      #     git checkout towers
+      #     git pull
+      #     git merge main
+      #     git push origin towers
+
+      # - name: Update Map Branch
+      #   run: |
+      #     git checkout map
+      #     git pull
+      #     git merge main
+      #     git push origin map
+
+      # - name: Update Enemies Branch
+      #   run: |
+      #     git checkout enemies
+      #     git pull
+      #     git merge main
+      #     git push origin enemies
+
+      # - name: Update UI Branch
+      #   run: |
+      #     git checkout ui
+      #     git pull
+      #     git merge main
+      #     git push origin ui
+
