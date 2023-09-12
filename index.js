@@ -1,6 +1,7 @@
 import Enemy from "./enemy.js";
 import { Tower, Bullet }  from "./tower.js";
 
+
 // GLOBAL VARIABLES
 
 const path = [
@@ -112,9 +113,14 @@ function fireBullets() {
 
 // GAME LOOP
 
+window.preload = function(){
+    //let mySound = loadSound('assets/potassium.mp3');
+}
+
 window.setup = function() {
     createCanvas(400, 400);
-
+    //mySound.setVolume(0.3);
+    //mySound.play();
     // Fire bullets every 400mps
     setInterval(fireBullets, 400);
 }
