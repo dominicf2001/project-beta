@@ -12,8 +12,8 @@ const path = [
 ];
 
 const enemies = [
-    new Enemy(0.2, path),
-    new Enemy(0.3, path)
+    new Enemy(0.2, 10, path),
+    new Enemy(0.3, 5, path)
 ];
 
 // tower variables
@@ -45,7 +45,6 @@ window.mousePressed = function(event) {
             }
             let t = new Tower(mouseX, mouseY);
             towers.push(t);
-            bullets.push(new Bullet(t));
         } catch (e) {
             alert(e);
         }
@@ -90,27 +89,26 @@ window.mouseMoved = function() {
 function fireBullets() {
     // Generate bullets for each tower
     for(let t of towers) {
-        let enemyInDistance = false;
         let shortestDistance = Infinity;
-        let enemyAngle = 0;
+        let closestEnemy = null;
+
         for(let e of enemies) {
             let xDist = e.x - t.x;
             let yDist = e.y - t.y;
             let distance = sqrt(xDist * xDist + yDist * yDist);
-            enemyAngle = atan2(yDist, xDist);
-            if(distance < t.range) {
-                if(distance < shortestDistance) {
-                    shortestDistance = distance;
-                }
-                enemyInDistance = true;
+
+            if(distance < t.range && distance < shortestDistance) {
+                shortestDistance = distance;
+                closestEnemy = e;
             }
         }
 
-        if(enemyInDistance) {
-            bullets.push(new Bullet(t, enemyAngle));
+        if(closestEnemy !== null) {
+            bullets.push(new Bullet(t, closestEnemy));
         }
     }
 }
+
 
 // GAME LOOP
 
@@ -138,7 +136,7 @@ window.draw = function() {
     
     // draw or remove enemies
     for (const i in enemies) {
-        if (enemies[i].hasReachedEnd()) {
+        if (enemies[i].hasReachedEnd() || !enemies[i].health) {
             enemies.splice(i, 1);
         } else {
             enemies[i].draw();
@@ -150,7 +148,16 @@ window.draw = function() {
         if (bullets[i].isOutOfRange()) {
             bullets.splice(i, 1);
         } else {
-            bullets[i].draw();   
+            if (bullets[i].hasHitTarget()) {
+                console.log("HIT");
+                console.log("ENEMY HP: ", bullets[i].target.health);
+                console.log("Damage: ", bullets[i].damage);
+                console.log("ENEMY HP: ", bullets[i].target.health);
+                bullets[i].target.health -= bullets[i].damage;
+                bullets.splice(i, 1);
+            } else {
+                bullets[i].draw();   
+            }
         }
     }
 

@@ -7,8 +7,9 @@ export default class Enemy {
      * @param {number} speed - how quick an enemy moves along a path
      * @param {array} path - a path the enemy will be drawn on
      */
-    constructor(speed, path) {
+    constructor(speed, health, path) {
         this.speed = speed;
+        this.health = health;
         this.path = path;
         this.pathIndex = 0;
         this.x = this.path[0].x;

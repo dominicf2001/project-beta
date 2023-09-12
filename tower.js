@@ -40,12 +40,17 @@ export class Tower {
 };
 
 export class Bullet {
-    constructor(tower, enemyAngle) {
+    constructor(tower, target) {
         this.x = tower.x;
         this.y = tower.y;
         this.range = tower.range;
+        this.damage = tower.damage;
+        this.target = target;
+        
+        let xDist = target.x - tower.x;
+        let yDist = target.y - tower.y;
+        this.angle = atan2(yDist, xDist);
 
-        this.angle = enemyAngle;
         this.xMove = Math.cos(this.angle);
         this.yMove = Math.sin(this.angle);
     }
@@ -62,5 +67,12 @@ export class Bullet {
     }
     isOutOfRange() {
         return this.range <= 0;
+    }
+    hasHitTarget() {
+        const dx = this.x - this.target.x;
+        const dy = this.y - this.target.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        return distance <= 8;
     }
 }
