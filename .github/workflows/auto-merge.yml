@@ -50,15 +50,15 @@ jobs:
           git merge enemies
           git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
       
-      - name: Changes in UI
-        run: |
-          git checkout ui
-          git pull
-          git checkout auto-release-${{github.run_attempt}}-${{github.run_number}}
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git merge ui
-          git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
+      # - name: Changes in UI
+      #   run: |
+      #     git checkout ui
+      #     git pull
+      #     git checkout auto-release-${{github.run_attempt}}-${{github.run_number}}
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      #     git merge ui
+      #     git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
 
       - name: JS Docs
         run: |
