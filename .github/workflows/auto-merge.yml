@@ -50,7 +50,7 @@ jobs:
           git merge enemies
           git push origin auto-release-${{github.run_attempt}}-${{github.run_number}}
       
-      - name: Chnages in UI
+      - name: Changes in UI
         run: |
           git checkout ui
           git pull
@@ -109,13 +109,11 @@ jobs:
 
     
   delete-branch:
-    if: always()
     needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Delete Release Branch
         run: |
-          git checkout main
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git branch -D auto-release-${{github.run_attempt}}-${{github.run_number}}
