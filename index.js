@@ -22,11 +22,18 @@ const towerLimit = 5;
 const towers = [];
 const bullets = [];
 let dragTower = null;
+let playSound = false;
 
 // EVENT LISTENERS
 
 window.mousePressed = function(event) {
     console.log(event);
+
+    if (!playSound) {
+        mySound.setVolume(0.3);
+        mySound.play();
+        playSound = true;
+    }
 
     // Check if mouse is inside a tower
     for(let t = 0; t < towers.length; t++) {
@@ -82,7 +89,7 @@ window.mouseMoved = function() {
     for(let t of towers) {
         t.hover = false;
     }
-    cursor();
+    cursor('default');
 }
 
 // HELPERS
@@ -113,15 +120,16 @@ function fireBullets() {
 
 // GAME LOOP
 
+let mySound;
+
 window.preload = function(){
-    //let mySound = loadSound('assets/potassium.mp3');
+    mySound = loadSound('./assets/potassium.mp3');
 }
 
 window.setup = function() {
     createCanvas(400, 400);
-    //mySound.setVolume(0.3);
-    //mySound.play();
-    // Fire bullets every 400mps
+
+    //Fire bullets every 400mps
     setInterval(fireBullets, 400);
 }
 
