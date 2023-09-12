@@ -3,16 +3,6 @@
 var spriteSheet;
 var towerAnimation;
 
-/**
- * Loads the tower sprite sheet
- * @returns {void} loads the tower sprite sheet
- * @modifies {spriteSheet} - sprite sheet of tower
- * @modifies {towerAnimation} - animation of tower
- */
-function preload(){
-    spriteSheet = loadSpriteSheet('assets/RedMoonTower_free_idle_animation.png', 100, 140, 11);
-    towerAnimation = loadAnimation(spriteSheet)
-}
 
 export class Tower {
     static TOWER_SIZE = 20;
