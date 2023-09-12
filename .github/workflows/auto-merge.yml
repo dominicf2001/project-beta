@@ -3,6 +3,9 @@ name: Auto Merge
 on:
   push:
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
