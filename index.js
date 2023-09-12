@@ -147,17 +147,18 @@ window.draw = function() {
     for (const i in bullets) {
         if (bullets[i].isOutOfRange()) {
             bullets.splice(i, 1);
+            continue;
+        }
+        
+        if (bullets[i].hasHitTarget()) {
+            console.log("HIT");
+            console.log("ENEMY HP: ", bullets[i].target.health);
+            console.log("Damage: ", bullets[i].damage);
+            console.log("ENEMY HP: ", bullets[i].target.health);
+            bullets[i].target.health -= bullets[i].damage;
+            bullets.splice(i, 1);
         } else {
-            if (bullets[i].hasHitTarget()) {
-                console.log("HIT");
-                console.log("ENEMY HP: ", bullets[i].target.health);
-                console.log("Damage: ", bullets[i].damage);
-                console.log("ENEMY HP: ", bullets[i].target.health);
-                bullets[i].target.health -= bullets[i].damage;
-                bullets.splice(i, 1);
-            } else {
-                bullets[i].draw();   
-            }
+            bullets[i].draw();
         }
     }
 
