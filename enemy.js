@@ -6,14 +6,18 @@ export default class Enemy {
      * Constructs an enemy based on speed, and the path it will follow
      * @param {number} speed - how quick an enemy moves along a path
      * @param {array} path - a path the enemy will be drawn on
+     * @param {number} currency - how much money you will receive
+     * @param {number} damage - how much health an enemy takes away
      */
-    constructor(speed, health, path) {
+    constructor(speed, health, path, currency, damage) {
         this.speed = speed;
         this.health = health;
         this.path = path;
         this.pathIndex = 0;
         this.x = this.path[0].x;
         this.y = this.path[0].y;
+        this.currency = currency;
+        this.damage = damage;
     }
     draw() {
         // draw enemy

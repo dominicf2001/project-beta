@@ -16,8 +16,9 @@ const path = [
 ];
 
 const enemies = [
-    new Enemy(0.2, 10, path),
-    new Enemy(0.3, 5, path)
+    new Enemy(0.1, 10, path, 140, 3),
+    new Enemy(0.3, 5, path, 80, 1),
+    new Enemy(0.05, 25, path, 300, 6)
 ];
 
 // tower variables
@@ -26,6 +27,10 @@ const towers = [];
 const bullets = [];
 let dragTower = null;
 let playSound = false;
+
+// other relevant variables
+let totalCurrency = 0;
+let totalHealth = 50;
 
 // EVENT LISTENERS
 
@@ -180,10 +185,27 @@ window.draw = function() {
         }
         endShape();
         pop();
+
+        // draw currency holder
+        push();
+        textSize(20);
+        text(totalCurrency, 100, 40);
+        pop();
         
+        // draw current health
+        push();
+        textSize(20);
+        text(totalHealth, 40, 40);
+        pop();
+
         // draw or remove enemies
         for (const i in enemies) {
-            if (enemies[i].hasReachedEnd() || enemies[i].health <= 0) {
+            if (enemies[i].hasReachedEnd()) {
+                totalHealth -= enemies[i].damage;
+                if (totalHealth < 0) {} // Implement game over screen
+                enemies.splice(i, 1);
+            } else if (enemies[i].health <= 0) {
+                totalCurrency += enemies[i].currency;
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
@@ -205,6 +227,8 @@ window.draw = function() {
                 bullets[i].target.health -= bullets[i].damage;
                 bullets.splice(i, 1);
             } else {
+
+
                 bullets[i].draw();
             }
         }
