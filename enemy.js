@@ -1,7 +1,7 @@
 /** @module enemy */
 
 /** Class representing an enemy */
-export default class Enemy {
+export class Enemy {
     /**
      * Constructs an enemy based on speed, and the path it will follow
      * @param {number} speed - how quick an enemy moves along a path
@@ -46,5 +46,23 @@ export default class Enemy {
      */
     hasReachedEnd() {
         return this.pathIndex === this.path.length - 1;
+    }
+};
+
+
+/** @module wave */
+
+/** Class representing a wave of enemies. This class stores the number of enemies of each type to spawn and the spawning priority for each type.  */
+export class Wave {
+    /** Constructs a new Wave object
+     *
+     */
+    constructor(spawnData, spawnPriority) {
+        this.spawnData = spawnData;
+        this.spawnPriority = spawnPriority;
+    }
+
+    printWave() {
+        console.log("[TEST] New wave!");
     }
 };
