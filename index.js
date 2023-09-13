@@ -11,10 +11,14 @@ const path = [
     { x: 250, y: 250 },
 ];
 
-const enemies = [
-    new Enemy(0.2, 10, path),
-    new Enemy(0.3, 5, path)
-];
+const test_waveData = [5, 3, 1, 0];
+const test_spawnPriority = [0, 1, 2, 3];
+
+const newWave = new Wave(test_waveData, test_spawnPriority, path);
+
+newWave.debugPrintWave();
+newWave.spawn();
+const enemies = newWave.getEnemies();
 
 // tower variables
 const towerLimit = 5;
