@@ -1,6 +1,15 @@
+var spriteSheet;
+var towerAnimation;
+
+function preload(){
+    spriteSheet = loadSpriteSheet('assets/RedMoonTower_free_idle_animation.png', 100, 140, 11);
+    towerAnimation = loadAnimation(spriteSheet)
+}
+
 export class Tower {
     static TOWER_SIZE = 20;
     
+
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -9,7 +18,7 @@ export class Tower {
         this.fireRate = 1;
         this.hover = false;
     }
-
+    
     draw() {
         push();
         fill(152, 84, 235);
@@ -31,13 +40,12 @@ export class Tower {
 };
 
 export class Bullet {
-    constructor(tower) {
+    constructor(tower, enemyAngle) {
         this.x = tower.x;
         this.y = tower.y;
         this.range = tower.range;
 
-        // Generate random angle, and calculate x and y movement
-        this.angle = Math.random()*Math.PI*2;
+        this.angle = enemyAngle;
         this.xMove = Math.cos(this.angle);
         this.yMove = Math.sin(this.angle);
     }
