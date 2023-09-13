@@ -68,6 +68,8 @@ export class Wave {
         this.enemies = []; 
     }
 
+    /** Prints wave spawnData and spawnPriority
+     */
     debugPrintWave() {
         console.log("[DEBUG] New wave!");
         
@@ -76,6 +78,8 @@ export class Wave {
         }
     }
 
+    /** Spawns all of the enemies in the wave 
+     */
     spawn() {
         for (let i = 0; i < this.spawnData.length; i++) {
              if(this.spawnData[i] > 0) {
@@ -85,7 +89,9 @@ export class Wave {
             }
         }
     }
-
+    
+    /** Returns a stored list of enemies; used by towers for targeting
+     */
     getEnemies() {
         return this.enemies;
     }
