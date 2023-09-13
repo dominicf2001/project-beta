@@ -1,4 +1,4 @@
-import Enemy from "./enemy.js";
+import { Enemy, Wave } from "./enemy.js";
 import { Tower, Bullet }  from "./tower.js";
 
 // GLOBAL VARIABLES
