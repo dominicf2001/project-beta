@@ -3,6 +3,7 @@ import { Tower, Bullet }  from "./tower.js";
 
 
 // GLOBAL VARIABLES
+let img;
 
 // 0 - main menu
 // 1 - start game
@@ -10,11 +11,8 @@ var gameMode = 0;
 let f_Andale;
 
 const path = [
-    { x: 50, y: 50 },
-    { x: 150, y: 50 },
-    { x: 150, y: 150 },
-    { x: 250, y: 150 },
-    { x: 250, y: 250 },
+    { x: 0, y: 380 },
+    { x: 1190, y: 380 },
 ];
 
 const enemies = [
@@ -128,17 +126,18 @@ function fireBullets() {
 
 // GAME LOOP
 
+
 let mySound;
 
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
+    img = loadImage('Maps/Tower Defense Map Ideas.png'); // Loads the Map
 }
 
 window.setup = function() {
-    createCanvas(400, 400);
-
-    //Fire bullets every 400mps
+    createCanvas(1507, 737);
+    // Fire bullets every 400mps
     setInterval(fireBullets, 400);
 }
 
@@ -155,6 +154,7 @@ window.draw = function() {
             playSound = true;
         }
 
+        image(img, 0, 0, 1200, 650);
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -169,9 +169,10 @@ window.draw = function() {
             t.draw();
         }
         // draw path
+    
         push();
         strokeWeight(20);
-        stroke(255);
+        stroke(0, 0, 0, 0);
         noFill();
         beginShape();
         for (const point of path) {
