@@ -33,7 +33,7 @@ export class Enemy {
         // if it cannot reach the next point in this frame
         if (distance > this.speed) {
             // normalize
-            this.x += (dx / distance) * thitaxError: mis.speed;
+            this.x += (dx / distance) * this.speed;
             this.y += (dy / distance) * this.speed;
         } else {
             this.x = this.path[this.pathIndex + 1].x;
@@ -59,10 +59,12 @@ export class Wave {
     /** Constructs a new Wave object
      *  @param {array} spawnData - integer array representing how many of each enemy type to spawn where array index = enemy type id 
      *  @param {array} spawnPriority - order to spawn enemy types in
+     * @param{array} path - path spawned enemies travel along
      */
-    constructor(spawnData, spawnPriority) {
+    constructor(spawnData, spawnPriority, path) {
         this.spawnData = spawnData;
         this.spawnPriority = spawnPriority;
+        this.path = path; 
     }
 
     debugPrintWave() {
@@ -74,6 +76,11 @@ export class Wave {
     }
 
     spawn() {
-
+        for (let i = 0; i < this.spawnData.length; i++) {
+             if(this.spawnData[i] > 0) {
+                new Enemy(i, i, i, this.path);
+                this.spawnData[i]--; 
+            }
+        }
     } 
 };
