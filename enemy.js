@@ -64,7 +64,8 @@ export class Wave {
     constructor(spawnData, spawnPriority, path) {
         this.spawnData = spawnData;
         this.spawnPriority = spawnPriority;
-        this.path = path; 
+        this.path = path;
+        this.enemies = []; 
     }
 
     debugPrintWave() {
@@ -78,9 +79,14 @@ export class Wave {
     spawn() {
         for (let i = 0; i < this.spawnData.length; i++) {
              if(this.spawnData[i] > 0) {
-                new Enemy(i, i, i, this.path);
-                this.spawnData[i]--; 
+                var newEnemy = new Enemy(i, i, i, this.path);
+                this.spawnData[i]--;
+                this.enemies.push(newEnemy);
             }
         }
-    } 
+    }
+
+    getEnemies() {
+        return this.enemies;
+    }
 };
