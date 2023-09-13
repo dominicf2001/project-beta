@@ -7,8 +7,9 @@ export default class Enemy {
      * @param {number} speed - how quick an enemy moves along a path
      * @param {array} path - a path the enemy will be drawn on
      */
-    constructor(speed, path) {
+    constructor(speed, health, path) {
         this.speed = speed;
+        this.health = health;
         this.path = path;
         this.pathIndex = 0;
         this.x = this.path[0].x;
@@ -21,6 +22,20 @@ export default class Enemy {
         fill(50);
         noStroke();
         ellipse(this.x, this.y, 20, 20);
+
+        // health bar
+        let healthbarwidth = 0;
+        if (this.health > 30) { // max width
+            healthbarwidth = 30 % this.health;
+        } else {
+            healthbarwidth = this.health;
+        }
+        fill(0, 200, 0);
+        stroke(0, 180, 0);
+        rectMode(CENTER);
+        rect(this.x, this.y + 20, healthbarwidth, 5);
+        //text(this.health, this.x-5, this.y - 20);
+
 
         // calculate distance to next point
         let dx = this.path[this.pathIndex + 1].x - this.x;

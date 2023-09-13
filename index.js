@@ -1,6 +1,7 @@
 import Enemy from "./enemy.js";
 import { Tower, Bullet }  from "./tower.js";
 
+
 // GLOBAL VARIABLES
 
 // 0 - main menu
@@ -17,8 +18,8 @@ const path = [
 ];
 
 const enemies = [
-    new Enemy(2, path),
-    new Enemy(3, path)
+    new Enemy(0.2, 10, path),
+    new Enemy(0.3, 5, path)
 ];
 
 // tower variables
@@ -26,11 +27,7 @@ const towerLimit = 5;
 const towers = [];
 const bullets = [];
 let dragTower = null;
-
-// preload
-window.preload = function() {
-    f_Andale = loadFont('assets/Andale-Mono.ttf');
-}
+let playSound = false;
 
 // EVENT LISTENERS
 
@@ -56,7 +53,7 @@ window.mousePressed = function(event) {
                 }
                 let t = new Tower(mouseX, mouseY);
                 towers.push(t);
-                bullets.push(new Bullet(t));
+
             } catch (e) {
                 alert(e);
             }
@@ -66,7 +63,7 @@ window.mousePressed = function(event) {
 
 window.mouseDragged = function() {
     // Move tower if it's being dragged
-    if(dragTower) {
+    if(dragTower != null) {
         dragTower.x = mouseX;
         dragTower.y = mouseY;
     }
@@ -74,7 +71,7 @@ window.mouseDragged = function() {
 
 window.mouseReleased = function() {
     // Stop dragging tower
-    if (dragTower) {
+    if (dragTower != null) {
         dragTower.x = mouseX;
         dragTower.y = mouseY;
         dragTower.hover = false;
@@ -108,16 +105,40 @@ window.keyPressed = function() {
 function fireBullets() {
     // Generate bullets for each tower
     for(let t of towers) {
-        bullets.push(new Bullet(t));
+        let shortestDistance = Infinity;
+        let closestEnemy = null;
+
+        for(let e of enemies) {
+            let xDist = e.x - t.x;
+            let yDist = e.y - t.y;
+            let distance = sqrt(xDist * xDist + yDist * yDist);
+
+            if(distance < t.range && distance < shortestDistance) {
+                shortestDistance = distance;
+                closestEnemy = e;
+            }
+        }
+
+        if(closestEnemy !== null) {
+            bullets.push(new Bullet(t, closestEnemy));
+        }
     }
 }
 
+
 // GAME LOOP
+
+let mySound;
+
+window.preload = function(){
+    mySound = loadSound('./assets/potassium.mp3');
+    f_Andale = loadFont('./assets/Andale-Mono.ttf');
+}
 
 window.setup = function() {
     createCanvas(400, 400);
 
-    // Fire bullets every 400mps
+    //Fire bullets every 400mps
     setInterval(fireBullets, 400);
 }
 
@@ -127,6 +148,12 @@ window.draw = function() {
     }
     if (gameMode == 1) {
         background(200);
+
+        if (!playSound) {
+            mySound.setVolume(0.3);
+            mySound.play();
+            playSound = true;
+        }
 
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
@@ -155,11 +182,35 @@ window.draw = function() {
         
         // draw or remove enemies
         for (const i in enemies) {
-            if (enemies[i].hasReachedEnd()) {
+            if (enemies[i].hasReachedEnd() || enemies[i].health <= 0) {
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
             }
+        }
+
+        // Draw bullets before towers
+        for (const i in bullets) {
+            if (bullets[i].isOutOfRange()) {
+                bullets.splice(i, 1);
+                continue;
+            }
+            
+            if (bullets[i].hasHitTarget()) {
+                console.log("HIT");
+                console.log("ENEMY HP: ", bullets[i].target.health);
+                console.log("Damage: ", bullets[i].damage);
+                console.log("ENEMY HP: ", bullets[i].target.health);
+                bullets[i].target.health -= bullets[i].damage;
+                bullets.splice(i, 1);
+            } else {
+                bullets[i].draw();
+            }
+        }
+
+        // Draw towers
+        for (const t of towers) {
+            t.draw();
         }
     }
     
