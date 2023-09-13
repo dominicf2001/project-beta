@@ -10,10 +10,8 @@ export class Tower {
     /**
      * Constructs a tower with x and y coordinates
      * @param {number} x - x coordinate of tower
-     * @param {array} y - y coordinate of tower
+     * @param {number} y - y coordinate of tower
      */
-
-
     constructor(x, y) {
         this.x = x;
         this.y = y;
