@@ -1,8 +1,8 @@
+
 /** @module tower */
 
 var spriteSheet;
 var towerAnimation;
-
 
 export class Tower {
     static TOWER_SIZE = 20;
@@ -12,6 +12,7 @@ export class Tower {
      * @param {number} x - x coordinate of tower
      * @param {array} y - y coordinate of tower
      */
+
 
     constructor(x, y) {
         this.x = x;
