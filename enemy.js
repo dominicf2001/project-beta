@@ -4,10 +4,12 @@
 export class Enemy {
     /**
      * Constructs an enemy based on speed, and the path it will follow
+     * @param {number} type - integer id of enemy type 
      * @param {number} speed - how quick an enemy moves along a path
      * @param {array} path - a path the enemy will be drawn on
      */
-    constructor(speed, health, path) {
+    constructor(type, speed, health, path) {
+        this.type = type; 
         this.speed = speed;
         this.health = health;
         this.path = path;
@@ -31,7 +33,7 @@ export class Enemy {
         // if it cannot reach the next point in this frame
         if (distance > this.speed) {
             // normalize
-            this.x += (dx / distance) * this.speed;
+            this.x += (dx / distance) * thitaxError: mis.speed;
             this.y += (dy / distance) * this.speed;
         } else {
             this.x = this.path[this.pathIndex + 1].x;
@@ -55,14 +57,23 @@ export class Enemy {
 /** Class representing a wave of enemies. This class stores the number of enemies of each type to spawn and the spawning priority for each type.  */
 export class Wave {
     /** Constructs a new Wave object
-     *
+     *  @param {array} spawnData - integer array representing how many of each enemy type to spawn where array index = enemy type id 
+     *  @param {array} spawnPriority - order to spawn enemy types in
      */
     constructor(spawnData, spawnPriority) {
         this.spawnData = spawnData;
         this.spawnPriority = spawnPriority;
     }
 
-    printWave() {
-        console.log("[TEST] New wave!");
+    debugPrintWave() {
+        console.log("[DEBUG] New wave!");
+        
+        for (let i = 0; i < this.spawnData.length; i++) {
+            console.log(i, ", spawnData: ", this.spawnData[i], "spawnPriority: ", this.spawnPriority[i]);
+        }
     }
+
+    spawn() {
+
+    } 
 };
