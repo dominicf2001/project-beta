@@ -12,9 +12,9 @@ const path = [
 ];
 
 const test_waveData = [5, 3, 1, 0];
-const test_spawnPriority = [0, 1, 2, 3];
+const test_spawnPriority = [1, 0, 2, 3];
 
-const newWave = new Wave(test_waveData, test_spawnPriority, path);
+const newWave = new Wave(test_waveData, test_spawnPriority, path, 2);
 
 newWave.debugPrintWave();
 newWave.spawn();

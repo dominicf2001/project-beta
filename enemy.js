@@ -14,8 +14,8 @@ export class Enemy {
         this.health = health;
         this.path = path;
         this.pathIndex = 0;
-        this.x = this.path[0].x;
-        this.y = this.path[0].y;
+        this.x = path[0].x;
+        this.y = path[0].y;
     }
     draw() {
         // draw enemy
@@ -59,12 +59,14 @@ export class Wave {
     /** Constructs a new Wave object
      *  @param {array} spawnData - integer array representing how many of each enemy type to spawn where array index = enemy type id 
      *  @param {array} spawnPriority - order to spawn enemy types in
-     * @param{array} path - path spawned enemies travel along
+     * @param {array} path - path spawned enemies travel along
+     * @param {number} delay - amount of time in seconds to wait between spawning enemies 
      */
-    constructor(spawnData, spawnPriority, path) {
+    constructor(spawnData, spawnPriority, path, delay) {
         this.spawnData = spawnData;
         this.spawnPriority = spawnPriority;
         this.path = path;
+        this.delay = delay; 
         this.enemies = []; 
     }
 
@@ -78,17 +80,33 @@ export class Wave {
         }
     }
 
+    spawnLoopHelper(i, j, k) {
+        setTimeout(() => {
+            var newEnemy = new Enemy(k, k / 2, k, this.path);
+            this.spawnData[k]--;
+            this.enemies.push(newEnemy);
+            console.log("Spawned new enemy at ", this.delay * 1000 * i);
+        }, this.delay * 1000 * (i + j)); 
+    }
+
     /** Spawns all of the enemies in the wave 
      */
     spawn() {
-        for (let i = 0; i < this.spawnData.length; i++) {
-             if(this.spawnData[i] > 0) {
-                var newEnemy = new Enemy(i, i, i, this.path);
-                this.spawnData[i]--;
-                this.enemies.push(newEnemy);
+        for (let i = 0; i < this.spawnPriority.length; i++)
+        {
+            let k = this.spawnPriority[i];
+            let max = this.spawnData[k];
+            if (max > 0) {
+                for (let j = 0; j < max; j++) {
+                    {
+                        this.spawnLoopHelper(i, j, k); 
+                    }
+                }
             }
         }
     }
+
+    
     
     /** Returns a stored list of enemies; used by towers for targeting
      */
