@@ -4,10 +4,17 @@ import { Tower, Bullet }  from "./tower.js";
 
 // GLOBAL VARIABLES
 
+const canvasWidth = 400;
+const canvasHeight = 400;
+
 // 0 - main menu
 // 1 - start game
 var gameMode = 0;
 let f_Andale;
+
+// buttons
+let upgradeRange;
+let upgradeFireRate;
 
 const path = [
     { x: 50, y: 50 },
@@ -46,7 +53,8 @@ window.mousePressed = function(event) {
         }
 
         //Ignore touch events, only handle left mouse button
-        if (event.button === 0 && !dragTower) {        
+        // Check if mouse is inside canvas
+        if ((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > canvasWidth || mouseY < 0 || mouseY > canvasHeight)) {        
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -105,6 +113,12 @@ window.keyPressed = function() {
 function fireBullets() {
     // Generate bullets for each tower
     for(let t of towers) {
+
+        // Skip if tower can't fire
+        if(!t.canFire()) {
+            continue;
+        }
+
         let shortestDistance = Infinity;
         let closestEnemy = null;
 
@@ -120,7 +134,7 @@ function fireBullets() {
         }
 
         if(closestEnemy !== null) {
-            bullets.push(new Bullet(t, closestEnemy));
+            bullets.push(t.fire(closestEnemy));
         }
     }
 }
@@ -136,17 +150,40 @@ window.preload = function(){
 }
 
 window.setup = function() {
-    createCanvas(400, 400);
+    createCanvas(canvasWidth, canvasHeight);
 
-    //Fire bullets every 400mps
-    setInterval(fireBullets, 400);
+    //Poll for bullets every 100ms
+    setInterval(fireBullets, 100);
+    upgradeRange = createButton('Upgrade Range');
+    upgradeRange.position(0, 410);
+    upgradeRange.mousePressed(function() {
+        for(let t of towers) {
+            t.range += 5;
+        }
+    });
+    upgradeFireRate = createButton('Upgrade Fire Speed');
+    upgradeFireRate.position(120, 410);
+    upgradeFireRate.mousePressed(function() {
+        for(let t of towers) {
+            t.upgradeFireRate();
+        }
+    });
 }
 
 window.draw = function() {
     if (gameMode == 0) {
         mainMenu();
+
+        // Hide upgrade buttons
+        upgradeRange.hide();
+        upgradeFireRate.hide();
     }
     if (gameMode == 1) {
+
+        // Show upgrade buttons
+        upgradeRange.show();
+        upgradeFireRate.show();
+
         background(200);
 
         if (!playSound) {

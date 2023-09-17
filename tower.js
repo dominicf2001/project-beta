@@ -18,6 +18,7 @@ export class Tower {
         this.range = 50;
         this.damage = 1;
         this.fireRate = 1;
+        this.coolDown = 5;
         this.hover = false;
     }
     
@@ -47,6 +48,49 @@ export class Tower {
     mouseInside() {
         return mouseX > this.x - (Tower.TOWER_SIZE / 2) && mouseX < this.x + (Tower.TOWER_SIZE / 2) && mouseY > this.y - (Tower.TOWER_SIZE / 2) && mouseY < this.y + (Tower.TOWER_SIZE / 2);
     }
+
+    /**
+     * Method to check if the tower can fire a bullet
+     * @returns {boolean} boolean that if true, indicates the tower can fire a bullet
+     */
+    canFire() {
+        
+
+        if (this.coolDown > this.fireRate) {
+            this.coolDown--;
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Method to fire a bullet
+     * @param {Enemy} enemy - enemy that the bullet is targeting
+     * @returns {Bullet} bullet fired by the tower
+     */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy); 
+    }
+
+    /**
+     * Method to upgrade the tower's firing range
+     * @returns {void} upgrades the tower's firing range
+     */
+    upgradeRange() {
+        this.range += 10;
+    }
+
+    /**
+     * Method to upgrade the tower's firing rate
+     * @returns {void} upgrades the tower's firing rate
+     */
+    upgradeFireRate() {
+        this.fireRate += 1;
+    }
+
+
 };
 
 export class Bullet {
