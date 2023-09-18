@@ -1,4 +1,4 @@
-import { Enemy, Tank, Standard, Rapid } from "./enemy.js";
+import { Tank, Standard, Rapid } from "./enemy.js";
 import { Tower, Bullet }  from "./tower.js";
 
 
@@ -16,9 +16,9 @@ const path = [
 ];
 
 const enemies = [
-    new Standard(0.1, 10, path, 140, 3),
-    new Rapid(0.3, 5, path, 80, 1),
-    new Tank(0.05, 25, path, 300, 6)
+    new Standard(path),
+    new Rapid(path),
+    new Tank(path)
 ];
 
 // tower variables
@@ -206,11 +206,12 @@ window.draw = function() {
         encyclopedia.mousePressed(showEncyclopedia);
         pop();
 
-        // draw or remove enemies
-        for (const i in enemies) {
+        // draw or remove enemie
+        // iterate backwards to prevent flickering
+        for (let i = enemies.length - 1; i >= 0; i--) {
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
-                if (totalHealth < 0) {} // Implement game over screen
+                // Implement game over screen if needed
                 enemies.splice(i, 1);
             } else if (enemies[i].health <= 0) {
                 totalCurrency += enemies[i].currency;
@@ -228,15 +229,9 @@ window.draw = function() {
             }
             
             if (bullets[i].hasHitTarget()) {
-                console.log("HIT");
-                console.log("ENEMY HP: ", bullets[i].target.health);
-                console.log("Damage: ", bullets[i].damage);
-                console.log("ENEMY HP: ", bullets[i].target.health);
                 bullets[i].target.health -= bullets[i].damage;
                 bullets.splice(i, 1);
             } else {
-
-
                 bullets[i].draw();
             }
         }
@@ -246,7 +241,6 @@ window.draw = function() {
             t.draw();
         }
     }
-    
 }
 
 // Show the Encyclopedia when button is pressed. 

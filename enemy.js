@@ -19,13 +19,12 @@ class Enemy {
         this.currency = currency;
         this.damage = damage;
     }
+
     draw() {
         // draw enemy
-        // note: should eventually depend on the enemy type
         push();
-        fill(50);
-        noStroke();
-        ellipse(this.x, this.y, 20, 20);
+        
+        this.drawAppearance();
 
         // health bar
         let healthbarwidth = 0;
@@ -58,6 +57,7 @@ class Enemy {
         }
         pop();
     }
+    
     /**
      * Method to check if enemy has reached the end of the path
      * @returns {boolean} boolean that if true, indicates the enemy is at the end of the path
@@ -73,22 +73,37 @@ class Enemy {
 
 /** The Tank */
 class Tank extends Enemy {
-    constructor(speed, health, path, currency, damage) {
-        super(speed, health, path, currency, damage);
+    constructor(path) {
+        super(0.05, 25, path, 300, 6);
+    }
+    drawAppearance() {
+        fill(10);
+        noStroke();
+        ellipse(this.x, this.y, 20, 20);
     }
 }
 
 /** The Standard */
 class Standard extends Enemy {
-    constructor(speed, health, path, currency, damage) {
-        super(speed, health, path, currency, damage);
+    constructor(path) {
+        super(0.1, 10, path, 140, 3);
+    }
+    drawAppearance() {
+        fill(100);
+        noStroke();
+        square(this.x - 10, this.y - 10, 20);
     }
 }
 
 /** The Rapid */
 class Rapid extends Enemy {
-    constructor(speed, health, path, currency, damage) {
-        super(speed, health, path, currency, damage);
+    constructor(path) {
+        super(0.3, 5, path, 80, 1);
+    }
+    drawAppearance() {
+        fill(50);
+        noStroke();
+        rect(this.x - 10, this.y - 10, 20, 20);
     }
 }
 
