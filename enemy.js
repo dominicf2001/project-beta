@@ -1,29 +1,46 @@
 /** @module enemy */
 
 /** Class representing an enemy */
-export class Enemy {
+
+class Enemy {
     /**
      * Constructs an enemy based on speed, and the path it will follow
-     * @param {number} type - integer id of enemy type 
      * @param {number} speed - how quick an enemy moves along a path
+     * @param {number} health - how much health an enemy has
      * @param {array} path - a path the enemy will be drawn on
+     * @param {number} currency - how much money you will receive
+     * @param {number} damage - how much health an enemy takes away
      */
-    constructor(type, speed, health, path) {
-        this.type = type; 
+    constructor(speed, health, path, currency, damage) {
         this.speed = speed;
         this.health = health;
         this.path = path;
         this.pathIndex = 0;
-        this.x = path[0].x;
-        this.y = path[0].y;
+        this.x = this.path[0].x;
+        this.y = this.path[0].y;
+        this.currency = currency;
+        this.damage = damage;
     }
+
     draw() {
         // draw enemy
-        // note: should eventually depend on the enemy type
         push();
-        fill(50);
-        noStroke();
-        ellipse(this.x, this.y, 20, 20);
+        
+        this.drawAppearance();
+
+        // health bar
+        let healthbarwidth = 0;
+        if (this.health > 30) { // max width
+            healthbarwidth = 30 % this.health;
+        } else {
+            healthbarwidth = this.health;
+        }
+        fill(0, 200, 0);
+        stroke(0, 180, 0);
+        rectMode(CENTER);
+        rect(this.x, this.y + 20, healthbarwidth, 5);
+        //text(this.health, this.x-5, this.y - 20);
+
 
         // calculate distance to next point
         let dx = this.path[this.pathIndex + 1].x - this.x;
@@ -42,6 +59,7 @@ export class Enemy {
         }
         pop();
     }
+    
     /**
      * Method to check if enemy has reached the end of the path
      * @returns {boolean} boolean that if true, indicates the enemy is at the end of the path
@@ -49,13 +67,58 @@ export class Enemy {
     hasReachedEnd() {
         return this.pathIndex === this.path.length - 1;
     }
-};
+    };
+// ------------------------------------------ //
+// ENEMY TYPE CLASSES
+// ------------------------------------------ //
 
+/** The Tank */
+class Tank extends Enemy {
+    constructor(path) {
+        super(0.2, 25, path, 300, 6);
+    }
+    drawAppearance() {
+        fill(10);
+        noStroke();
+        ellipse(this.x, this.y, 20, 20);
+    }
+}
+
+/** The Standard */
+class Standard extends Enemy {
+    constructor(path) {
+        super(0.5, 10, path, 140, 3);
+    }
+    drawAppearance() {
+        fill(100);
+        noStroke();
+        square(this.x - 10, this.y - 10, 20);
+    }
+}
+
+/** The Rapid */
+class Rapid extends Enemy {
+    constructor(path) {
+        super(1, 5, path, 80, 1);
+    }
+    drawAppearance() {
+        fill(50);
+        noStroke();
+        rect(this.x - 10, this.y - 10, 20, 20);
+    }
+}
+    
 
 /** @module wave */
 
 /** Class representing a wave of enemies. This class stores the number of enemies of each type to spawn and the spawning priority for each type.  */
-export class Wave {
+class Wave {
+    static ENEMY_IDS = Object.freeze({
+        0: (path) => new Tank(path),
+        1: (path) => new Standard(path),
+        2: (path) => new Rapid(path)
+    });
+
     /** Constructs a new Wave object
      *  @param {array} spawnData - integer array representing how many of each enemy type to spawn where array index = enemy type id 
      *  @param {array} spawnPriority - order to spawn enemy types in
@@ -82,7 +145,7 @@ export class Wave {
 
     spawnLoopHelper(i, j, k) {
         setTimeout(() => {
-            var newEnemy = new Enemy(k, k / 2, k, this.path);
+            var newEnemy = Wave.ENEMY_IDS[k](this.path);
             this.spawnData[k]--;
             this.enemies.push(newEnemy);
             console.log("Spawned new enemy at ", this.delay * 1000 * i);
@@ -114,3 +177,6 @@ export class Wave {
         return this.enemies;
     }
 };
+
+// ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
+export { Enemy, Tank, Standard, Rapid, Wave }
