@@ -1,4 +1,4 @@
-import Enemy from "./enemy.js";
+import { Enemy, Tank, Standard, Rapid } from "./enemy.js";
 import { Tower, Bullet }  from "./tower.js";
 
 
@@ -16,9 +16,9 @@ const path = [
 ];
 
 const enemies = [
-    new Enemy(0.1, 10, path, 140, 3),
-    new Enemy(0.3, 5, path, 80, 1),
-    new Enemy(0.05, 25, path, 300, 6)
+    new Standard(0.1, 10, path, 140, 3),
+    new Rapid(0.3, 5, path, 80, 1),
+    new Tank(0.05, 25, path, 300, 6)
 ];
 
 // tower variables
@@ -31,6 +31,7 @@ let playSound = false;
 // other relevant variables
 let totalCurrency = 0;
 let totalHealth = 50;
+let encyclopedia;
 
 // EVENT LISTENERS
 
@@ -198,6 +199,13 @@ window.draw = function() {
         text(totalHealth, 40, 40);
         pop();
 
+        // draw encyclopedia
+        push();
+        encyclopedia = createButton('Encyclopedia');
+        encyclopedia.position(1057, 45);
+        encyclopedia.mousePressed(showEncyclopedia);
+        pop();
+
         // draw or remove enemies
         for (const i in enemies) {
             if (enemies[i].hasReachedEnd()) {
@@ -238,6 +246,11 @@ window.draw = function() {
             t.draw();
         }
     }
+    
+}
+
+// Show the Encyclopedia when button is pressed. 
+function showEncyclopedia() {
     
 }
 

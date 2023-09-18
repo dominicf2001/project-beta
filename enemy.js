@@ -1,7 +1,7 @@
 /** @module enemy */
 
 /** Class representing an enemy */
-export default class Enemy {
+class Enemy {
     /**
      * Constructs an enemy based on speed, and the path it will follow
      * @param {number} speed - how quick an enemy moves along a path
@@ -66,3 +66,31 @@ export default class Enemy {
         return this.pathIndex === this.path.length - 1;
     }
 };
+
+// ------------------------------------------ //
+// ENEMY TYPE CLASSES
+// ------------------------------------------ //
+
+/** The Tank */
+class Tank extends Enemy {
+    constructor(speed, health, path, currency, damage) {
+        super(speed, health, path, currency, damage);
+    }
+}
+
+/** The Standard */
+class Standard extends Enemy {
+    constructor(speed, health, path, currency, damage) {
+        super(speed, health, path, currency, damage);
+    }
+}
+
+/** The Rapid */
+class Rapid extends Enemy {
+    constructor(speed, health, path, currency, damage) {
+        super(speed, health, path, currency, damage);
+    }
+}
+
+// ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
+export { Enemy, Tank, Standard, Rapid }
