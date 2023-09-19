@@ -218,12 +218,18 @@ window.draw = function() {
                 enemies.splice(i, 1);
             } else if (enemies[i].health <= 0) {
                 totalCurrency += enemies[i].currency;
+
+                // handle spawner type enemies
+                if (enemies[i].spawn) {
+                    enemies[i].spawn(enemies);
+                }
+                
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
                 
-                // logic for spawner type enemies
-                if (enemies[i].spawn && !enemies[i].onCooldown){
+                // handle spawner type enemies
+                if (enemies[i].spawn && !enemies[i].onCooldown) {
                     enemies[i].spawn(enemies);
                 }
             }

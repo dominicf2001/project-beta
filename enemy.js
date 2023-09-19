@@ -120,14 +120,22 @@ class Rapid extends Enemy {
 }
 
 /** The Spawner */
-class Spawner extends Enemy {
+class Spawner extends Enemy {    
     constructor(path, x, y) {
         super(1, 5, path, 80, 1, x, y);
-
+        
+        this.spawnCount = 1;
+        /**
+         * 0 - spawn while alive
+         * 1 - spawn upon death
+        */
+        this.spawnType = 1;
         this.spawnedEnemyId = 0;
         this.onCooldown = false;
         this.cooldownTime = 4000;
-        this.startCooldown();
+        if (!this.spawnType) {
+            this.startCooldown();   
+        }
     }
     drawAppearance() {
         fill(3000);
@@ -144,8 +152,14 @@ class Spawner extends Enemy {
      * @param {Array} enemies - the array of enemies to insert into
      */
     spawn(enemies) {
-        enemies.push(ENEMY_BUILDERS[this.spawnedEnemyId](this.path, this.x, this.y));
-        this.startCooldown();
+        const shouldSpawn = !this.spawnType || (this.spawnType && this.health <= 0);
+
+        if (shouldSpawn) {
+            for (let i = 0; i < this.spawnCount; ++i) {
+                enemies.push(ENEMY_BUILDERS[this.spawnedEnemyId](this.path, this.x, this.y));
+            }
+            this.startCooldown();
+        }
     }
 }
     
