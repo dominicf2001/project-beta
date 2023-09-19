@@ -9,6 +9,9 @@ import { Tower, Bullet }  from "./tower.js";
 var gameMode = 0;
 let f_Andale;
 
+var windowWidth = 1200;
+var windowHeight = 700;
+
 const path = [
     { x: 50, y: 50 },
     { x: 150, y: 50 },
@@ -97,6 +100,12 @@ window.mouseMoved = function() {
 window.keyPressed = function() {
     if (keyCode === ENTER) {
         gameMode = 1;
+
+        if(!playSound) {
+            mySound.setVolume(0.05);
+            mySound.play();
+            playSound = true;
+        }
     }
 }
 
@@ -129,6 +138,8 @@ function fireBullets() {
 // GAME LOOP
 
 let mySound;
+let settings;
+let settingsMute;
 
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
@@ -136,9 +147,14 @@ window.preload = function(){
 }
 
 window.setup = function() {
+<<<<<<< Updated upstream
     createCanvas(400, 400);
 
     //Fire bullets every 400mps
+=======
+    createCanvas(windowWidth, windowHeight);
+    // Fire bullets every 400mps
+>>>>>>> Stashed changes
     setInterval(fireBullets, 400);
 }
 
@@ -147,14 +163,19 @@ window.draw = function() {
         mainMenu();
     }
     if (gameMode == 1) {
+        settingsMenu();
         background(200);
 
+<<<<<<< Updated upstream
         if (!playSound) {
             mySound.setVolume(0.3);
             mySound.play();
             playSound = true;
         }
 
+=======
+        image(img, 0, 0, 1200, 650);
+>>>>>>> Stashed changes
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -222,4 +243,32 @@ function mainMenu() {
     textAlign(CENTER);
     text("Press [ENTER] to start", 200, 300);
     fill('#FFF');
+}
+
+function settingsMenu() {
+    let toggleSettings = false;
+    settings = createButton("Settings");
+    settingsMute = createButton("Toggle Audio");
+    
+    settings.position(windowWidth - 75, 15);
+    settings.mousePressed(function() {
+        if (!toggleSettings) {
+            toggleSettings = true;
+            settingsMute.position(windowWidth - 75, 40);
+            settingsMute.mousePressed(function() {
+                if (playSound) {
+                    mySound.pause();
+                    playSound = false;
+                } else {
+                    mySound.play();
+                    playSound = true;
+                }
+                })
+        } else {
+            toggleSettings = false;
+            settingsMute.hide();
+        }
+        
+    })
+    
 }
