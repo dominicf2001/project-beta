@@ -10,8 +10,8 @@ let img;
 var gameMode = 0;
 let f_Andale;
 
-var windowWidth = 1200;
-var windowHeight = 700;
+let windowWidth = 1200;
+let windowHeight = 750;
 
 const path = [
     { x: 0, y: 380 },
@@ -103,9 +103,9 @@ window.mouseMoved = function() {
 window.keyPressed = function() {
     if (keyCode === ENTER) {
         gameMode = 1;
-
-        if(!playSound) {
-            mySound.setVolume(0.05);
+        
+        if (!playSound) {
+            mySound.setVolume(0.3);
             mySound.play();
             playSound = true;
         }
@@ -139,8 +139,6 @@ function fireBullets() {
 
 
 // GAME LOOP
-
-
 let mySound;
 let settings;
 let settingsMute;
@@ -152,9 +150,9 @@ window.preload = function(){
 }
 
 window.setup = function() {
-    createCanvas(400, 400);
-
-    //Fire bullets every 400mps
+    createCanvas(windowWidth, windowHeight);
+    
+    // Fire bullets every 400mps
     setInterval(fireBullets, 400);
 }
 
@@ -164,15 +162,11 @@ window.draw = function() {
     }
     if (gameMode == 1) {
         settingsMenu();
+
         background(200);
 
-<<<<<<< Updated upstream
-        if (!playSound) {
-            mySound.setVolume(0.3);
-            mySound.play();
-            playSound = true;
-        }
-
+        image(img, 0, 0, 1200, 650);
+        
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -263,28 +257,22 @@ function mainMenu() {
 }
 
 function settingsMenu() {
-    let toggleSettings = false;
     settings = createButton("Settings");
-    settingsMute = createButton("Toggle Audio");
     
     settings.position(windowWidth - 75, 15);
     settings.mousePressed(function() {
-        if (!toggleSettings) {
-            toggleSettings = true;
-            settingsMute.position(windowWidth - 75, 40);
-            settingsMute.mousePressed(function() {
-                if (playSound) {
-                    mySound.pause();
-                    playSound = false;
-                } else {
-                    mySound.play();
-                    playSound = true;
-                }
-                })
-        } else {
-            toggleSettings = false;
-            settingsMute.hide();
-        }
+        settingsMute = createButton("Toggle Audio");
+        settingsMute.position(windowWidth - 75, 40);
+        settingsMute.mousePressed(function() {
+            if (playSound) {
+                mySound.pause();
+                playSound = false;
+            } else {
+                mySound.play();
+                playSound = true;
+            }
+            })
+        
         
     })
     
