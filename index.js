@@ -15,8 +15,8 @@ const path = [
     { x: 1190, y: 380 },
 ];
 
-const test_waveData = [5, 3, 1, 0];
-const test_spawnPriority = [1, 0, 2, 3];
+const test_waveData = [0, 0, 0, 1];
+const test_spawnPriority = [3];
 
 const newWave = new Wave(test_waveData, test_spawnPriority, path, 4);
 
@@ -221,6 +221,11 @@ window.draw = function() {
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
+                
+                // logic for spawner type enemies
+                if (enemies[i].spawn && !enemies[i].onCooldown){
+                    enemies[i].spawn(enemies);
+                }
             }
         }
 
