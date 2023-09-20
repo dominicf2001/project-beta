@@ -3,7 +3,6 @@ import { Tower, Bullet }  from "./tower.js";
 
 
 // GLOBAL VARIABLES
-let img;
 
 // 0 - main menu
 // 1 - start game
@@ -11,7 +10,7 @@ var gameMode = 0;
 let f_Andale;
 
 let windowWidth = 1200;
-let windowHeight = 750;
+let windowHeight = 700;
 
 const path = [
     { x: 0, y: 380 },
@@ -100,18 +99,6 @@ window.mouseMoved = function() {
     cursor();
 }
 
-window.keyPressed = function() {
-    if (keyCode === ENTER) {
-        gameMode = 1;
-        
-        if (!playSound) {
-            mySound.setVolume(0.3);
-            mySound.play();
-            playSound = true;
-        }
-    }
-}
-
 // HELPERS
 
 function fireBullets() {
@@ -143,14 +130,34 @@ let mySound;
 let settings;
 let settingsMute;
 
+let mapImg;
+let titleImg;
+var startButton;
+
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
-    img = loadImage('Maps/Tower Defense Map Ideas.png'); // Loads the Map
+    mapImg = loadImage('Maps/Tower Defense Map Ideas.png'); // Loads the Map
+    titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+    startImg = loadImage('./assets/GalacticGuardiansStartBtn.png');
+
 }
 
 window.setup = function() {
     createCanvas(windowWidth, windowHeight);
+    imageMode(CENTER);
+
+    startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
+    startButton.position((windowWidth/2)-90, (windowHeight/2)+100);
+    startButton.size(200,100);
+    startButton.mousePressed(function() {
+        gameMode = 1;
+        if (!playSound) {
+            mySound.setVolume(0.3);
+            mySound.play();
+            playSound = true;
+        }
+    })
     
     // Fire bullets every 400mps
     setInterval(fireBullets, 400);
@@ -161,11 +168,11 @@ window.draw = function() {
         mainMenu();
     }
     if (gameMode == 1) {
+        startButton.hide();
         settingsMenu();
 
         background(200);
-
-        image(img, 0, 0, 1200, 650);
+        image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
         
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
@@ -249,20 +256,18 @@ window.draw = function() {
 }
 
 function mainMenu() {
-    background('#262626');
-    textFont(f_Andale);
-    textAlign(CENTER);
-    text("Press [ENTER] to start", 200, 300);
-    fill('#FFF');
+    background('#141414');
+    image(titleImg, windowWidth / 2, (windowHeight / 2) - 100, 650, 375);
 }
 
 function settingsMenu() {
-    settings = createButton("Settings");
-    
-    settings.position(windowWidth - 75, 15);
+    settings = createImg('./assets/settingsbutton.png');
+    settings.position(windowWidth - 35, 15);
+    settings.size(30,30);
     settings.mousePressed(function() {
-        settingsMute = createButton("Toggle Audio");
-        settingsMute.position(windowWidth - 75, 40);
+        settingsMute = createImg('./assets/audiobutton.png');
+        settingsMute.position(windowWidth - 35, 50);
+        settingsMute.size(30,30);
         settingsMute.mousePressed(function() {
             if (playSound) {
                 mySound.pause();
