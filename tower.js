@@ -5,21 +5,20 @@ var spriteSheet;
 var towerAnimation;
 
 export class Tower {
-    static TOWER_SIZE = 20;
+    static TOWER_SIZE = 40;
     
     /**
      * Constructs a tower with x and y coordinates
      * @param {number} x - x coordinate of tower
-     * @param {array} y - y coordinate of tower
+     * @param {number} y - y coordinate of tower
      */
-
-
     constructor(x, y) {
         this.x = x;
         this.y = y;
         this.range = 50;
         this.damage = 1;
         this.fireRate = 1;
+        this.coolDown = 5;
         this.hover = false;
     }
     
@@ -27,10 +26,16 @@ export class Tower {
      * Method to draw the tower on the canvas
      * @returns {void} draws the tower on the canvas, and a circle around it if the mouse is hovering over it
      */
-    draw() {
+    draw(towerSprite) {
+        
         push();
         fill(152, 84, 235);
-        rect(this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+
+        //tower as a rectangle
+        rect(this.x - (Tower.TOWER_SIZE / 4), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE/2, Tower.TOWER_SIZE, 10, 10, 0, 0);
+        
+        //tower as a sprite (DOESNT WORK)
+        //image(towerSprite, this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
 
         strokeWeight(2);
         stroke(255);
@@ -49,6 +54,48 @@ export class Tower {
     mouseInside() {
         return mouseX > this.x - (Tower.TOWER_SIZE / 2) && mouseX < this.x + (Tower.TOWER_SIZE / 2) && mouseY > this.y - (Tower.TOWER_SIZE / 2) && mouseY < this.y + (Tower.TOWER_SIZE / 2);
     }
+
+    /**
+     * Method to check if the tower can fire a bullet
+     * @returns {boolean} boolean that if true, indicates the tower can fire a bullet
+     */
+    canFire() {
+        
+
+        if (this.coolDown > this.fireRate) {
+            this.coolDown--;
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Method to fire a bullet
+     * @param {Enemy} enemy - enemy that the bullet is targeting
+     * @returns {Bullet} bullet fired by the tower
+     */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy); 
+    }
+
+    /**
+     * Method to upgrade the tower's firing range
+     * @returns {void} upgrades the tower's firing range
+     */
+    upgradeRange() {
+        this.range += 10;
+    }
+
+    /**
+     * Method to upgrade the tower's firing rate
+     * @returns {void} upgrades the tower's firing rate
+     */
+    upgradeFireRate() {
+        this.fireRate += 1;
+    }
+
 };
 
 export class Bullet {
