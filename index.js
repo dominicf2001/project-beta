@@ -76,7 +76,11 @@ window.mousePressed = function(event) {
                     throw new Error("No more towers allowed!");
                 }
                 let t = new Tower(mouseX, mouseY);
+                if(mouseX >= windowWidth -15 && mouseY > 30 || mouseY < 70){
+                   // throw new Error("NO");
+                }else{
                 towers.push(t);
+                }
 
             } catch (e) {
                 alert(e);
@@ -389,12 +393,15 @@ function mainMenu() {
 }
 
 function settingsMenu() {
+    let settingsX = windowWidth-35
+    let b1settingsY = 15;
+    let b2settingsY = 50;
     settings = createImg('./assets/settingsbutton.png');
-    settings.position(windowWidth - 35, 15);
+    settings.position(settingsX, b1settingsY);
     settings.size(30,30);
     settings.mousePressed(function() {
         settingsMute = createImg('./assets/audiobutton.png');
-        settingsMute.position(windowWidth - 35, 50);
+        settingsMute.position(settingsX, b2settingsY);
         settingsMute.size(30,30);
         settingsMute.mousePressed(function() {
             if (playSound) {
