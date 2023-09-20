@@ -4,8 +4,8 @@ import { Tower, Bullet }  from "./tower.js";
 
 // GLOBAL VARIABLES
 
-const canvasWidth = 1507;
-const canvasHeight = 737;
+const canvasWidth = 1200;
+const canvasHeight = 700;
 
 // 0 - main menu
 // 1 - start game
@@ -159,11 +159,13 @@ let mapImg;
 let titleImg;
 var startButton;
 let towerSprite;
+let startImg;
+
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
-    img = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
     titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
     startImg = loadImage('./assets/GalacticGuardiansStartBtn.png');
 }
@@ -172,31 +174,17 @@ window.setup = function() {
 
     createCanvas(canvasWidth, canvasHeight);
 
-    imageMode(CENTER);
-
-    startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
-    startButton.position((windowWidth/2)-90, (windowHeight/2)+100);
-    startButton.size(200,100);
-    startButton.mousePressed(function() {
-        gameMode = 1;
-        if (!playSound) {
-            mySound.setVolume(0.3);
-            mySound.play();
-            playSound = true;
-        }
-    })
-
     //Poll for bullets every 100ms
     setInterval(fireBullets, 100);
     upgradeRange = createButton('Upgrade Range');
-    upgradeRange.position(0, 410);
+    upgradeRange.position(0, canvasHeight + 10);
     upgradeRange.mousePressed(function() {
         for(let t of towers) {
             t.range += 5;
         }
     });
     upgradeFireRate = createButton('Upgrade Fire Speed');
-    upgradeFireRate.position(120, 410);
+    upgradeFireRate.position(120, canvasHeight + 10);
     upgradeFireRate.mousePressed(function() {
         for(let t of towers) {
             t.upgradeFireRate();
@@ -204,7 +192,7 @@ window.setup = function() {
     });
 
     saveButton = createButton('Save');
-    saveButton.position(0, 430);
+    saveButton.position(0,  canvasHeight + 40);
     saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
@@ -216,7 +204,7 @@ window.setup = function() {
     });
 
     loadSaveButton = createButton('Load');
-    loadSaveButton.position(50, 430);
+    loadSaveButton.position(50,  canvasHeight + 40);
     loadSaveButton.mousePressed(function() {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
@@ -252,16 +240,32 @@ window.setup = function() {
         }
     });
 
+    imageMode(CENTER);
+
+    startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
+    startButton.position((canvasWidth/2)-90, (canvasHeight/2)+100);
+    startButton.size(200,100);
+    startButton.mousePressed(function() {
+        gameMode = 1;
+        if (!playSound) {
+            mySound.setVolume(0.3);
+            mySound.play();
+            playSound = true;
+        }
+    });
+
 }
 
 window.draw = function() {
     if (gameMode == 0) {
         mainMenu();
 
-        // Hide upgrade buttons
+        // Hide buttons
         upgradeRange.hide();
         upgradeFireRate.hide();
         loadSaveButton.hide();
+        saveButton.hide();
+
     }
     if (gameMode == 1) {
 
@@ -269,6 +273,7 @@ window.draw = function() {
         upgradeRange.show();
         upgradeFireRate.show();
         loadSaveButton.show();
+        saveButton.show();
         startButton.hide();
         settingsMenu();
 
@@ -364,7 +369,10 @@ function showEncyclopedia() {
 
 function mainMenu() {
     background('#141414');
-    image(titleImg, windowWidth / 2, (windowHeight / 2) - 100, 650, 375);
+    image(titleImg, canvasWidth / 2, (canvasHeight / 2) - 100, 650, 375);
+
+    
+
 }
 
 function settingsMenu() {
