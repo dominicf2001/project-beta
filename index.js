@@ -20,8 +20,14 @@ let saveButton;
 let loadSaveButton;
 
 const path = [
-    { x: 0, y: 380 },
-    { x: 1190, y: 380 },
+    { x: 0, y: 230 },
+    { x: 100, y: 250 },
+    { x: 250, y: 240 },
+    { x: 500, y: 225 },
+    { x: 900, y: 210 },
+    { x: 1100, y: 260 },
+    { x: 1150, y: 330 },
+    { x: 1190, y: 420 },
 ];
 
 const test_waveData = [5, 3, 1, 0];
@@ -158,7 +164,7 @@ window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
-    img = loadImage('Maps/Tower Defense Map Ideas.png'); // Loads the Map
+    img = loadImage('Maps/Space Map 1.png'); // Loads the Map
 }
 
 window.setup = function() {
