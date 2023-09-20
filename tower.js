@@ -5,7 +5,7 @@ var spriteSheet;
 var towerAnimation;
 
 export class Tower {
-    static TOWER_SIZE = 20;
+    static TOWER_SIZE = 40;
     
     /**
      * Constructs a tower with x and y coordinates
@@ -26,10 +26,16 @@ export class Tower {
      * Method to draw the tower on the canvas
      * @returns {void} draws the tower on the canvas, and a circle around it if the mouse is hovering over it
      */
-    draw() {
+    draw(towerSprite) {
+        
         push();
         fill(152, 84, 235);
-        rect(this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+
+        //tower as a rectangle
+        rect(this.x - (Tower.TOWER_SIZE / 4), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE/2, Tower.TOWER_SIZE, 10, 10, 0, 0);
+        
+        //tower as a sprite (DOESNT WORK)
+        //image(towerSprite, this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
 
         strokeWeight(2);
         stroke(255);

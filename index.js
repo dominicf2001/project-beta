@@ -145,10 +145,11 @@ function fireBullets() {
 // GAME LOOP
 
 let mySound;
-
+let towerSprite;
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
+    towerSprite = loadImage('./assets/RedMoonTower.png');
 }
 
 window.setup = function() {
@@ -258,7 +259,7 @@ window.draw = function() {
 
         // Draw towers
         for (const t of towers) {
-            t.draw();
+            t.draw(towerSprite);
         }
         // draw path
         push();
