@@ -5,7 +5,7 @@ var spriteSheet;
 var towerAnimation;
 
 export class Tower {
-    static TOWER_SIZE = 50;
+    static TOWER_SIZE = 40;
     
     /**
      * Constructs a tower with x and y coordinates
@@ -32,7 +32,7 @@ export class Tower {
         fill(152, 84, 235);
 
         //tower as a rectangle
-        //rect(this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+        rect(this.x - (Tower.TOWER_SIZE / 4), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE/2, Tower.TOWER_SIZE, 10, 10, 0, 0);
         
         //tower as a sprite (DOESNT WORK)
         //image(towerSprite, this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
