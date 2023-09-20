@@ -309,19 +309,21 @@ window.draw = function() {
         // draw currency holder
         push();
         textSize(20);
+        fill('white');
         text(totalCurrency, 100, 40);
         pop();
         
         // draw current health
         push();
         textSize(20);
+        fill('white');
         text(totalHealth, 40, 40);
         pop();
 
         // draw encyclopedia
         push();
         encyclopedia = createButton('Encyclopedia');
-        encyclopedia.position(1057, 45);
+        encyclopedia.position(1057, 40);
         encyclopedia.mousePressed(showEncyclopedia);
         pop();
 
