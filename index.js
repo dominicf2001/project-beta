@@ -3,7 +3,6 @@ import { Tower, Bullet }  from "./tower.js";
 
 
 // GLOBAL VARIABLES
-let img;
 
 const canvasWidth = 1507;
 const canvasHeight = 737;
@@ -18,6 +17,8 @@ let upgradeRange;
 let upgradeFireRate;
 let saveButton;
 let loadSaveButton;
+let windowWidth = 1200;
+let windowHeight = 700;
 
 const path = [
     { x: 0, y: 230 },
@@ -117,12 +118,6 @@ window.mouseMoved = function() {
     cursor();
 }
 
-window.keyPressed = function() {
-    if (keyCode === ENTER) {
-        gameMode = 1;
-    }
-}
-
 // HELPERS
 
 function fireBullets() {
@@ -156,20 +151,40 @@ function fireBullets() {
 
 
 // GAME LOOP
-
-
 let mySound;
+let settings;
+let settingsMute;
+
+let mapImg;
+let titleImg;
+var startButton;
 let towerSprite;
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     img = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+    startImg = loadImage('./assets/GalacticGuardiansStartBtn.png');
 }
 
 window.setup = function() {
 
     createCanvas(canvasWidth, canvasHeight);
+
+    imageMode(CENTER);
+
+    startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
+    startButton.position((windowWidth/2)-90, (windowHeight/2)+100);
+    startButton.size(200,100);
+    startButton.mousePressed(function() {
+        gameMode = 1;
+        if (!playSound) {
+            mySound.setVolume(0.3);
+            mySound.play();
+            playSound = true;
+        }
+    })
 
     //Poll for bullets every 100ms
     setInterval(fireBullets, 100);
@@ -236,7 +251,7 @@ window.setup = function() {
             }
         }
     });
-    
+
 }
 
 window.draw = function() {
@@ -254,16 +269,12 @@ window.draw = function() {
         upgradeRange.show();
         upgradeFireRate.show();
         loadSaveButton.show();
+        startButton.hide();
+        settingsMenu();
 
         background(200);
-
-        if (!playSound) {
-            mySound.setVolume(0.3);
-            mySound.play();
-            playSound = true;
-        }
-
-        image(img, 0, 0, 1200, 650);
+        image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
+        
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -352,9 +363,29 @@ function showEncyclopedia() {
 }
 
 function mainMenu() {
-    background('#262626');
-    textFont(f_Andale);
-    textAlign(CENTER);
-    text("Press [ENTER] to start", 200, 300);
-    fill('#FFF');
+    background('#141414');
+    image(titleImg, windowWidth / 2, (windowHeight / 2) - 100, 650, 375);
+}
+
+function settingsMenu() {
+    settings = createImg('./assets/settingsbutton.png');
+    settings.position(windowWidth - 35, 15);
+    settings.size(30,30);
+    settings.mousePressed(function() {
+        settingsMute = createImg('./assets/audiobutton.png');
+        settingsMute.position(windowWidth - 35, 50);
+        settingsMute.size(30,30);
+        settingsMute.mousePressed(function() {
+            if (playSound) {
+                mySound.pause();
+                playSound = false;
+            } else {
+                mySound.play();
+                playSound = true;
+            }
+            })
+        
+        
+    })
+    
 }
