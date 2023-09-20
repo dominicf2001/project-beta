@@ -90,7 +90,6 @@ export class Tower {
         this.fireRate += 1;
     }
 
-
 };
 
 export class Bullet {

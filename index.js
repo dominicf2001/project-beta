@@ -15,6 +15,8 @@ let f_Andale;
 // buttons
 let upgradeRange;
 let upgradeFireRate;
+let saveButton;
+let loadSaveButton;
 
 const path = [
     { x: 50, y: 50 },
@@ -24,15 +26,15 @@ const path = [
     { x: 250, y: 250 },
 ];
 
-const enemies = [
+let enemies = [
     new Enemy(0.2, 10, path),
     new Enemy(0.3, 5, path)
 ];
 
 // tower variables
 const towerLimit = 5;
-const towers = [];
-const bullets = [];
+let towers = [];
+let bullets = [];
 let dragTower = null;
 let playSound = false;
 
@@ -150,6 +152,7 @@ window.preload = function(){
 }
 
 window.setup = function() {
+
     createCanvas(canvasWidth, canvasHeight);
 
     //Poll for bullets every 100ms
@@ -168,6 +171,56 @@ window.setup = function() {
             t.upgradeFireRate();
         }
     });
+
+    saveButton = createButton('Save');
+    saveButton.position(0, 430);
+    saveButton.mousePressed(function() {
+        // Save game state
+        let saveState = {
+            towers: towers,
+            bullets: bullets,
+            enemies: enemies
+        };
+        localStorage.setItem("saveState", JSON.stringify(saveState));
+    });
+
+    loadSaveButton = createButton('Load');
+    loadSaveButton.position(50, 430);
+    loadSaveButton.mousePressed(function() {
+        // Load game state
+        let saveState = JSON.parse(localStorage.getItem("saveState"));
+        if(saveState) {
+
+            // Load Tower data
+            let towerData = JSON.parse(localStorage.getItem("saveState")).towers;
+            for(let i = 0; i < towerData.length; i++) {
+                let t = new Tower(towerData[i].x, towerData[i].y);
+                t.range = towerData[i].range;
+                t.damage = towerData[i].damage;
+                t.fireRate = towerData[i].fireRate;
+                t.coolDown = towerData[i].coolDown;
+
+                towers.push(t);
+            }
+
+            // Load Bullet data
+            let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
+            for(let i = 0; i < bulletData.length; i++) {
+                let b = new Bullet(bulletData[i].tower, bulletData[i].target)
+                b.x = bulletData[i].x
+                b.y = bulletData[i].y
+                b.range = bulletData[i].range
+                b.damage = bulletData[i].damage
+                b.target = bulletData[i].target
+                b.angle = bulletData[i].angle
+                b.xMove = bulletData[i].xMove
+                b.yMove = bulletData[i].yMove
+                    
+                bullets.push(b);
+            }
+        }
+    });
+
 }
 
 window.draw = function() {
@@ -177,12 +230,14 @@ window.draw = function() {
         // Hide upgrade buttons
         upgradeRange.hide();
         upgradeFireRate.hide();
+        loadSaveButton.hide();
     }
     if (gameMode == 1) {
 
         // Show upgrade buttons
         upgradeRange.show();
         upgradeFireRate.show();
+        loadSaveButton.show();
 
         background(200);
 
