@@ -1,11 +1,12 @@
-import Enemy from "./enemy.js";
+import { Tank, Standard, Rapid, Wave } from "./enemy.js";
 import { Tower, Bullet }  from "./tower.js";
 
 
 // GLOBAL VARIABLES
+let img;
 
-const canvasWidth = 400;
-const canvasHeight = 400;
+const canvasWidth = 1507;
+const canvasHeight = 737;
 
 // 0 - main menu
 // 1 - start game
@@ -19,17 +20,18 @@ let saveButton;
 let loadSaveButton;
 
 const path = [
-    { x: 50, y: 50 },
-    { x: 150, y: 50 },
-    { x: 150, y: 150 },
-    { x: 250, y: 150 },
-    { x: 250, y: 250 },
+    { x: 0, y: 380 },
+    { x: 1190, y: 380 },
 ];
 
-let enemies = [
-    new Enemy(0.2, 10, path),
-    new Enemy(0.3, 5, path)
-];
+const test_waveData = [5, 3, 1, 0];
+const test_spawnPriority = [1, 0, 2, 3];
+
+const newWave = new Wave(test_waveData, test_spawnPriority, path, 4);
+
+newWave.debugPrintWave();
+newWave.spawn();
+const enemies = newWave.getEnemies();
 
 // tower variables
 const towerLimit = 5;
@@ -37,6 +39,11 @@ let towers = [];
 let bullets = [];
 let dragTower = null;
 let playSound = false;
+
+// other relevant variables
+let totalCurrency = 0;
+let totalHealth = 50;
+let encyclopedia;
 
 // EVENT LISTENERS
 
@@ -144,12 +151,14 @@ function fireBullets() {
 
 // GAME LOOP
 
+
 let mySound;
 let towerSprite;
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
+    img = loadImage('Maps/Tower Defense Map Ideas.png'); // Loads the Map
 }
 
 window.setup = function() {
@@ -221,7 +230,7 @@ window.setup = function() {
             }
         }
     });
-
+    
 }
 
 window.draw = function() {
@@ -248,6 +257,7 @@ window.draw = function() {
             playSound = true;
         }
 
+        image(img, 0, 0, 1200, 650);
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -262,9 +272,10 @@ window.draw = function() {
             t.draw(towerSprite);
         }
         // draw path
+    
         push();
         strokeWeight(20);
-        stroke(255);
+        stroke(0, 0, 0, 0);
         noFill();
         beginShape();
         for (const point of path) {
@@ -272,10 +283,35 @@ window.draw = function() {
         }
         endShape();
         pop();
+
+        // draw currency holder
+        push();
+        textSize(20);
+        text(totalCurrency, 100, 40);
+        pop();
         
-        // draw or remove enemies
-        for (const i in enemies) {
-            if (enemies[i].hasReachedEnd() || enemies[i].health <= 0) {
+        // draw current health
+        push();
+        textSize(20);
+        text(totalHealth, 40, 40);
+        pop();
+
+        // draw encyclopedia
+        push();
+        encyclopedia = createButton('Encyclopedia');
+        encyclopedia.position(1057, 45);
+        encyclopedia.mousePressed(showEncyclopedia);
+        pop();
+
+        // draw or remove enemie
+        // iterate backwards to prevent flickering
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            if (enemies[i].hasReachedEnd()) {
+                totalHealth -= enemies[i].damage;
+                // Implement game over screen if needed
+                enemies.splice(i, 1);
+            } else if (enemies[i].health <= 0) {
+                totalCurrency += enemies[i].currency;
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
@@ -290,10 +326,6 @@ window.draw = function() {
             }
             
             if (bullets[i].hasHitTarget()) {
-                console.log("HIT");
-                console.log("ENEMY HP: ", bullets[i].target.health);
-                console.log("Damage: ", bullets[i].damage);
-                console.log("ENEMY HP: ", bullets[i].target.health);
                 bullets[i].target.health -= bullets[i].damage;
                 bullets.splice(i, 1);
             } else {
@@ -306,6 +338,10 @@ window.draw = function() {
             t.draw();
         }
     }
+}
+
+// Show the Encyclopedia when button is pressed. 
+function showEncyclopedia() {
     
 }
 
