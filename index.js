@@ -1,5 +1,5 @@
 import { Tank, Standard, Rapid, Wave } from "./enemy.js";
-import { Tower, Bullet }  from "./tower.js";
+import { Tower, Bullet } from "./tower.js";
 
 
 // GLOBAL VARIABLES
@@ -20,6 +20,7 @@ let loadSaveButton;
 let windowWidth = 1200;
 let windowHeight = 700;
 
+/*
 const path = [
     { x: 0, y: 230 },
     { x: 100, y: 250 },
@@ -29,7 +30,9 @@ const path = [
     { x: 1100, y: 260 },
     { x: 1150, y: 330 },
     { x: 1190, y: 420 },
-];
+]; */
+
+function path(x) { return 204.2901 + 0.412868 * x - 0.001434411 * x * x + 0.000001023214 * x * x * x  + 1.296086e-10 * x * x * x * x; }
 
 const test_waveData = [0, 0, 0, 1];
 const test_spawnPriority = [3];
@@ -54,12 +57,12 @@ let encyclopedia;
 
 // EVENT LISTENERS
 
-window.mousePressed = function(event) {
+window.mousePressed = function (event) {
     if (gameMode == 1) {
         console.log(event);
 
         // Check if mouse is inside a tower
-        for(let t = 0; t < towers.length; t++) {
+        for (let t = 0; t < towers.length; t++) {
             if (towers[t].mouseInside()) {
                 dragTower = towers.splice(t, 1)[0];
                 dragTower.hover = true;
@@ -70,16 +73,16 @@ window.mousePressed = function(event) {
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
-        if ((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > canvasWidth || mouseY < 0 || mouseY > canvasHeight)) {        
+        if ((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > canvasWidth || mouseY < 0 || mouseY > canvasHeight)) {
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
                 }
                 let t = new Tower(mouseX, mouseY);
-                if(mouseX >= windowWidth -15 && mouseY > 30 || mouseY < 70){
-                   // throw new Error("NO");
-                }else{
-                towers.push(t);
+                if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
+                    // throw new Error("NO");
+                } else {
+                    towers.push(t);
                 }
 
             } catch (e) {
@@ -89,15 +92,15 @@ window.mousePressed = function(event) {
     }
 }
 
-window.mouseDragged = function() {
+window.mouseDragged = function () {
     // Move tower if it's being dragged
-    if(dragTower != null) {
+    if (dragTower != null) {
         dragTower.x = mouseX;
         dragTower.y = mouseY;
     }
 }
 
-window.mouseReleased = function() {
+window.mouseReleased = function () {
     // Stop dragging tower
     if (dragTower != null) {
         dragTower.x = mouseX;
@@ -107,16 +110,16 @@ window.mouseReleased = function() {
     }
 }
 
-window.mouseMoved = function() {
+window.mouseMoved = function () {
     // Change cursor if mouse is inside a tower
-    for(let t of towers) {
+    for (let t of towers) {
         if (t.mouseInside()) {
             t.hover = true;
             cursor('grab');
             return;
         }
     }
-    for(let t of towers) {
+    for (let t of towers) {
         t.hover = false;
     }
     cursor();
@@ -126,28 +129,28 @@ window.mouseMoved = function() {
 
 function fireBullets() {
     // Generate bullets for each tower
-    for(let t of towers) {
+    for (let t of towers) {
 
         // Skip if tower can't fire
-        if(!t.canFire()) {
+        if (!t.canFire()) {
             continue;
         }
 
         let shortestDistance = Infinity;
         let closestEnemy = null;
 
-        for(let e of enemies) {
+        for (let e of enemies) {
             let xDist = e.x - t.x;
             let yDist = e.y - t.y;
             let distance = sqrt(xDist * xDist + yDist * yDist);
 
-            if(distance < t.range && distance < shortestDistance) {
+            if (distance < t.range && distance < shortestDistance) {
                 shortestDistance = distance;
                 closestEnemy = e;
             }
         }
 
-        if(closestEnemy !== null) {
+        if (closestEnemy !== null) {
             bullets.push(t.fire(closestEnemy));
         }
     }
@@ -165,7 +168,7 @@ var startButton;
 let towerSprite;
 let startImg;
 
-window.preload = function(){
+window.preload = function () {
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
@@ -174,7 +177,7 @@ window.preload = function(){
     startImg = loadImage('./assets/GalacticGuardiansStartBtn.png');
 }
 
-window.setup = function() {
+window.setup = function () {
 
     createCanvas(canvasWidth, canvasHeight);
 
@@ -182,22 +185,22 @@ window.setup = function() {
     setInterval(fireBullets, 100);
     upgradeRange = createButton('Upgrade Range');
     upgradeRange.position(0, canvasHeight + 10);
-    upgradeRange.mousePressed(function() {
-        for(let t of towers) {
+    upgradeRange.mousePressed(function () {
+        for (let t of towers) {
             t.range += 5;
         }
     });
     upgradeFireRate = createButton('Upgrade Fire Speed');
     upgradeFireRate.position(120, canvasHeight + 10);
-    upgradeFireRate.mousePressed(function() {
-        for(let t of towers) {
+    upgradeFireRate.mousePressed(function () {
+        for (let t of towers) {
             t.upgradeFireRate();
         }
     });
 
     saveButton = createButton('Save');
-    saveButton.position(0,  canvasHeight + 40);
-    saveButton.mousePressed(function() {
+    saveButton.position(0, canvasHeight + 40);
+    saveButton.mousePressed(function () {
         // Save game state
         let saveState = {
             towers: towers,
@@ -208,15 +211,15 @@ window.setup = function() {
     });
 
     loadSaveButton = createButton('Load');
-    loadSaveButton.position(50,  canvasHeight + 40);
-    loadSaveButton.mousePressed(function() {
+    loadSaveButton.position(50, canvasHeight + 40);
+    loadSaveButton.mousePressed(function () {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
-        if(saveState) {
+        if (saveState) {
 
             // Load Tower data
             let towerData = JSON.parse(localStorage.getItem("saveState")).towers;
-            for(let i = 0; i < towerData.length; i++) {
+            for (let i = 0; i < towerData.length; i++) {
                 let t = new Tower(towerData[i].x, towerData[i].y);
                 t.range = towerData[i].range;
                 t.damage = towerData[i].damage;
@@ -228,7 +231,7 @@ window.setup = function() {
 
             // Load Bullet data
             let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
-            for(let i = 0; i < bulletData.length; i++) {
+            for (let i = 0; i < bulletData.length; i++) {
                 let b = new Bullet(bulletData[i].tower, bulletData[i].target)
                 b.x = bulletData[i].x
                 b.y = bulletData[i].y
@@ -238,7 +241,7 @@ window.setup = function() {
                 b.angle = bulletData[i].angle
                 b.xMove = bulletData[i].xMove
                 b.yMove = bulletData[i].yMove
-                    
+
                 bullets.push(b);
             }
         }
@@ -247,9 +250,9 @@ window.setup = function() {
     imageMode(CENTER);
 
     startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
-    startButton.position((canvasWidth/2)-90, (canvasHeight/2)+100);
-    startButton.size(200,100);
-    startButton.mousePressed(function() {
+    startButton.position((canvasWidth / 2) - 90, (canvasHeight / 2) + 100);
+    startButton.size(200, 100);
+    startButton.mousePressed(function () {
         gameMode = 1;
         if (!playSound) {
             mySound.setVolume(0.3);
@@ -260,7 +263,7 @@ window.setup = function() {
 
 }
 
-window.draw = function() {
+window.draw = function () {
     if (gameMode == 0) {
         mainMenu();
 
@@ -283,13 +286,13 @@ window.draw = function() {
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
-        
+
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
                 bullets.splice(i, 1);
             } else {
-                bullets[i].draw();   
+                bullets[i].draw();
             }
         }
 
@@ -298,17 +301,17 @@ window.draw = function() {
             t.draw(towerSprite);
         }
         // draw path
-    
-        push();
+
+        /* push();
         strokeWeight(20);
-        stroke(0, 0, 0, 0);
+        stroke(255, 255, 255, 255);
         noFill();
         beginShape();
         for (const point of path) {
             vertex(point.x, point.y);
         }
         endShape();
-        pop();
+        pop(); */
 
         // draw currency holder
         push();
@@ -316,7 +319,7 @@ window.draw = function() {
         fill('white');
         text(totalCurrency, 100, 40);
         pop();
-        
+
         // draw current health
         push();
         textSize(20);
@@ -345,11 +348,11 @@ window.draw = function() {
                 if (enemies[i].spawn) {
                     enemies[i].spawn(enemies);
                 }
-                
+
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
-                
+
                 // handle spawner type enemies
                 if (enemies[i].spawn && !enemies[i].onCooldown) {
                     enemies[i].spawn(enemies);
@@ -363,7 +366,7 @@ window.draw = function() {
                 bullets.splice(i, 1);
                 continue;
             }
-            
+
             if (bullets[i].hasHitTarget()) {
                 bullets[i].target.health -= bullets[i].damage;
                 bullets.splice(i, 1);
@@ -381,29 +384,29 @@ window.draw = function() {
 
 // Show the Encyclopedia when button is pressed. 
 function showEncyclopedia() {
-    
+
 }
 
 function mainMenu() {
     background('#141414');
     image(titleImg, canvasWidth / 2, (canvasHeight / 2) - 100, 650, 375);
 
-    
+
 
 }
 
 function settingsMenu() {
-    let settingsX = windowWidth-35
+    let settingsX = windowWidth - 35
     let b1settingsY = 15;
     let b2settingsY = 50;
     settings = createImg('./assets/settingsbutton.png');
     settings.position(settingsX, b1settingsY);
-    settings.size(30,30);
-    settings.mousePressed(function() {
+    settings.size(30, 30);
+    settings.mousePressed(function () {
         settingsMute = createImg('./assets/audiobutton.png');
         settingsMute.position(settingsX, b2settingsY);
-        settingsMute.size(30,30);
-        settingsMute.mousePressed(function() {
+        settingsMute.size(30, 30);
+        settingsMute.mousePressed(function () {
             if (playSound) {
                 mySound.pause();
                 playSound = false;
@@ -411,9 +414,9 @@ function settingsMenu() {
                 mySound.play();
                 playSound = true;
             }
-            })
-        
-        
+        })
+
+
     })
-    
+
 }

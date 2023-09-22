@@ -16,7 +16,7 @@ class Enemy {
      * Constructs an enemy based on speed, and the path it will follow
      * @param {number} speed - how quick an enemy moves along a path
      * @param {number} health - how much health an enemy has
-     * @param {array} path - a path the enemy will be drawn on
+     * @param {function} path - a path the enemy will be drawn on
      * @param {number} currency - how much money you will receive
      * @param {number} damage - how much health an enemy takes away
      * @param {number=} x - the starting x coordinate (if undefined, defaults to start of path's x)
@@ -27,8 +27,8 @@ class Enemy {
         this.health = health;
         this.path = path;
         this.pathIndex = 0;
-        this.x = x ?? path[0].x;
-        this.y = y ?? path[0].y;
+        this.x = x ?? 0;
+        this.y = y ?? this.path(0);
         this.currency = currency;
         this.damage = damage;
     }
@@ -50,10 +50,13 @@ class Enemy {
         stroke(0, 180, 0);
         rectMode(CENTER);
         rect(this.x, this.y + 20, healthbarwidth, 5);
-        //text(this.health, this.x-5, this.y - 20);
-
-
-        // calculate distance to next point
+        text(this.health, this.x-5, this.y - 20);
+        
+        this.x += this.speed;
+        this.y = this.path(this.x);
+        console.log(this.y);
+        pop();
+        /*/ calculate distance to next point
         let dx = this.path[this.pathIndex + 1].x - this.x;
         let dy = this.path[this.pathIndex + 1].y - this.y;
         let distance = sqrt(dx * dx + dy * dy);
@@ -68,7 +71,9 @@ class Enemy {
             this.y = this.path[this.pathIndex + 1].y;
             this.pathIndex++;
         }
-        pop();
+        pop(); */
+
+
     }
     
     /**
@@ -76,7 +81,8 @@ class Enemy {
      * @returns {boolean} boolean that if true, indicates the enemy is at the end of the path
      */
     hasReachedEnd() {
-        return this.pathIndex === this.path.length - 1;
+        // TODO - make this relative to the canvas
+        return this.x == 1200;
     }
 };
 // ------------------------------------------ //
@@ -171,7 +177,7 @@ class Wave {
     /** Constructs a new Wave object
      *  @param {array} spawnData - integer array representing how many of each enemy type to spawn where array index = enemy type id 
      *  @param {array} spawnPriority - order to spawn enemy types in
-     * @param {array} path - path spawned enemies travel along
+     * @param {function} path - path spawned enemies travel along
      * @param {number} delay - amount of time in seconds to wait between spawning enemies 
      */
     constructor(spawnData, spawnPriority, path, delay) {
