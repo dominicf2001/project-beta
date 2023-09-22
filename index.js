@@ -319,7 +319,7 @@ window.draw = function() {
     
         push();
         strokeWeight(20);
-        stroke(255, 255, 255, 255);
+        stroke(0, 0, 0, 0);
         noFill();
         beginShape();
         for (const point of path) {
