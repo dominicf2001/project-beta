@@ -1,3 +1,7 @@
+// MAP SIZE
+const canvasWidth = 1200;
+const canvasHeight = 700;
+
 /** @module enemy */
 
 /** The index of the builder is the ID of the enemy
@@ -50,7 +54,7 @@ class Enemy {
         stroke(0, 180, 0);
         rectMode(CENTER);
         rect(this.x, this.y + 20, healthbarwidth, 5);
-        text(this.health, this.x-5, this.y - 20);
+        //text(this.health, this.x-5, this.y - 20);
         
         this.x += this.speed;
         this.y = this.path(this.x);
@@ -81,8 +85,7 @@ class Enemy {
      * @returns {boolean} boolean that if true, indicates the enemy is at the end of the path
      */
     hasReachedEnd() {
-        // TODO - make this relative to the canvas
-        return this.x == 1200;
+        return this.x >= canvasWidth;
     }
 };
 // ------------------------------------------ //

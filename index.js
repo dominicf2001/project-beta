@@ -32,7 +32,7 @@ const path = [
     { x: 1190, y: 420 },
 ]; */
 
-function path(x) { return 204.2901 + 0.412868 * x - 0.001434411 * x * x + 0.000001023214 * x * x * x  + 1.296086e-10 * x * x * x * x; }
+function path(x) { return 246.768 + 0.6824144*x - 0.002826065*(x*x) + 0.000004403122*(x*x*x) - 3.39375e-9*(x*x*x*x) + 1.15278e-12*(x*x*x*x*x); }
 
 const test_waveData = [0, 0, 0, 1];
 const test_spawnPriority = [3];
