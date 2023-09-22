@@ -58,7 +58,6 @@ class Enemy {
         
         this.x += this.speed;
         this.y = this.path(this.x);
-        console.log(this.y);
         pop();
         /*/ calculate distance to next point
         let dx = this.path[this.pathIndex + 1].x - this.x;
