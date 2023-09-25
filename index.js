@@ -1,5 +1,5 @@
 import { Tank, Standard, Rapid, Wave } from "./enemy.js";
-import { Tower, Bullet }  from "./tower.js";
+import { Tower, Bullet}  from "./tower.js";
 
 
 // GLOBAL VARIABLES
@@ -7,14 +7,23 @@ import { Tower, Bullet }  from "./tower.js";
 const canvasWidth = 1200;
 const canvasHeight = 700;
 
+const primaryColor = "color(237, 112, 192)"; // pink
+const secondaryColor = "color(81, 176, 101)"; // green
+
 // 0 - main menu
 // 1 - start game
 var gameMode = 0;
 let f_Andale;
 
+// 0 - place tower (default)
+// 1 - upgrade range
+// 2 - upgrade fire rate
+let towerTool = 0;
+
 // buttons
 let upgradeRange;
 let upgradeFireRate;
+let placeTower;
 let saveButton;
 let loadSaveButton;
 let windowWidth = 1200;
@@ -60,17 +69,27 @@ window.mousePressed = function(event) {
 
         // Check if mouse is inside a tower
         for(let t = 0; t < towers.length; t++) {
-            if (towers[t].mouseInside()) {
+            if (towers[t].mouseInside() && towerTool == 0) {
                 dragTower = towers.splice(t, 1)[0];
                 dragTower.hover = true;
                 towers.push(dragTower);
+                break;
+            }
+
+            if (towers[t].mouseInside() && towerTool == 1) {
+                towers[t].upgradeRange();
+                break;
+            }
+
+            if (towers[t].mouseInside() && towerTool == 2) {
+                towers[t].upgradeFireRate();
                 break;
             }
         }
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
-        if ((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > canvasWidth || mouseY < 0 || mouseY > canvasHeight)) {        
+        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > canvasWidth || mouseY < 0 || mouseY > canvasHeight - 50)) && towerTool == 0) {        
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -112,7 +131,12 @@ window.mouseMoved = function() {
     for(let t of towers) {
         if (t.mouseInside()) {
             t.hover = true;
-            cursor('grab');
+            if(towerTool == 0) {
+                cursor('grab');
+            }
+            if (towerTool == 1 || towerTool == 2) {
+                cursor('crosshair');
+            }
             return;
         }
     }
@@ -179,20 +203,47 @@ window.setup = function() {
     createCanvas(canvasWidth, canvasHeight);
 
     //Poll for bullets every 100ms
+
     setInterval(fireBullets, 100);
+    placeTower = createButton('Place Tower');
+    placeTower.style('font-family', 'Andale Mono');
+    placeTower.style('font-size', '18px');
+    placeTower.style('color', color(181, 43, 131));
+    placeTower.style('background-color', color(81,176,101));
+    placeTower.style('border', 'none');
+    placeTower.style('border-radius', '5px');
+    placeTower.style('padding', '5px 10px');
+    placeTower.style('font-weight', 'bold');
+    placeTower.position(10, canvasHeight - 35);
+    placeTower.mousePressed(function() {
+        towerTool = 0;
+    });
+
     upgradeRange = createButton('Upgrade Range');
-    upgradeRange.position(0, canvasHeight + 10);
+    upgradeRange.style('font-family', 'Andale Mono');
+    upgradeRange.style('font-size', '18px');
+    upgradeRange.style('color', color(181, 43, 131));
+    upgradeRange.style('background-color', color(81,176,101));
+    upgradeRange.style('border', 'none');
+    upgradeRange.style('border-radius', '5px');
+    upgradeRange.style('padding', '5px 10px');
+    upgradeRange.style('font-weight', 'bold');
+    upgradeRange.position(160, canvasHeight - 35);
     upgradeRange.mousePressed(function() {
-        for(let t of towers) {
-            t.range += 5;
-        }
+        towerTool = 1;
     });
     upgradeFireRate = createButton('Upgrade Fire Speed');
-    upgradeFireRate.position(120, canvasHeight + 10);
+    upgradeFireRate.style('font-family', 'Andale Mono');
+    upgradeFireRate.style('font-size', '18px');
+    upgradeFireRate.style('color', color(181, 43, 131));
+    upgradeFireRate.style('background-color', color(81,176,101));
+    upgradeFireRate.style('border', 'none');
+    upgradeFireRate.style('border-radius', '5px');
+    upgradeFireRate.style('padding', '5px 10px');
+    upgradeFireRate.style('font-weight', 'bold');
+    upgradeFireRate.position(335, canvasHeight - 35);
     upgradeFireRate.mousePressed(function() {
-        for(let t of towers) {
-            t.upgradeFireRate();
-        }
+        towerTool = 2;
     });
 
     saveButton = createButton('Save');
@@ -268,14 +319,13 @@ window.draw = function() {
         upgradeRange.hide();
         upgradeFireRate.hide();
         loadSaveButton.hide();
+        placeTower.hide();
         saveButton.hide();
 
     }
     if (gameMode == 1) {
 
         // Show upgrade buttons
-        upgradeRange.show();
-        upgradeFireRate.show();
         loadSaveButton.show();
         saveButton.show();
         startButton.hide();
@@ -376,6 +426,9 @@ window.draw = function() {
         for (const t of towers) {
             t.draw();
         }
+
+        // Draw tower upgrade menu
+        towerUpgradeMenu(canvasHeight, canvasWidth);
     }
 }
 
@@ -384,12 +437,53 @@ function showEncyclopedia() {
     
 }
 
+function towerUpgradeMenu(height, width) {
+
+    const toolbarColor = color(51, 51, 51);
+    toolbarColor.setAlpha(200);
+
+    placeTower.show();
+    upgradeRange.show();
+    upgradeFireRate.show();
+
+    // Update button colors
+    switch(towerTool) {
+        case 0:
+            placeTower.style('background-color', color(181, 43, 131));
+            placeTower.style('color', color(81,176,101));
+            upgradeRange.style('background-color', color(81,176,101));
+            upgradeRange.style('color', color(181, 43, 131));
+            upgradeFireRate.style('background-color', color(81,176,101));
+            upgradeFireRate.style('color', color(181, 43, 131));
+            break;
+        case 1:
+            placeTower.style('background-color', color(81,176,101));
+            placeTower.style('color', color(181, 43, 131));
+            upgradeRange.style('background-color', color(181, 43, 131));
+            upgradeRange.style('color', color(81,176,101));
+            upgradeFireRate.style('background-color', color(81,176,101));
+            upgradeFireRate.style('color', color(181, 43, 131));
+            break;
+        case 2:
+            placeTower.style('background-color', color(81,176,101));
+            placeTower.style('color', color(181, 43, 131));
+            upgradeRange.style('background-color', color(81,176,101));
+            upgradeRange.style('color', color(181, 43, 131));
+            upgradeFireRate.style('background-color', color(181, 43, 131));
+            upgradeFireRate.style('color', color(81,176,101));
+            break;
+    }
+
+    push();
+    fill(toolbarColor);
+    noStroke();
+    rect(0, height - 50, width, 50);
+    pop();
+}
+
 function mainMenu() {
     background('#141414');
     image(titleImg, canvasWidth / 2, (canvasHeight / 2) - 100, 650, 375);
-
-    
-
 }
 
 function settingsMenu() {
@@ -412,8 +506,6 @@ function settingsMenu() {
                 playSound = true;
             }
             })
-        
-        
     })
     
 }
