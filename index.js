@@ -12,6 +12,8 @@ const canvasHeight = 700;
 var gameMode = 0;
 let f_Andale;
 
+let beginGame = false;
+
 // buttons
 let upgradeRange;
 let upgradeFireRate;
@@ -250,12 +252,12 @@ window.setup = function() {
     startButton.position((canvasWidth/2)-90, (canvasHeight/2)+100);
     startButton.size(200,100);
     startButton.mousePressed(function() {
-        gameMode = 1;
         if (!playSound) {
             mySound.setVolume(0.3);
             mySound.play();
             playSound = true;
         }
+        beginGame = true;
     });
 
 }
@@ -270,6 +272,10 @@ window.draw = function() {
         loadSaveButton.hide();
         saveButton.hide();
 
+        // Switch to game mode
+        if (beginGame) {
+            gameMode = 1;
+        }
     }
     if (gameMode == 1) {
 
