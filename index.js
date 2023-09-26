@@ -260,6 +260,14 @@ window.setup = function() {
         beginGame = true;
     });
 
+    settingsMenu();
+
+    // draw encyclopedia
+    push();
+    encyclopedia = createButton('Encyclopedia');
+    encyclopedia.position(1057, 40);
+    encyclopedia.mousePressed(showEncyclopedia);
+    pop();
 }
 
 window.draw = function() {
@@ -285,7 +293,6 @@ window.draw = function() {
         loadSaveButton.show();
         saveButton.show();
         startButton.hide();
-        settingsMenu();
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
@@ -328,13 +335,6 @@ window.draw = function() {
         textSize(20);
         fill('white');
         text(totalHealth, 40, 40);
-        pop();
-
-        // draw encyclopedia
-        push();
-        encyclopedia = createButton('Encyclopedia');
-        encyclopedia.position(1057, 40);
-        encyclopedia.mousePressed(showEncyclopedia);
         pop();
 
         // draw or remove enemie
@@ -393,9 +393,6 @@ function showEncyclopedia() {
 function mainMenu() {
     background('#141414');
     image(titleImg, canvasWidth / 2, (canvasHeight / 2) - 100, 650, 375);
-
-    
-
 }
 
 function settingsMenu() {
@@ -420,6 +417,5 @@ function settingsMenu() {
             })
         
         
-    })
-    
+    })    
 }
