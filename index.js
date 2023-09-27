@@ -368,23 +368,27 @@ window.setup = function () {
 
     settings = createImg('./assets/settingsbutton.png');
     settings.addClass('settingsMenu');
-    settings.position(windowWidth-50, 10);
-    settings.size(40,40);
+    settings.position(windowWidth - 50, 10);
+    settings.size(40, 40);
     settingsMute = createImg('./assets/audiobutton.png');
     settingsMute.addClass('settingsMenu');
-    settingsMute.position(windowWidth-50, 60);
-    settingsMute.size(40,40);
-        settingsMute.mousePressed(function() {
-            if (playSound) {
-                mySound.pause();
-                playSound = false;
-            } else {
-                mySound.play();
-                playSound = true;
-            }
-            })
-        
-        
+    settingsMute.position(windowWidth - 50, 60);
+    settingsMute.size(40, 40);
+    settingsMute.mousePressed(function () {
+        if (playSound) {
+            mySound.pause();
+            playSound = false;
+        } else {
+            mySound.play();
+            playSound = true;
+        }
+    })
+
+    let testButton = createButton("CLICK ME!!!!!!!!!!");
+    testButton.id("testIdButton");
+
+    let testInput = createInput("test");
+    testInput.id("testIdInput");
 }
 
 
