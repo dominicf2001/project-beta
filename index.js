@@ -4,8 +4,8 @@ import { Tower, Bullet}  from "./tower.js";
 
 // GLOBAL VARIABLES
 
-const canvasWidth = 1200;
-const canvasHeight = 700;
+const canvasWidth = window.innerWidth;
+const canvasHeight = window.innerHeight;
 
 const primaryColor = "color(237, 112, 192)"; // pink
 const secondaryColor = "color(81, 176, 101)"; // green
@@ -19,6 +19,7 @@ let f_Andale;
 // 1 - upgrade range
 // 2 - upgrade fire rate
 let towerTool = 0;
+let beginGame = false;
 
 // buttons
 let upgradeRange;
@@ -26,6 +27,8 @@ let upgradeFireRate;
 let placeTower;
 let saveButton;
 let loadSaveButton;
+
+// map width & height
 let windowWidth = 1200;
 let windowHeight = 700;
 
@@ -89,7 +92,7 @@ window.mousePressed = function(event) {
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
-        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > canvasWidth || mouseY < 0 || mouseY > canvasHeight - 50)) && towerTool == 0) {        
+        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))&& towerTool == 0) {        
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -180,6 +183,8 @@ function fireBullets() {
 
 // GAME LOOP
 let mySound;
+
+let settingsOpen = false;
 let settings;
 let settingsMute;
 
@@ -187,7 +192,6 @@ let mapImg;
 let titleImg;
 var startButton;
 let towerSprite;
-let startImg;
 
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
@@ -195,12 +199,18 @@ window.preload = function(){
     towerSprite = loadImage('./assets/RedMoonTower.png');
     mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
     titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
-    startImg = loadImage('./assets/GalacticGuardiansStartBtn.png');
+}
+
+window.keyPressed = function() {
+    if (keyCode === ESCAPE) { // use escape to open/close settings
+        if (beginGame)
+            openSettings();
+    }
 }
 
 window.setup = function() {
 
-    createCanvas(canvasWidth, canvasHeight);
+    createCanvas(windowWidth, windowHeight);
 
     //Poll for bullets every 100ms
 
@@ -214,7 +224,7 @@ window.setup = function() {
     placeTower.style('border-radius', '5px');
     placeTower.style('padding', '5px 10px');
     placeTower.style('font-weight', 'bold');
-    placeTower.position(10, canvasHeight - 35);
+    placeTower.position(10, windowHeight + 40);
     placeTower.mousePressed(function() {
         towerTool = 0;
     });
@@ -228,7 +238,7 @@ window.setup = function() {
     upgradeRange.style('border-radius', '5px');
     upgradeRange.style('padding', '5px 10px');
     upgradeRange.style('font-weight', 'bold');
-    upgradeRange.position(160, canvasHeight - 35);
+    upgradeRange.position(160, windowHeight + 40);
     upgradeRange.mousePressed(function() {
         towerTool = 1;
     });
@@ -241,13 +251,15 @@ window.setup = function() {
     upgradeFireRate.style('border-radius', '5px');
     upgradeFireRate.style('padding', '5px 10px');
     upgradeFireRate.style('font-weight', 'bold');
-    upgradeFireRate.position(335, canvasHeight - 35);
+    upgradeFireRate.position(335, windowHeight + 40);
     upgradeFireRate.mousePressed(function() {
         towerTool = 2;
     });
 
-    saveButton = createButton('Save');
-    saveButton.position(0,  canvasHeight + 40);
+    saveButton = createImg('./assets/saveButton.png');
+    saveButton.addClass('settingsMenu');
+    saveButton.size(100,40);
+    saveButton.position(windowWidth-265, 10);
     saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
@@ -258,8 +270,10 @@ window.setup = function() {
         localStorage.setItem("saveState", JSON.stringify(saveState));
     });
 
-    loadSaveButton = createButton('Load');
-    loadSaveButton.position(50,  canvasHeight + 40);
+    loadSaveButton = createImg('./assets/loadButton.png');
+    loadSaveButton.addClass('settingsMenu');
+    loadSaveButton.size(100,40);
+    loadSaveButton.position(windowWidth-160,10);
     loadSaveButton.mousePressed(function() {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
@@ -297,23 +311,47 @@ window.setup = function() {
 
     imageMode(CENTER);
 
+    image(titleImg, windowWidth/2, (windowHeight/2)-100, 650, 375);
+
     startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
-    startButton.position((canvasWidth/2)-90, (canvasHeight/2)+100);
+    startButton.addClass('startButton');
     startButton.size(200,100);
     startButton.mousePressed(function() {
-        gameMode = 1;
         if (!playSound) {
-            mySound.setVolume(0.3);
+            mySound.setVolume(0.1);
             mySound.play();
             playSound = true;
         }
+        beginGame = true;
     });
 
+    settings = createImg('./assets/settingsbutton.png');
+    settings.addClass('settingsMenu');
+    settings.position(windowWidth-50, 10);
+    settings.size(40,40);
+    settingsMute = createImg('./assets/audiobutton.png');
+    settingsMute.addClass('settingsMenu');
+    settingsMute.position(windowWidth-50, 60);
+    settingsMute.size(40,40);
+        settingsMute.mousePressed(function() {
+            if (playSound) {
+                mySound.pause();
+                playSound = false;
+            } else {
+                mySound.play();
+                playSound = true;
+            }
+            })
+        
+        
 }
 
+
+
 window.draw = function() {
+    fill(0);
+
     if (gameMode == 0) {
-        mainMenu();
 
         // Hide buttons
         upgradeRange.hide();
@@ -322,14 +360,25 @@ window.draw = function() {
         placeTower.hide();
         saveButton.hide();
 
+        settings.hide();
+        settingsMute.hide();
+
+        // Switch to game mode
+        if (beginGame) {
+            gameMode = 1;
+        }
     }
     if (gameMode == 1) {
 
         // Show upgrade buttons
         loadSaveButton.show();
         saveButton.show();
+        upgradeRange.show();
+        upgradeFireRate.show();
         startButton.hide();
-        settingsMenu();
+
+        settings.show();
+        settings.mousePressed(openSettings);
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
@@ -377,9 +426,10 @@ window.draw = function() {
         // draw encyclopedia
         push();
         encyclopedia = createButton('Encyclopedia');
-        encyclopedia.position(1057, 40);
+        encyclopedia.position(1057, 100);
         encyclopedia.mousePressed(showEncyclopedia);
         pop();
+        
 
         // draw or remove enemie
         // iterate backwards to prevent flickering
@@ -428,7 +478,7 @@ window.draw = function() {
         }
 
         // Draw tower upgrade menu
-        towerUpgradeMenu(canvasHeight, canvasWidth);
+        towerUpgradeMenu(windowHeight + 50, canvasWidth);
     }
 }
 
@@ -508,4 +558,17 @@ function settingsMenu() {
             })
     })
     
+}
+function openSettings() {
+    if (!settingsOpen) {
+        settingsMute.show();
+        loadSaveButton.show();
+        saveButton.show();
+        settingsOpen = true;
+    } else {
+        settingsMute.hide();
+        loadSaveButton.hide();
+        saveButton.hide();
+        settingsOpen = false;
+    }
 }
