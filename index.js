@@ -354,13 +354,13 @@ window.setup = function () {
 
     settingsMenu();
 
-    // draw encyclopedia
-    push();
-    encyclopedia = createButton('Encyclopedia');
-    encyclopedia.position(1057, 40);
-    encyclopedia.mousePressed(showEncyclopedia);
-    pop();
-    
+    // // draw encyclopedia
+    // push();
+    // encyclopedia = createButton('Encyclopedia');
+    // encyclopedia.position(1057, 150);
+    // encyclopedia.mousePressed(showEncyclopedia);
+    // pop();
+
     settings = createImg('./assets/settingsbutton.png');
     settings.addClass('settingsMenu');
     settings.position(windowWidth-50, 10);
