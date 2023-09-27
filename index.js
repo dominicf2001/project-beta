@@ -352,8 +352,6 @@ window.setup = function () {
         beginGame = true;
     });
 
-    settingsMenu();
-
     // // draw encyclopedia
     // push();
     // encyclopedia = createButton('Encyclopedia');
@@ -415,8 +413,6 @@ window.draw = function() {
     if (gameMode == 1) {
 
         // Show upgrade buttons
-        loadSaveButton.show();
-        saveButton.show();
         upgradeRange.show();
         upgradeFireRate.show();
         startButton.hide();
@@ -606,37 +602,6 @@ function towerUpgradeMenu(height, width) {
     pop();
 }
 
-function mainMenu() {
-    background('#141414');
-    image(titleImg, canvasWidth / 2, (canvasHeight / 2) - 100, 650, 375);
-
-
-
-}
-
-function settingsMenu() {
-    let settingsX = windowWidth - 35
-    let b1settingsY = 15;
-    let b2settingsY = 50;
-    settings = createImg('./assets/settingsbutton.png');
-    settings.position(settingsX, b1settingsY);
-    settings.size(30, 30);
-    settings.mousePressed(function () {
-        settingsMute = createImg('./assets/audiobutton.png');
-        settingsMute.position(settingsX, b2settingsY);
-        settingsMute.size(30, 30);
-        settingsMute.mousePressed(function () {
-            if (playSound) {
-                mySound.pause();
-                playSound = false;
-            } else {
-                mySound.play();
-                playSound = true;
-            }
-            })
-    })
-    
-}
 function openSettings() {
     if (!settingsOpen) {
         settingsMute.show();
