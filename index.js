@@ -361,6 +361,13 @@ window.setup = function () {
     // encyclopedia.mousePressed(showEncyclopedia);
     // pop();
 
+    // draw "next wave" button
+    push();
+    nextWave = createButton('Next Wave')
+    nextWave.position(windowWidth - 100, windowHeight + 15);
+    nextWave.mousePressed(spawnNextWave);
+    pop();
+
     settings = createImg('./assets/settingsbutton.png');
     settings.addClass('settingsMenu');
     settings.position(windowWidth-50, 10);
@@ -395,6 +402,7 @@ window.draw = function() {
         loadSaveButton.hide();
         placeTower.hide();
         saveButton.hide();
+        nextWave.hide();
 
         settings.hide();
         settingsMute.hide();
@@ -412,6 +420,7 @@ window.draw = function() {
         upgradeRange.show();
         upgradeFireRate.show();
         startButton.hide();
+        nextWave.show();
 
         settings.show();
         settings.mousePressed(openSettings);
@@ -464,13 +473,6 @@ window.draw = function() {
         textSize(20);
         fill('white');
         text('Wave: ' + currentWave + '/' + waveAmount, windowWidth - 120, windowHeight - 30);
-        pop();
-
-        // draw "next wave" button
-        push();
-        nextWave = createButton('Next Wave')
-        nextWave.position(windowWidth - 100, windowHeight + 15);
-        nextWave.mousePressed(spawnNextWave);
         pop();
 
         // draw or remove enemies
