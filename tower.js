@@ -36,6 +36,8 @@ export class Tower {
         
         //tower as a sprite (DOESNT WORK)
         //image(towerSprite, this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+        //img = loadImage('assets/RedMoonTower.png');
+        //image(img, 0, 0);
 
         strokeWeight(2);
         stroke(255);
