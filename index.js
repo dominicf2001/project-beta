@@ -368,7 +368,7 @@ window.draw = function () {
         // draw "next wave" button
         push();
         nextWave = createButton('Next Wave')
-        nextWave.position(windowWidth - 100, windowHeight);
+        nextWave.position(windowWidth - 100, windowHeight + 15);
         nextWave.mousePressed(spawnNextWave);
         pop();
 
@@ -427,17 +427,21 @@ function showEncyclopedia() {
 
 // Spawns the next wave.
 function spawnNextWave() {
-    if (currentWave < waveAmount) {
-        currentWave = currentWave + 1;
-        let newWave = spawnWave(levelWaveData, levelSpawnPriority, currentWave);
-        newWave.debugPrintWave();
-        newWave.spawn();
-        console.log(newWave)
+    try {
+        if (currentWave < waveAmount) {
+            currentWave = currentWave + 1;
+            let newWave = spawnWave(levelWaveData, levelSpawnPriority, currentWave);
+            newWave.debugPrintWave();
+            newWave.spawn();
+            console.log(newWave)
 
-        enemies = newWave.getEnemies();
-        console.log(enemies);
-    } else {
-        throw new Error("No more waves available");
+            enemies = newWave.getEnemies();
+            console.log(enemies);
+        } else {
+            throw new Error("No more waves available");
+        }
+    } catch(e) {
+        alert(e);
     }
 }
 
