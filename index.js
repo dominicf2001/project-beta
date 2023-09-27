@@ -4,8 +4,8 @@ import { Tower, Bullet }  from "./tower.js";
 
 // GLOBAL VARIABLES
 
-const canvasWidth = 1200;
-const canvasHeight = 700;
+const canvasWidth = window.innerWidth;
+const canvasHeight = window.innerHeight;
 
 // 0 - main menu
 // 1 - start game
@@ -19,6 +19,8 @@ let upgradeRange;
 let upgradeFireRate;
 let saveButton;
 let loadSaveButton;
+
+// map width & height
 let windowWidth = 1200;
 let windowHeight = 700;
 
@@ -72,7 +74,7 @@ window.mousePressed = function(event) {
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
-        if ((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > canvasWidth || mouseY < 0 || mouseY > canvasHeight)) {        
+        if ((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight)) {        
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -158,6 +160,8 @@ function fireBullets() {
 
 // GAME LOOP
 let mySound;
+
+let settingsOpen = false;
 let settings;
 let settingsMute;
 
@@ -165,7 +169,6 @@ let mapImg;
 let titleImg;
 var startButton;
 let towerSprite;
-let startImg;
 
 window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
@@ -173,12 +176,18 @@ window.preload = function(){
     towerSprite = loadImage('./assets/RedMoonTower.png');
     mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
     titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
-    startImg = loadImage('./assets/GalacticGuardiansStartBtn.png');
+}
+
+window.keyPressed = function() {
+    if (keyCode === ESCAPE) { // use escape to open/close settings
+        if (beginGame)
+            openSettings();
+    }
 }
 
 window.setup = function() {
 
-    createCanvas(canvasWidth, canvasHeight);
+    createCanvas(windowWidth, windowHeight);
 
     //Poll for bullets every 100ms
     setInterval(fireBullets, 100);
@@ -197,8 +206,10 @@ window.setup = function() {
         }
     });
 
-    saveButton = createButton('Save');
-    saveButton.position(0,  canvasHeight + 40);
+    saveButton = createImg('./assets/saveButton.png');
+    saveButton.addClass('settingsMenu');
+    saveButton.size(100,40);
+    saveButton.position(windowWidth-265, 10);
     saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
@@ -209,8 +220,10 @@ window.setup = function() {
         localStorage.setItem("saveState", JSON.stringify(saveState));
     });
 
-    loadSaveButton = createButton('Load');
-    loadSaveButton.position(50,  canvasHeight + 40);
+    loadSaveButton = createImg('./assets/loadButton.png');
+    loadSaveButton.addClass('settingsMenu');
+    loadSaveButton.size(100,40);
+    loadSaveButton.position(windowWidth-160,10);
     loadSaveButton.mousePressed(function() {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
@@ -248,29 +261,56 @@ window.setup = function() {
 
     imageMode(CENTER);
 
+    image(titleImg, windowWidth/2, (windowHeight/2)-100, 650, 375);
+
     startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
-    startButton.position((canvasWidth/2)-90, (canvasHeight/2)+100);
+    startButton.addClass('startButton');
     startButton.size(200,100);
     startButton.mousePressed(function() {
         if (!playSound) {
-            mySound.setVolume(0.3);
+            mySound.setVolume(0.1);
             mySound.play();
             playSound = true;
         }
         beginGame = true;
     });
 
+    settings = createImg('./assets/settingsbutton.png');
+    settings.addClass('settingsMenu');
+    settings.position(windowWidth-50, 10);
+    settings.size(40,40);
+    settingsMute = createImg('./assets/audiobutton.png');
+    settingsMute.addClass('settingsMenu');
+    settingsMute.position(windowWidth-50, 60);
+    settingsMute.size(40,40);
+        settingsMute.mousePressed(function() {
+            if (playSound) {
+                mySound.pause();
+                playSound = false;
+            } else {
+                mySound.play();
+                playSound = true;
+            }
+            })
+        
+        
 }
 
+
+
 window.draw = function() {
+    fill(0);
+
     if (gameMode == 0) {
-        mainMenu();
 
         // Hide buttons
         upgradeRange.hide();
         upgradeFireRate.hide();
         loadSaveButton.hide();
         saveButton.hide();
+
+        settings.hide();
+        settingsMute.hide();
 
         // Switch to game mode
         if (beginGame) {
@@ -282,10 +322,10 @@ window.draw = function() {
         // Show upgrade buttons
         upgradeRange.show();
         upgradeFireRate.show();
-        loadSaveButton.show();
-        saveButton.show();
         startButton.hide();
-        settingsMenu();
+
+        settings.show();
+        settings.mousePressed(openSettings);
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
@@ -333,9 +373,10 @@ window.draw = function() {
         // draw encyclopedia
         push();
         encyclopedia = createButton('Encyclopedia');
-        encyclopedia.position(1057, 40);
+        encyclopedia.position(1057, 100);
         encyclopedia.mousePressed(showEncyclopedia);
         pop();
+        
 
         // draw or remove enemie
         // iterate backwards to prevent flickering
@@ -390,36 +431,16 @@ function showEncyclopedia() {
     
 }
 
-function mainMenu() {
-    background('#141414');
-    image(titleImg, canvasWidth / 2, (canvasHeight / 2) - 100, 650, 375);
-
-    
-
-}
-
-function settingsMenu() {
-    let settingsX = windowWidth-35
-    let b1settingsY = 15;
-    let b2settingsY = 50;
-    settings = createImg('./assets/settingsbutton.png');
-    settings.position(settingsX, b1settingsY);
-    settings.size(30,30);
-    settings.mousePressed(function() {
-        settingsMute = createImg('./assets/audiobutton.png');
-        settingsMute.position(settingsX, b2settingsY);
-        settingsMute.size(30,30);
-        settingsMute.mousePressed(function() {
-            if (playSound) {
-                mySound.pause();
-                playSound = false;
-            } else {
-                mySound.play();
-                playSound = true;
-            }
-            })
-        
-        
-    })
-    
+function openSettings() {
+    if (!settingsOpen) {
+        settingsMute.show();
+        loadSaveButton.show();
+        saveButton.show();
+        settingsOpen = true;
+    } else {
+        settingsMute.hide();
+        loadSaveButton.hide();
+        saveButton.hide();
+        settingsOpen = false;
+    }
 }
