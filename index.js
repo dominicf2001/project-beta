@@ -19,18 +19,33 @@ let saveButton;
 let loadSaveButton;
 let windowWidth = 1200;
 let windowHeight = 700;
+let mapID = 2;
 
 const path = [
     { x: 0, y: 230 },
-    { x: 100, y: 250 },
-    { x: 250, y: 240 },
-    { x: 500, y: 225 },
-    { x: 900, y: 210 },
-    { x: 1100, y: 260 },
-    { x: 1150, y: 330 },
+    { x: 100, y: 270 },
+    { x: 250, y: 260 },
+    { x: 500, y: 235 },
+    { x: 900, y: 220 },
+    { x: 1000, y: 260 },
+    { x: 1100, y: 300 },
+    { x: 1150, y: 350 },
     { x: 1190, y: 420 },
 ];
 
+function selectMap(mapID) {
+    switch (mapID) {
+        case 1:
+            mapImg = loadImage('Maps/Space Map 1.png');
+            break;
+        case 2:
+            mapImg = loadImage('Maps/Space Map Version 2.png');
+            break;
+        default:
+            break;
+    }
+    return;
+}
 const test_waveData = [0, 0, 0, 1];
 const test_spawnPriority = [3];
 
@@ -169,7 +184,7 @@ window.preload = function(){
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
-    mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    selectMap(mapID);
     titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
     startImg = loadImage('./assets/GalacticGuardiansStartBtn.png');
 }
