@@ -114,12 +114,7 @@ export class Bullet {
         this.damage = tower.damage;
         this.target = target;
         
-        let xDist = target.x - tower.x;
-        let yDist = target.y - tower.y;
-        this.angle = atan2(yDist, xDist);
-
-        this.xMove = Math.cos(this.angle);
-        this.yMove = Math.sin(this.angle);
+        this.updateDirection();
     }
 
     /**
@@ -134,10 +129,15 @@ export class Bullet {
         strokeWeight(2);
         fill(255, 0, 0);
         ellipse(this.x, this.y, 5, 5);
-        this.x += this.xMove;
-        this.y += this.yMove;
+        this.x += this.xMove * 2;
+        this.y += this.yMove * 2;
         this.range--;
         pop();
+
+        // update only every 15 frames to ease computation
+        if (this.range % 15 === 0){
+            this.updateDirection();   
+        }
     }
 
     /**
@@ -148,8 +148,7 @@ export class Bullet {
         return this.range <= 0;
     }
 
-    /**
-     * Method to check if bullet has hit its target
+    /**     * Method to check if bullet has hit its target
      * @returns {boolean} boolean that if true, indicates the bullet has hit its target
      */
     hasHitTarget() {
@@ -158,5 +157,14 @@ export class Bullet {
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         return distance <= 8;
+    }
+
+    updateDirection() {
+        const xDist = this.target.x - this.x;
+        const yDist = this.target.y - this.y;
+        
+        this.angle = Math.atan2(yDist, xDist);
+        this.xMove = Math.cos(this.angle);
+        this.yMove = Math.sin(this.angle);
     }
 }
