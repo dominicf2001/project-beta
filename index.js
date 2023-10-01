@@ -91,6 +91,22 @@ let totalHealth = 50;
 let encyclopedia;
 let nextWave;
 
+
+let mapImg;
+let titleImg;
+var startButton;
+var towerSprite;
+
+window.preload = function () {
+    mySound = loadSound('./assets/potassium.mp3');
+    f_Andale = loadFont('./assets/Andale-Mono.ttf');
+    towerSprite = loadImage('./assets/RedMoonTower.png');
+    mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+}
+
+
+
 // EVENT LISTENERS
 
 window.mousePressed = function (event) {
@@ -214,19 +230,6 @@ let mySound;
 let settingsOpen = false;
 let settings;
 let settingsMute;
-
-let mapImg;
-let titleImg;
-var startButton;
-let towerSprite;
-
-window.preload = function () {
-    mySound = loadSound('./assets/potassium.mp3');
-    f_Andale = loadFont('./assets/Andale-Mono.ttf');
-    towerSprite = loadImage('./assets/RedMoonTower.png');
-    mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
-    titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
-}
 
 window.keyPressed = function() {
     if (keyCode === ESCAPE) { // use escape to open/close settings
@@ -510,11 +513,6 @@ window.draw = function() {
             } else {
                 bullets[i].draw();
             }
-        }
-
-        // Draw towers
-        for (const t of towers) {
-            t.draw();
         }
 
         // Draw tower upgrade menu
