@@ -45,9 +45,25 @@ const path = [
 ]; */
 
 //function path(x) { return 166.8354 + 1.043129*x - 0.003942524*(x*x) + 0.00000607239*(x*x*x) - 4.46637e-9*(x*x*x*x) + 1.352265e-12*(x*x*x*x*x); }
-function path(x) { return 246.768 + 0.6824144*x - 0.002826065*(x*x) + 0.000004403122*(x*x*x) - 3.39375e-9*(x*x*x*x) + 1.15278e-12*(x*x*x*x*x); }
-
-//////////////////////////////
+//function path(x) { return 246.768 + 0.6824144*x - 0.002826065*(x*x) + 0.000004403122*(x*x*x) - 3.39375e-9*(x*x*x*x) + 1.15278e-12*(x*x*x*x*x); }
+function path(x) {
+    if (x < 768) { 
+    return (5.00842e-27*Math.pow(x, 11) - 1.79629e-23*Math.pow(x,10)
+    + 2.6735e-20*Math.pow(x, 9) - 2.14461e-17*Math.pow(x, 8)
+    + 1.02276e-14*Math.pow(x, 7) - 3.17496e-12*Math.pow(x, 6)
+    + 7.82401e-10*Math.pow(x, 5) - 1.90207e-7*Math.pow(x, 4)
+    + 4.10456e-5*Math.pow(x, 3) - 6.97063e-3*Math.pow(x, 2)
+    + 7.67275e-1*x + 3.11e2); }
+    else if (x >= 768) { 
+    let t = x - 768;
+    return (-5.47516e-18*Math.pow(t,9) + (1.21619e-14*Math.pow(t,8))
+    - 1.14693e-11*Math.pow(t,7) + 5.97479e-9*Math.pow(t,6)
+    - 1.871e-6*Math.pow(t,5) + 3.58222e-4*Math.pow(t,4)
+    - 4.05677e-2*Math.pow(t,3) + 2.45195*Math.pow(t,2)
+    - 5.92202e1*t + 250);
+    }
+}
+//////////////////////////////     
 // CONSTRUCT LEVEL
 const waveAmount = 4;
 let currentWave = 0;
