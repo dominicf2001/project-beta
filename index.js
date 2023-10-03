@@ -27,11 +27,37 @@ let upgradeFireRate;
 let placeTower;
 let saveButton;
 let loadSaveButton;
+let nextLevel;
 
 // map width & height
 let windowWidth = 1200;
 let windowHeight = 700;
 
+var mapID = 1;
+function selectMap(mapID) {
+    switch (mapID) {
+        case 1:
+            mapImg = loadImage('Maps/Space Map 1.png');
+            break;
+        case 2:
+            mapImg = loadImage('Maps/Space Map Version 2.png');
+            break;
+        default:
+            break;
+    }
+    return;
+}
+// Reset the Map variables
+function switchMap() {
+    ++mapID;
+    currentWave = 0;
+    //for (let t of towers) {
+
+    //}
+    //enemies = [];
+    selectMap(mapID);
+    redraw();
+}
 /*
 const path = [
     { x: 0, y: 230 },
@@ -244,7 +270,8 @@ window.preload = function () {
     mySound = loadSound('./assets/potassium.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
-    mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    //mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    selectMap(mapID);
     titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
 }
 
@@ -383,9 +410,16 @@ window.setup = function () {
 
     // draw "next wave" button
     push();
-    nextWave = createButton('Next Wave')
+    nextWave = createButton('Next Wave');
     nextWave.position(windowWidth - 100, windowHeight + 15);
     nextWave.mousePressed(spawnNextWave);
+    pop();
+
+    // draw Next Level Button
+    push();
+    nextLevel = createButton('Next Level');
+    nextLevel.position(windowWidth - 100, windowHeight + 45);
+    nextLevel.mousePressed(switchMap);
     pop();
 
     settings = createImg('./assets/settingsbutton.png');
@@ -423,6 +457,7 @@ window.draw = function() {
         placeTower.hide();
         saveButton.hide();
         nextWave.hide();
+        nextLevel.hide();
 
         settings.hide();
         settingsMute.hide();
@@ -564,7 +599,9 @@ function spawnNextWave() {
             enemies = newWave.getEnemies();
             console.log(enemies);
         } else {
-            throw new Error("No more waves available");
+            //throw new Error("No more waves available");
+            // Next Level Button Appears after all the Waves are done.
+            nextLevel.show(); 
         }
     } catch(e) {
         alert(e);
