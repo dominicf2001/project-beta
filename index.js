@@ -33,6 +33,7 @@ let nextLevel;
 let windowWidth = 1200;
 let windowHeight = 700;
 
+
 var mapID = 1;
 function selectMap(mapID) {
     switch (mapID) {
@@ -58,17 +59,6 @@ function switchMap() {
     selectMap(mapID);
     redraw();
 }
-/*
-const path = [
-    { x: 0, y: 230 },
-    { x: 100, y: 250 },
-    { x: 250, y: 240 },
-    { x: 500, y: 225 },
-    { x: 900, y: 210 },
-    { x: 1100, y: 260 },
-    { x: 1150, y: 330 },
-    { x: 1190, y: 420 },
-]; */
 
 //function path(x) { return 166.8354 + 1.043129*x - 0.003942524*(x*x) + 0.00000607239*(x*x*x) - 4.46637e-9*(x*x*x*x) + 1.352265e-12*(x*x*x*x*x); }
 
