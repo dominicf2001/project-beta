@@ -537,6 +537,7 @@ window.draw = function() {
         // draw or remove enemies
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
+            nextWave.hide();
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
                 // Implement game over screen if needed
