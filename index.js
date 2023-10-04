@@ -20,6 +20,10 @@ let f_Andale;
 // 2 - upgrade fire rate
 let towerTool = 0;
 let beginGame = false;
+let gameOver = false;
+
+let game;
+let gameOverScreen;
 
 // buttons
 let upgradeRange;
@@ -120,14 +124,16 @@ let nextWave;
 let mapImg;
 let titleImg;
 var startButton;
-var towerSprite;
+let towerSprite;
 
 window.preload = function () {
     mySound = loadSound('./assets/potassium.mp3');
+    deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3')
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
     titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+    gameOverImg = loadImage('./assets/Game_OVER_Screen.png');
 }
 
 
@@ -254,6 +260,7 @@ function fireBullets() {
 
 // GAME LOOP
 let mySound;
+let deathSound;
 
 let settingsOpen = false;
 let settings;
@@ -268,7 +275,7 @@ window.keyPressed = function() {
 
 window.setup = function () {
 
-    createCanvas(windowWidth, windowHeight);
+    game = createCanvas(windowWidth, windowHeight);
 
     //Poll for bullets every 100ms
 
@@ -371,6 +378,9 @@ window.setup = function () {
 
     image(titleImg, windowWidth/2, (windowHeight/2)-100, 650, 375);
 
+    gameOverScreen = createImg('./assets/Game_OVER_Screen.png');
+    gameOverScreen.addClass('gameOver');
+
     startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
     startButton.addClass('startButton');
     startButton.size(200,100);
@@ -414,8 +424,6 @@ window.setup = function () {
                 playSound = true;
             }
             })
-        
-        
 }
 
 
@@ -432,6 +440,7 @@ window.draw = function() {
         placeTower.hide();
         saveButton.hide();
         nextWave.hide();
+        gameOverScreen.hide();
 
         settings.hide();
         settingsMute.hide();
@@ -448,6 +457,7 @@ window.draw = function() {
         upgradeFireRate.show();
         startButton.hide();
         nextWave.show();
+        gameOverScreen.hide();
 
         settings.show();
         settings.mousePressed(openSettings);
@@ -494,6 +504,11 @@ window.draw = function() {
         fill('white');
         text(totalHealth, 40, 40);
         pop();
+
+        if (totalHealth <= 0) {
+            gameMode = -1;
+            gameOver = true;
+        }
 
         // draw Wave information
         push();
@@ -545,6 +560,27 @@ window.draw = function() {
 
         // Draw tower upgrade menu
         towerUpgradeMenu(windowHeight + 50, canvasWidth);
+
+        
+    }
+
+    if (gameMode == -1 && gameOver == true) {
+        upgradeRange.hide();
+        upgradeFireRate.hide();
+        loadSaveButton.hide();
+        placeTower.hide();
+        saveButton.hide();
+        nextWave.hide();
+        gameOverScreen.hide();
+        settings.hide();
+        settingsMute.hide();
+        game.hide();
+        gameOverScreen.show();
+
+        if (mySound.isPlaying()) {
+            mySound.pause();
+            deathSound.play();
+        }
     }
 }
 
@@ -641,3 +677,4 @@ function openSettings() {
         settingsOpen = false;
     }
 }
+
