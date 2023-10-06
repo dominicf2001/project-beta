@@ -31,6 +31,9 @@ let upgradeFireRate;
 let placeTower;
 let saveButton;
 let loadSaveButton;
+let encyclopedia;
+let nextWave;
+var startButton;
 
 // map width & height
 let windowWidth = 1200;
@@ -53,11 +56,11 @@ const path = [
 
 // PATHING FUNCTIONS
 
-function topPath(x) { return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x); }
+export function topPath(x) { return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x); }
 
-function middlePath(x) { return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x); }
+export function middlePath(x) { return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x); }
 
-function bottomPath(x) {
+export function bottomPath(x) {
     if (x < 768) {
         return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
             + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
@@ -134,13 +137,15 @@ let playSound = false;
 // other relevant variables
 let totalCurrency = 0;
 let totalHealth = 50;
-let encyclopedia;
-let nextWave;
 
+// checks for next wave button.
+// can cause error if new ways that enemies disapear arise so keep in mind
+let nextWaveCheck = { 
+    amount: 0
+}
 
 let mapImg;
 let titleImg;
-var startButton;
 let towerSprite;
 
 window.preload = function () {
@@ -162,7 +167,7 @@ window.mousePressed = function (event) {
         console.log(event);
 
         // Check if mouse is inside a tower
-        for(let t = 0; t < towers.length; t++) {
+        for (let t = 0; t < towers.length; t++) {
             if (towers[t].mouseInside() && towerTool == 0) {
                 dragTower = towers.splice(t, 1)[0];
                 dragTower.hover = true;
@@ -183,7 +188,7 @@ window.mousePressed = function (event) {
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
-        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))&& towerTool == 0) {        
+        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight)) && towerTool == 0) {
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -228,7 +233,7 @@ window.mouseMoved = function () {
     for (let t of towers) {
         if (t.mouseInside()) {
             t.hover = true;
-            if(towerTool == 0) {
+            if (towerTool == 0) {
                 cursor('grab');
             }
             if (towerTool == 1 || towerTool == 2) {
@@ -283,7 +288,7 @@ let settingsOpen = false;
 let settings;
 let settingsMute;
 
-window.keyPressed = function() {
+window.keyPressed = function () {
     if (keyCode === ESCAPE) { // use escape to open/close settings
         if (beginGame)
             openSettings();
@@ -301,13 +306,13 @@ window.setup = function () {
     placeTower.style('font-family', 'Andale Mono');
     placeTower.style('font-size', '18px');
     placeTower.style('color', color(181, 43, 131));
-    placeTower.style('background-color', color(81,176,101));
+    placeTower.style('background-color', color(81, 176, 101));
     placeTower.style('border', 'none');
     placeTower.style('border-radius', '5px');
     placeTower.style('padding', '5px 10px');
     placeTower.style('font-weight', 'bold');
     placeTower.position(10, windowHeight + 40);
-    placeTower.mousePressed(function() {
+    placeTower.mousePressed(function () {
         towerTool = 0;
     });
 
@@ -315,34 +320,34 @@ window.setup = function () {
     upgradeRange.style('font-family', 'Andale Mono');
     upgradeRange.style('font-size', '18px');
     upgradeRange.style('color', color(181, 43, 131));
-    upgradeRange.style('background-color', color(81,176,101));
+    upgradeRange.style('background-color', color(81, 176, 101));
     upgradeRange.style('border', 'none');
     upgradeRange.style('border-radius', '5px');
     upgradeRange.style('padding', '5px 10px');
     upgradeRange.style('font-weight', 'bold');
     upgradeRange.position(160, windowHeight + 40);
-    upgradeRange.mousePressed(function() {
+    upgradeRange.mousePressed(function () {
         towerTool = 1;
     });
     upgradeFireRate = createButton('Upgrade Fire Speed');
     upgradeFireRate.style('font-family', 'Andale Mono');
     upgradeFireRate.style('font-size', '18px');
     upgradeFireRate.style('color', color(181, 43, 131));
-    upgradeFireRate.style('background-color', color(81,176,101));
+    upgradeFireRate.style('background-color', color(81, 176, 101));
     upgradeFireRate.style('border', 'none');
     upgradeFireRate.style('border-radius', '5px');
     upgradeFireRate.style('padding', '5px 10px');
     upgradeFireRate.style('font-weight', 'bold');
     upgradeFireRate.position(335, windowHeight + 40);
-    upgradeFireRate.mousePressed(function() {
+    upgradeFireRate.mousePressed(function () {
         towerTool = 2;
     });
 
     saveButton = createImg('./assets/saveButton.png');
     saveButton.addClass('settingsMenu');
-    saveButton.size(100,40);
-    saveButton.position(windowWidth-265, 10);
-    saveButton.mousePressed(function() {
+    saveButton.size(100, 40);
+    saveButton.position(windowWidth - 265, 10);
+    saveButton.mousePressed(function () {
         // Save game state
         let saveState = {
             towers: towers,
@@ -354,9 +359,9 @@ window.setup = function () {
 
     loadSaveButton = createImg('./assets/loadButton.png');
     loadSaveButton.addClass('settingsMenu');
-    loadSaveButton.size(100,40);
-    loadSaveButton.position(windowWidth-160,10);
-    loadSaveButton.mousePressed(function() {
+    loadSaveButton.size(100, 40);
+    loadSaveButton.position(windowWidth - 160, 10);
+    loadSaveButton.mousePressed(function () {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
         if (saveState) {
@@ -393,15 +398,15 @@ window.setup = function () {
 
     imageMode(CENTER);
 
-    image(titleImg, windowWidth/2, (windowHeight/2)-100, 650, 375);
+    image(titleImg, windowWidth / 2, (windowHeight / 2) - 100, 650, 375);
 
     gameOverScreen = createImg('./assets/Game_OVER_Screen.png');
     gameOverScreen.addClass('gameOver');
 
     startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
     startButton.addClass('startButton');
-    startButton.size(200,100);
-    startButton.mousePressed(function() {
+    startButton.size(200, 100);
+    startButton.mousePressed(function () {
         if (!playSound) {
             mySound.setVolume(0.1);
             mySound.play();
@@ -426,26 +431,26 @@ window.setup = function () {
 
     settings = createImg('./assets/settingsbutton.png');
     settings.addClass('settingsMenu');
-    settings.position(windowWidth-50, 10);
-    settings.size(40,40);
+    settings.position(windowWidth - 50, 10);
+    settings.size(40, 40);
     settingsMute = createImg('./assets/audiobutton.png');
     settingsMute.addClass('settingsMenu');
-    settingsMute.position(windowWidth-50, 60);
-    settingsMute.size(40,40);
-        settingsMute.mousePressed(function() {
-            if (playSound) {
-                mySound.pause();
-                playSound = false;
-            } else {
-                mySound.play();
-                playSound = true;
-            }
-            })
+    settingsMute.position(windowWidth - 50, 60);
+    settingsMute.size(40, 40);
+    settingsMute.mousePressed(function () {
+        if (playSound) {
+            mySound.pause();
+            playSound = false;
+        } else {
+            mySound.play();
+            playSound = true;
+        }
+    })
 }
 
 
 
-window.draw = function() {
+window.draw = function () {
     fill(0);
 
     if (gameMode == 0) {
@@ -473,8 +478,9 @@ window.draw = function() {
         upgradeRange.show();
         upgradeFireRate.show();
         startButton.hide();
-        nextWave.show();
         gameOverScreen.hide();
+        if (nextWaveCheck.amount < 1) nextWave.show();
+        else nextWave.hide();
 
         settings.show();
         settings.mousePressed(openSettings);
@@ -537,19 +543,19 @@ window.draw = function() {
         // draw or remove enemies
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
-            nextWave.hide();
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
+                nextWaveCheck.amount -= 1;
+
                 // Implement game over screen if needed
                 enemies.splice(i, 1);
             } else if (enemies[i].health <= 0) {
                 totalCurrency += enemies[i].currency;
-
                 // handle spawner type enemies
                 if (enemies[i].spawn) {
-                    enemies[i].spawn(enemies);
+                    enemies[i].spawn(enemies, nextWaveCheck);
                 }
-
+                nextWaveCheck.amount -= 1;
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
@@ -560,6 +566,8 @@ window.draw = function() {
                 }
             }
         }
+
+        console.log(nextWaveCheck.amount);
 
         // Draw bullets before towers
         for (const i in bullets) {
@@ -579,7 +587,7 @@ window.draw = function() {
         // Draw tower upgrade menu
         towerUpgradeMenu(windowHeight + 50, canvasWidth);
 
-        
+
     }
 
     if (gameMode == -1 && gameOver == true) {
@@ -612,17 +620,18 @@ function spawnNextWave() {
     try {
         if (currentWave < waveAmount) {
             currentWave = currentWave + 1;
+            for (let t = 0; t < levelWaveData[currentWave - 1].length; ++t)
+                    nextWaveCheck.amount += levelWaveData[currentWave - 1][t];
             let newWave = spawnWave(levelWaveData, levelSpawnPriority, currentWave);
             newWave.debugPrintWave();
             newWave.spawn();
-            console.log(newWave)
+            console.log(newWave);
 
             enemies = newWave.getEnemies();
-            console.log(enemies);
         } else {
             throw new Error("No more waves available");
         }
-    } catch(e) {
+    } catch (e) {
         alert(e);
     }
 }
@@ -648,30 +657,30 @@ function towerUpgradeMenu(height, width) {
     upgradeFireRate.show();
 
     // Update button colors
-    switch(towerTool) {
+    switch (towerTool) {
         case 0:
             placeTower.style('background-color', color(181, 43, 131));
-            placeTower.style('color', color(81,176,101));
-            upgradeRange.style('background-color', color(81,176,101));
+            placeTower.style('color', color(81, 176, 101));
+            upgradeRange.style('background-color', color(81, 176, 101));
             upgradeRange.style('color', color(181, 43, 131));
-            upgradeFireRate.style('background-color', color(81,176,101));
+            upgradeFireRate.style('background-color', color(81, 176, 101));
             upgradeFireRate.style('color', color(181, 43, 131));
             break;
         case 1:
-            placeTower.style('background-color', color(81,176,101));
+            placeTower.style('background-color', color(81, 176, 101));
             placeTower.style('color', color(181, 43, 131));
             upgradeRange.style('background-color', color(181, 43, 131));
-            upgradeRange.style('color', color(81,176,101));
-            upgradeFireRate.style('background-color', color(81,176,101));
+            upgradeRange.style('color', color(81, 176, 101));
+            upgradeFireRate.style('background-color', color(81, 176, 101));
             upgradeFireRate.style('color', color(181, 43, 131));
             break;
         case 2:
-            placeTower.style('background-color', color(81,176,101));
+            placeTower.style('background-color', color(81, 176, 101));
             placeTower.style('color', color(181, 43, 131));
-            upgradeRange.style('background-color', color(81,176,101));
+            upgradeRange.style('background-color', color(81, 176, 101));
             upgradeRange.style('color', color(181, 43, 131));
             upgradeFireRate.style('background-color', color(181, 43, 131));
-            upgradeFireRate.style('color', color(81,176,101));
+            upgradeFireRate.style('color', color(81, 176, 101));
             break;
     }
 
