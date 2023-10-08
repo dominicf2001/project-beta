@@ -340,6 +340,7 @@ window.setup = function () {
 
     saveButton = createImg('./assets/saveButton.png');
     saveButton.addClass('settingsMenu');
+    saveButton.id('saveButton')
     saveButton.size(100,40);
     saveButton.position(windowWidth-265, 10);
     saveButton.mousePressed(function() {
@@ -354,6 +355,7 @@ window.setup = function () {
 
     loadSaveButton = createImg('./assets/loadButton.png');
     loadSaveButton.addClass('settingsMenu');
+    loadSaveButton.id('loadButton')
     loadSaveButton.size(100,40);
     loadSaveButton.position(windowWidth-160,10);
     loadSaveButton.mousePressed(function() {
@@ -426,10 +428,12 @@ window.setup = function () {
 
     settings = createImg('./assets/settingsbutton.png');
     settings.addClass('settingsMenu');
+    settings.id('settingsButton')
     settings.position(windowWidth-50, 10);
     settings.size(40,40);
     settingsMute = createImg('./assets/audiobutton.png');
     settingsMute.addClass('settingsMenu');
+    settingsMute.id('audioButton')
     settingsMute.position(windowWidth-50, 60);
     settingsMute.size(40,40);
         settingsMute.mousePressed(function() {

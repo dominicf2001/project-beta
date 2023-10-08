@@ -134,3 +134,8 @@ dist
 
 # Ignore docs, built when merged to main
 docs/
+
+# Ignore pycache
+
+**/__pycache__/
+**/.pytest_cache/
