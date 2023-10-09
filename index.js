@@ -282,12 +282,28 @@ let deathSound;
 let settingsOpen = false;
 let settings;
 let settingsMute;
+let debugConsole;
 
-window.keyPressed = function() {
+window.keyPressed = function(e) {
     if (keyCode === ESCAPE) { // use escape to open/close settings
         if (beginGame)
             openSettings();
     }
+    if(e.key === 'd') { // use d to open/close debug console
+        let gameData = {
+            gameMode: gameMode,
+            totalCurrency: totalCurrency,
+            totalHealth: totalHealth,
+            waveAmount: waveAmount,
+            currentWave: currentWave,
+            towers: towers,
+            enemies: enemies,
+
+        }
+        debugConsole.style('display', 'block');
+        debugConsole.html(JSON.stringify(gameData));
+    }
+
 }
 
 window.setup = function () {
@@ -423,6 +439,7 @@ window.setup = function () {
     push();
     nextWave = createButton('Next Wave')
     nextWave.position(windowWidth - 100, windowHeight + 15);
+    nextWave.id('nextWaveButton');
     nextWave.mousePressed(spawnNextWave);
     pop();
 
@@ -445,6 +462,17 @@ window.setup = function () {
                 playSound = true;
             }
             })
+
+    debugConsole = createP('DEBUG TEXT');
+    debugConsole.id('debugConsole');
+    debugConsole.style('max-height', '100%');
+    debugConsole.style('width', '100%');
+    debugConsole.style('font-family', 'Andale Mono');
+    debugConsole.style('font-size', '18px');
+    debugConsole.style('color', color(255, 255, 255));
+    debugConsole.style('background-color', color(81,176,101, 60));
+    debugConsole.style('display', 'none');
+    debugConsole.position(0, 0);
 }
 
 

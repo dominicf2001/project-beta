@@ -1,16 +1,34 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import pytest
 import subprocess
+import json
+
+def get_debug_data(browser):
+    action = webdriver.ActionChains(browser).key_down('d').key_up('d')
+    action.perform()
+    data = browser.find_element(By.ID, "debugConsole").text
+    json_data = json.loads(data)
+    return json_data
 
 class TestClass:
     app = subprocess.Popen(["npm", "start"])
     time.sleep(5)
     browser = webdriver.Chrome()
     browser.get("http://localhost:3000")
-    time.sleep(10)
+
+    # Wait for Chromedriver to load
+    timeout = 5
+    try:
+        element_present = EC.presence_of_element_located((By.ID, 'defaultCanvas0'))
+        WebDriverWait(browser, timeout).until(element_present)
+    except TimeoutException:
+        print("Timed out waiting for page to load")
 
     @pytest.mark.dependency()
     def test_title_screen(self):
@@ -44,6 +62,54 @@ class TestClass:
         assert not loadButton.is_displayed(), "Load button displayed"
         assert not saveButton.is_displayed(), "Save button displayed"
         assert not audioButton.is_displayed(), "Audio button displayed"
+
+    def test_debug(self):
+        action = webdriver.ActionChains(self.browser).key_down('d').key_up('d')
+        action.perform()
+
+        debugConsole = self.browser.find_element(By.ID, "debugConsole")
+        assert debugConsole.is_displayed(), "Debug console not displayed"
+        time.sleep(2)
+        assert "towers" in debugConsole.text, "Towers not in game data"
+        assert "enemies" in debugConsole.text, "Enemies not in game data"
+        print(debugConsole.text)
+
+    @pytest.mark.dependency(depends=["test_title_screen", "test_debug"])
+    def test_place_tower(self):
+        debug_console_old = get_debug_data(self.browser)
+        time.sleep(2)
+
+        action = webdriver.ActionChains(self.browser).move_by_offset(200, 200).click()
+        action.perform()
+
+        time.sleep(2)
+        debug_console_new = get_debug_data(self.browser)
+
+        assert len(debug_console_new["towers"]) == len(debug_console_old["towers"]) + 1, "Tower not placed"
+        assert debug_console_new["towers"][0]["x"] == 200, "Tower x position incorrect"
+        assert debug_console_new["towers"][0]["y"] == 200, "Tower y position incorrect"
+
+    @pytest.mark.dependency(depends=["test_title_screen", "test_debug"])
+    def test_wave_spawn(self):
+        """Test that the wave spawns enemies"""
+
+        wave_button = self.browser.find_element(By.ID, "nextWaveButton")
+
+        actions = webdriver.ActionChains(self.browser)
+        actions.move_to_element(wave_button)
+
+        actions.perform()
+        wave_button.click()
+
+        time.sleep(4)
+        debug_console = get_debug_data(self.browser)
+        assert len(debug_console["enemies"]) > 0, "Enemies not spawned"
+
+        time.sleep(4)
+        debug_console_new = get_debug_data(self.browser)
+        assert debug_console_new["enemies"][0]["x"] > debug_console["enemies"][0]["x"], "Enemy has not moved"
+
+        
 
     @pytest.mark.last
     def test_close(self):
