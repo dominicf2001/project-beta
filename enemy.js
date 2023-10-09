@@ -2,11 +2,11 @@
 const canvasWidth = 1200;
 const canvasHeight = 700;
 
-import { bottomPath, topPath } from "./index.js";
+import { maps } from "./index.js";
 
 // Generate offset within the bounds of the path
 function getOffset() {
-    let width = Math.floor(bottomPath(0) - topPath(0));
+    let width = Math.floor(maps[0].bottomPath(0) - maps[0].topPath(0));
     return Math.floor(Math.random() * width / 2.5) - Math.floor(width / 5);
 }
 
