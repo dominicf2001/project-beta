@@ -111,7 +111,7 @@ let dragTower = null;
 let playSound = false;
 
 // other relevant variables
-let totalCurrency = 0;
+let totalCurrency = 550;
 let totalHealth = 50;
 let encyclopedia;
 let nextWave;
@@ -148,13 +148,19 @@ window.mousePressed = function (event) {
             }
 
             if (towers[t].mouseInside() && towerTool == 1) {
-                towers[t].upgradeRange();
-                break;
+                if(totalCurrency>=100){
+                    towers[t].upgradeRange();
+                    totalCurrency -=100;
+                    break;
+                }
             }
 
             if (towers[t].mouseInside() && towerTool == 2) {
-                towers[t].upgradeFireRate();
-                break;
+                if(totalCurrency>= 150){
+                    towers[t].upgradeFireRate();
+                    totalCurrency -=150;
+                    break;
+                }
             }
         }
 
@@ -172,7 +178,12 @@ window.mousePressed = function (event) {
                 if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
                     // throw new Error("NO");
                 } else {
-                    towers.push(t);
+                    if(totalCurrency<400){
+                    }
+                    else{  
+                        towers.push(t);
+                        totalCurrency -= 400;
+                        }   
                 }
 
             } catch (e) {
