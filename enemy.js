@@ -33,10 +33,11 @@ class Enemy {
      * @param {number=} offset - how much enemy sways from the path, will never go off bounds
      * @param {number} currency - how much money you will receive
      * @param {number} damage - how much health an enemy takes away
+     * @param {number} damageDistance - how far away an enemy can damage a tower
      * @param {number=} x - the starting x coordinate (if undefined, defaults to start of path's x)
      * @param {number=} y - the starting y coordinate (if undefined, defaults to start of path's y)
      */
-    constructor(speed, health, path, offset, currency, damage, x, y) {
+    constructor(speed, health, path, offset, currency, damage, damageDistance, x, y) {
         this.speed = speed;
         this.health = health;
         this.path = path;
@@ -46,6 +47,8 @@ class Enemy {
         this.y = y ?? this.path(0) + this.offset;
         this.currency = currency;
         this.damage = damage;
+        this.damageDistance = damageDistance ?? 0;
+        this.coolDown = 0;
     }
 
     draw() {
@@ -98,6 +101,19 @@ class Enemy {
     hasReachedEnd() {
         return this.x >= canvasWidth;
     }
+    
+    damageTowers(towers) {
+        for(let i = 0; i < towers.length; i++) {
+            let tower = towers[i];
+            let distance = dist(this.x, this.y, tower.x, tower.y);
+            if (distance < this.damageDistance && this.coolDown <= 0) {
+                tower.health -= this.damage;
+                this.coolDown = 5;
+            } else {
+                this.coolDown--;
+            }
+        }
+    }
 };
 // ------------------------------------------ //
 // ENEMY TYPE CLASSES
@@ -118,7 +134,7 @@ class Tank extends Enemy {
 /** The Standard */
 class Standard extends Enemy {
     constructor(path, offset, x, y) {
-        super(0.5, 10, path, offset, 140, 3, x, y);
+        super(0.5, 10, path, offset, 140, 3, 50, x, y);
     }
     drawAppearance() {
         fill(100);
@@ -130,7 +146,7 @@ class Standard extends Enemy {
 /** The Rapid */
 class Rapid extends Enemy {
     constructor(path, offset, x, y) {
-        super(1, 5, path, offset, 80, 1, x, y);
+        super(1, 5, path, offset, 80, 1, 30, x, y);
     }
     drawAppearance() {
         fill(50);
@@ -142,7 +158,7 @@ class Rapid extends Enemy {
 /** The Spawner */
 class Spawner extends Enemy {    
     constructor(path, offset, x, y) {
-        super(0.4, 5, path, offset, 80, 1, x, y);
+        super(0.4, 5, path, offset, 80, 1, 40, x, y);
         
         this.spawnCount = 3;
         /**
