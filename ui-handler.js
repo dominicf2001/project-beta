@@ -156,7 +156,7 @@ export class UIHandler {
         this.placeTowerButton.style('padding', '5px 10px');
         this.placeTowerButton.style('font-weight', 'bold');
         this.placeTowerButton.position(10, this.windowHeight - 40);
-        this.placeTowerButton.mousePressed(function () {
+        this.placeTowerButton.mousePressed(() => {
             this.towerTool = 0;
         });
 
@@ -170,7 +170,7 @@ export class UIHandler {
         this.upgradeRangeButton.style('padding', '5px 10px');
         this.upgradeRangeButton.style('font-weight', 'bold');
         this.upgradeRangeButton.position(160, this.windowHeight - 40);
-        this.upgradeRangeButton.mousePressed(function () {
+        this.upgradeRangeButton.mousePressed(() => {
             this.towerTool = 1;
         });
         this.upgradeFireRateButton = createButton('Upgrade Fire Speed');
@@ -183,7 +183,7 @@ export class UIHandler {
         this.upgradeFireRateButton.style('padding', '5px 10px');
         this.upgradeFireRateButton.style('font-weight', 'bold');
         this.upgradeFireRateButton.position(335, this.windowHeight - 40);
-        this.upgradeFireRateButton.mousePressed(function () {
+        this.upgradeFireRateButton.mousePressed(() => {
             this.towerTool = 2;
         });    
     }

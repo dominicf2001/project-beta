@@ -2,7 +2,7 @@
 const canvasWidth = 1200;
 const canvasHeight = 700;
 
-// import { maps } from "./index.js";
+import { maps } from "./index.js";
 
 // Generate offset within the bounds of the path
 function getOffset() {
