@@ -309,6 +309,17 @@ function fireBullets() {
     }
 }
 
+function dealDamage() {
+    for(let i = 0; i < enemies.length; i++) {
+        enemies[i].damageTowers(towers);
+    }
+    for(let i = 0; i < towers.length; i++) {
+        if(towers[i].health <= 0) {
+            towers.splice(i, 1);
+        }
+    }
+}
+
 
 // GAME LOOP
 let mySound;
@@ -332,6 +343,7 @@ window.setup = function () {
     //Poll for bullets every 100ms
 
     setInterval(fireBullets, 100);
+    setInterval(dealDamage, 100);
     placeTower = createButton('Place Tower');
     placeTower.style('font-family', 'Andale Mono');
     placeTower.style('font-size', '18px');
