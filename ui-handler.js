@@ -89,12 +89,12 @@ export class UIHandler {
     }
 
     handleEscapeKeyPress() {
-        if (!this.encyclopiaOpen)
+        if (!this.encyclopediaOpen)
             openSettings();
-        if (this.encyclopiaOpen) {
+        if (this.encyclopediaOpen) {
             this.encyclopedia.hide();
             this.encyclopediaExit.hide();
-            this.encyclopiaOpen = false;
+            this.encyclopediaOpen = false;
         }
     }
 
@@ -216,17 +216,17 @@ export class UIHandler {
         this.encyclopediaButton.size(219, 40);
         
         this.encyclopediaButton.mousePressed(() => {
-            if (!this.encyclopiaOpen) {
+            if (!this.encyclopediaOpen) {
                 this.encyclopediaExitButton = createButton('X');
                 this.encyclopediaExitButton.addClass('encyclopedia-exit');
                 this.encyclopediaExitButton.position(this.windowWidth - 135, 55);
                 this.encyclopediaButton.style('display:block;');
-                this.encyclopiaOpen = true;
+                this.encyclopediaOpen = true;
 
                 this.encyclopediaExitButton.mousePressed(() => { // closes encyclopedia
-                    if (this.encyclopiaOpen) {
+                    if (this.encyclopediaOpen) {
                         this.encyclopediaButton.style('display:none');
-                        this.encyclopiaOpen = false;
+                        this.encyclopediaOpen = false;
                         this.encyclopediaExitButton.hide();
                         this.encyclopediaButton.show();
                     }
