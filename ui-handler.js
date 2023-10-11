@@ -36,6 +36,7 @@ export class UIHandler {
         this.loadButton;
         this.encyclopediaMenu;
         this.encyclopediaButton;
+        this.encyclopediaExitButton;
     }
 
     preloadAssets() {
@@ -90,10 +91,10 @@ export class UIHandler {
     handleEscapeKeyPress() {
         if (!this.encyclopiaOpen)
             openSettings();
-        if (encyclopiaOpen) {
-            encyclopedia.hide();
-            encyclopediaExit.hide();
-            encyclopiaOpen = false;
+        if (this.encyclopiaOpen) {
+            this.encyclopedia.hide();
+            this.encyclopediaExit.hide();
+            this.encyclopiaOpen = false;
         }
     }
 
@@ -216,17 +217,17 @@ export class UIHandler {
         
         this.encyclopediaButton.mousePressed(() => {
             if (!this.encyclopiaOpen) {
-                this.encyclopediaExit = createButton('X');
-                this.encyclopediaExit.addClass('encyclopedia-exit');
-                this.encyclopediaExit.position(this.windowWidth - 135, 55);
-                this.encyclopedia.style('display:block;');
+                this.encyclopediaExitButton = createButton('X');
+                this.encyclopediaExitButton.addClass('encyclopedia-exit');
+                this.encyclopediaExitButton.position(this.windowWidth - 135, 55);
+                this.encyclopediaButton.style('display:block;');
                 this.encyclopiaOpen = true;
 
-                this.encyclopediaExit.mousePressed(function () { // closes encyclopedia
+                this.encyclopediaExitButton.mousePressed(() => { // closes encyclopedia
                     if (this.encyclopiaOpen) {
-                        this.encyclopedia.style('display:none');
+                        this.encyclopediaButton.style('display:none');
                         this.encyclopiaOpen = false;
-                        this.encyclopediaExit.hide();
+                        this.encyclopediaExitButton.hide();
                         this.encyclopediaButton.show();
                     }
                 });
