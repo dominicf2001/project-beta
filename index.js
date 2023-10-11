@@ -18,12 +18,14 @@ let f_Andale;
 // 0 - place tower (default)
 // 1 - upgrade range
 // 2 - upgrade fire rate
+// 3 - fire speed
 let towerTool = 0;
 let beginGame = false;
 
 // buttons
 let upgradeRange;
 let upgradeFireRate;
+let upgradeFireSpeed;
 let placeTower;
 let saveButton;
 let loadSaveButton;
@@ -162,6 +164,14 @@ window.mousePressed = function (event) {
                     break;
                 }
             }
+
+            if (towers[t].mouseInside() && towerTool == 3) {
+                if(totalCurrency>= 100){
+                    towers[t].upgradeFireSpeed();
+                    totalCurrency -=100;
+                    break;
+                }
+            }
         }
 
         //Ignore touch events, only handle left mouse button
@@ -219,7 +229,7 @@ window.mouseMoved = function () {
             if(towerTool == 0) {
                 cursor('grab');
             }
-            if (towerTool == 1 || towerTool == 2) {
+            if (towerTool == 1 || towerTool == 2 || towerTool == 3) {
                 cursor('crosshair');
             }
             return;
@@ -311,7 +321,7 @@ window.setup = function () {
     upgradeRange.mousePressed(function() {
         towerTool = 1;
     });
-    upgradeFireRate = createButton('Upgrade Fire Speed');
+    upgradeFireRate = createButton('Upgrade Fire Rate');
     upgradeFireRate.style('font-family', 'Andale Mono');
     upgradeFireRate.style('font-size', '18px');
     upgradeFireRate.style('color', color(181, 43, 131));
@@ -323,6 +333,20 @@ window.setup = function () {
     upgradeFireRate.position(335, windowHeight + 40);
     upgradeFireRate.mousePressed(function() {
         towerTool = 2;
+    });
+
+    upgradeFireSpeed = createButton('Upgrade Fire Speed');
+    upgradeFireSpeed.style('font-family', 'Andale Mono');
+    upgradeFireSpeed.style('font-size', '18px');
+    upgradeFireSpeed.style('color', color(181, 43, 131));
+    upgradeFireSpeed.style('background-color', color(81,176,101));
+    upgradeFireSpeed.style('border', 'none');
+    upgradeFireSpeed.style('border-radius', '5px');
+    upgradeFireSpeed.style('padding', '5px 10px');
+    upgradeFireSpeed.style('font-weight', 'bold');
+    upgradeFireSpeed.position(550, windowHeight + 40);
+    upgradeFireSpeed.mousePressed(function() {
+        towerTool = 3;
     });
 
     saveButton = createImg('./assets/saveButton.png');
@@ -439,6 +463,7 @@ window.draw = function() {
         // Hide buttons
         upgradeRange.hide();
         upgradeFireRate.hide();
+        upgradeFireSpeed.hide();
         loadSaveButton.hide();
         placeTower.hide();
         saveButton.hide();
@@ -457,6 +482,7 @@ window.draw = function() {
         // Show upgrade buttons
         upgradeRange.show();
         upgradeFireRate.show();
+        upgradeFireSpeed.show();
         startButton.hide();
         nextWave.show();
 
@@ -613,6 +639,8 @@ function towerUpgradeMenu(height, width) {
             upgradeRange.style('color', color(181, 43, 131));
             upgradeFireRate.style('background-color', color(81,176,101));
             upgradeFireRate.style('color', color(181, 43, 131));
+            upgradeFireSpeed.style('background-color', color(81,176,101));
+            upgradeFireSpeed.style('color', color(181, 43, 131));
             break;
         case 1:
             placeTower.style('background-color', color(81,176,101));
@@ -621,6 +649,8 @@ function towerUpgradeMenu(height, width) {
             upgradeRange.style('color', color(81,176,101));
             upgradeFireRate.style('background-color', color(81,176,101));
             upgradeFireRate.style('color', color(181, 43, 131));
+            upgradeFireSpeed.style('background-color', color(81,176,101));
+            upgradeFireSpeed.style('color', color(181, 43, 131));
             break;
         case 2:
             placeTower.style('background-color', color(81,176,101));
@@ -629,7 +659,18 @@ function towerUpgradeMenu(height, width) {
             upgradeRange.style('color', color(181, 43, 131));
             upgradeFireRate.style('background-color', color(181, 43, 131));
             upgradeFireRate.style('color', color(81,176,101));
+            upgradeFireSpeed.style('background-color', color(81,176,101));
+            upgradeFireSpeed.style('color', color(181, 43, 131));
             break;
+        case 3:
+            placeTower.style('background-color', color(81,176,101));
+            placeTower.style('color', color(181, 43, 131));
+            upgradeRange.style('background-color', color(81,176,101));
+            upgradeRange.style('color', color(181, 43, 131));
+            upgradeFireRate.style('background-color', color(81,176,101));
+            upgradeFireRate.style('color', color(181, 43, 131));
+            upgradeFireSpeed.style('background-color', color(181, 43, 131));
+            upgradeFireSpeed.style('color', color(81,176,101));
     }
 
     push();

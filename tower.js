@@ -19,6 +19,7 @@ export class Tower {
         this.damage = 1;
         this.fireRate = 1;
         this.coolDown = 5;
+        this.fireSpeed = 1;
         this.hover = false;
     }
     
@@ -92,6 +93,10 @@ export class Tower {
         this.fireRate += 1;
     }
 
+    upgradeFireSpeed() {
+        this.fireSpeed += 1;
+    }
+
 };
 
 export class Bullet {
@@ -106,6 +111,7 @@ export class Bullet {
         this.y = tower.y;
         this.range = tower.range;
         this.damage = tower.damage;
+        this.fireSpeed = tower.fireSpeed;
         this.target = target;
         
         this.updateDirection();
@@ -123,9 +129,9 @@ export class Bullet {
         strokeWeight(2);
         fill(255, 0, 0);
         ellipse(this.x, this.y, 5, 5);
-        this.x += this.xMove * 2;
-        this.y += this.yMove * 2;
-        this.range--;
+        this.x += this.xMove * 2 * this.fireSpeed;
+        this.y += this.yMove * 2 * this.fireSpeed;
+        this.range -= this.fireSpeed;
         pop();
 
         // update only every 15 frames to ease computation
