@@ -1,6 +1,5 @@
-import { Tank, Standard, Rapid, Wave } from "./enemy.js";
+import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
 import { Tower, Bullet } from "./tower.js";
-
 
 // GLOBAL VARIABLES
 
@@ -54,6 +53,7 @@ const path = [
 ]; */
 
 export let maps = [
+// First map
     {
         topPath: function(x) {
             return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x);
@@ -84,78 +84,28 @@ export let maps = [
     {}
 ];
 
-// PATHING FUNCTIONS
-
-// export function topPath(x) { return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x); }
-
-// export function middlePath(x) { return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x); }
-
-// export function bottomPath(x) {
-//     if (x < 768) {
-//         return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
-//             + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
-//             + 1.02276e-14 * Math.pow(x, 7) - 3.17496e-12 * Math.pow(x, 6)
-//             + 7.82401e-10 * Math.pow(x, 5) - 1.90207e-7 * Math.pow(x, 4)
-//             + 4.10456e-5 * Math.pow(x, 3) - 6.97063e-3 * Math.pow(x, 2)
-//             + 7.67275e-1 * x + 3.11e2);
-//     }
-//     else if (x >= 768) {
-//         let t = x - 768;
-//         return (-3.17081e-23 * Math.pow(t, 11) + 7.03199e-20 * Math.pow(t, 10)
-//             - 6.63488e-17 * Math.pow(t, 9) + 3.46794e-14 * Math.pow(t, 8)
-//             - 1.09391e-11 * Math.pow(t, 7) + 2.12115e-9 * Math.pow(t, 6)
-//             - 2.45005e-7 * Math.pow(t, 5) + 1.51765e-5 * Math.pow(t, 4)
-//             - 3.54811e-4 * Math.pow(t, 3) - 3.55384e-3 * Math.pow(t, 2)
-//             + 2.33631e-1 * t + 250);
-//     }
-// }
-
 //////////////////////////////
 // CONSTRUCT LEVEL
-const waveAmount = 4;
-let currentWave = 0;
-
 const levelWaveData = [
-    [0, 3],
-    [0, 0, 6],
-    [2],
-    [0, 0, 0, 1]
+    // [0, 3],
+    // [0, 0, 6],
+    // [2],
+    // [0, 0, 0, 1],
+    [0, 0, 0, 0, 1]
 ];
 
 const levelSpawnPriority = [
-    [1, 0],
-    [2, 1, 0],
-    [0],
-    [3, 2, 1, 0]
+    // [1, 0],
+    // [2, 1, 0],
+    // [0],
+    // [3, 2, 1, 0],
+    [4, 3, 2, 1, 0]
 ];
 
+const waveAmount = levelWaveData.length;
+let currentWave = 0;
+
 let enemies = [];
-/////////////////////////////
-/*
-const test_waveData = [1, 3, 4, 1];
-const test_spawnPriority = [1, 2, 0, 3];
-function selectMap(mapID) {
-    switch (mapID) {
-        case 1:
-            mapImg = loadImage('Maps/Space Map 1.png');
-            break;
-        case 2:
-            mapImg = loadImage('Maps/Space Map Version 2.png');
-            break;
-        default:
-            break;
-    }
-    return;
-}
-const test_waveData = [0, 0, 0, 1];
-const test_spawnPriority = [3];
-
-const newWave = new Wave(test_waveData, test_spawnPriority, path, 4);
-
-newWave.debugPrintWave();
-newWave.spawn();
-const enemies = newWave.getEnemies();
-*/
 
 // tower variables
 const towerLimit = 5;
@@ -174,6 +124,13 @@ let nextWaveCheck = {
     amount: 0
 }
 
+// checks for stunned towers
+let stunCooldown = {
+    amount: 0,
+    trigger: 400
+}
+
+// Assets
 let mapImg;
 let titleImg;
 let towerSprite;
@@ -188,8 +145,6 @@ window.preload = function () {
     gameOverImg = loadImage('./assets/Game_OVER_Screen.png');
 }
 
-
-
 // EVENT LISTENERS
 
 window.mousePressed = function (event) {
@@ -199,6 +154,7 @@ window.mousePressed = function (event) {
         // Check if mouse is inside a tower
         for (let t = 0; t < towers.length; t++) {
             if (towers[t].mouseInside() && towerTool == 0) {
+                if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
                 dragTower = towers.splice(t, 1)[0];
                 dragTower.hover = true;
                 towers.push(dragTower);
@@ -530,6 +486,7 @@ window.draw = function () {
         // Draw towers
         for (const t of towers) {
             t.draw(towerSprite);
+            if (t.isStunned()) t.drawStunned();
         }
         // draw path
 
@@ -589,7 +546,20 @@ window.draw = function () {
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
-
+                // handle stunner type enemies
+                if (enemies[i].stunTower) {
+                    if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
+                    else {
+                        let stunIndex = enemies[i].stunTower(towers.length);
+                        // console.log(stunIndex ?? -1);
+                        if (stunIndex != -1) {
+                            if (!towers[stunIndex].isStunned()) {
+                                towers[stunIndex].stun();
+                            }
+                        }
+                        stunCooldown.amount = 0;
+                    }
+                }
                 // handle spawner type enemies
                 if (enemies[i].spawn && !enemies[i].onCooldown) {
                     enemies[i].spawn(enemies);
@@ -597,7 +567,7 @@ window.draw = function () {
             }
         }
 
-        console.log(nextWaveCheck.amount);
+        // console.log(nextWaveCheck.amount);
 
         // Draw bullets before towers
         for (const i in bullets) {
