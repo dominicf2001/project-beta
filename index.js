@@ -135,7 +135,11 @@ let playSound = false;
 let totalCurrency = 0;
 let totalHealth = 50;
 let encyclopedia;
+let encyclopediaButton;
 let nextWave;
+
+// character cards
+let card1;
 
 
 let mapImg;
@@ -183,7 +187,7 @@ window.mousePressed = function (event) {
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
-        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))&& towerTool == 0) {        
+        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))&& towerTool == 0 && encyclopiaOpen != true) {        
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -280,13 +284,20 @@ let mySound;
 let deathSound;
 
 let settingsOpen = false;
+let encyclopiaOpen = false;
+let encyclopediaExit;
 let settings;
 let settingsMute;
 
 window.keyPressed = function() {
     if (keyCode === ESCAPE) { // use escape to open/close settings
-        if (beginGame)
+        if (beginGame && !encyclopiaOpen)
             openSettings();
+        if (encyclopiaOpen) {
+            encyclopedia.hide();
+            encyclopediaExit.hide();
+            encyclopiaOpen = false;
+        }
     }
 }
 
@@ -306,7 +317,7 @@ window.setup = function () {
     placeTower.style('border-radius', '5px');
     placeTower.style('padding', '5px 10px');
     placeTower.style('font-weight', 'bold');
-    placeTower.position(10, windowHeight + 40);
+    placeTower.position(10, windowHeight - 40);
     placeTower.mousePressed(function() {
         towerTool = 0;
     });
@@ -320,7 +331,7 @@ window.setup = function () {
     upgradeRange.style('border-radius', '5px');
     upgradeRange.style('padding', '5px 10px');
     upgradeRange.style('font-weight', 'bold');
-    upgradeRange.position(160, windowHeight + 40);
+    upgradeRange.position(160, windowHeight - 40);
     upgradeRange.mousePressed(function() {
         towerTool = 1;
     });
@@ -333,7 +344,7 @@ window.setup = function () {
     upgradeFireRate.style('border-radius', '5px');
     upgradeFireRate.style('padding', '5px 10px');
     upgradeFireRate.style('font-weight', 'bold');
-    upgradeFireRate.position(335, windowHeight + 40);
+    upgradeFireRate.position(335, windowHeight - 40);
     upgradeFireRate.mousePressed(function() {
         towerTool = 2;
     });
@@ -341,7 +352,7 @@ window.setup = function () {
     saveButton = createImg('./assets/saveButton.png');
     saveButton.addClass('settingsMenu');
     saveButton.size(100,40);
-    saveButton.position(windowWidth-265, 10);
+    saveButton.position(windowWidth-500, 10);
     saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
@@ -355,7 +366,7 @@ window.setup = function () {
     loadSaveButton = createImg('./assets/loadButton.png');
     loadSaveButton.addClass('settingsMenu');
     loadSaveButton.size(100,40);
-    loadSaveButton.position(windowWidth-160,10);
+    loadSaveButton.position(windowWidth-390,10);
     loadSaveButton.mousePressed(function() {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
@@ -410,12 +421,34 @@ window.setup = function () {
         beginGame = true;
     });
 
-    // // draw encyclopedia
-    // push();
-    // encyclopedia = createButton('Encyclopedia');
-    // encyclopedia.position(1057, 150);
-    // encyclopedia.mousePressed(showEncyclopedia);
-    // pop();
+    // encyclopedia
+    encyclopedia = createGraphics(windowWidth - 200, windowHeight - 100); // container
+    encyclopedia.addClass('encyclopedia');
+    encyclopediaButton = createImg('./assets/encyclopediaButton.png');
+    encyclopediaButton.position(windowWidth - 279, 10);
+    encyclopediaButton.size(219, 40);
+
+
+    encyclopediaButton.mousePressed(function() {
+        if (!encyclopiaOpen) {
+            encyclopediaExit = createButton('X');
+            encyclopediaExit.addClass('encyclopedia-exit');
+            encyclopediaExit.position(windowWidth - 135, 55);
+            encyclopedia.style('display:block;');
+            encyclopiaOpen = true;
+
+            encyclopediaExit.mousePressed(function() { // closes encyclopedia
+                if (encyclopiaOpen) {
+                    encyclopedia.style('display:none');
+                    encyclopiaOpen = false;
+                    encyclopediaExit.hide();
+                    encyclopediaButton.show();
+                }
+            });
+
+
+        }
+    });
 
     // draw "next wave" button
     push();
@@ -458,6 +491,7 @@ window.draw = function() {
         saveButton.hide();
         nextWave.hide();
         gameOverScreen.hide();
+        encyclopediaButton.hide();
 
         settings.hide();
         settingsMute.hide();
@@ -475,12 +509,13 @@ window.draw = function() {
         startButton.hide();
         nextWave.show();
         gameOverScreen.hide();
-
+        encyclopediaButton.show();
         settings.show();
         settings.mousePressed(openSettings);
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
+        
 
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
