@@ -75,7 +75,7 @@ export class UIHandler {
         this.settingsButton.position(this.windowWidth - 50, 10);
         this.settingsButton.size(40, 40);
         this.settingsButton.mousePressed(() =>
-            this.#drawSettings()
+            this.#toggleSettings()
         );
         
         this.muteButton = createImg('./assets/audiobutton.png');
@@ -131,7 +131,7 @@ export class UIHandler {
         }
     }
 
-    #drawSettings() {
+    #toggleSettings() {
         if (!this.settingsOpen) {
             this.muteButton.show();
             this.loadButton.show();
