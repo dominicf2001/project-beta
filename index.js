@@ -89,7 +89,6 @@ const levelSpawnPriority = [
 let enemies = [];
 /////////////////////////////
 
-
 // tower variables
 const towerLimit = 5;
 let towers = [];
