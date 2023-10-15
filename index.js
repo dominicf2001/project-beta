@@ -104,10 +104,6 @@ let playSound = false;
 let totalCurrency = 0;
 let totalHealth = 50;
 
-// character cards
-let card1;
-
-
 // checks for next wave button.
 // can cause error if new ways that enemies disapear arise so keep in mind
 let nextWaveCheck = { 

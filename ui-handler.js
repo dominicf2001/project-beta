@@ -34,13 +34,15 @@ export class UIHandler {
         this.upgradeFireRateButton;
         this.saveButton;
         this.loadButton;
+
         this.encyclopediaMenu;
         this.encyclopediaButton;
-        this.encyclopediaExitButton;
+        this.enemy1;
     }
 
     preloadAssets() {
         this.titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+        this.enemy1 = loadImage('./assets/Basic_Enemy.png');
     }
 
     initializeUI() {
@@ -86,8 +88,19 @@ export class UIHandler {
         this.muteButton.mousePressed(() =>
             this.onMuteClick()
         );
+
+        this.encyclopediaButton = createImg('./assets/encyclopediaButton.png');
+        this.encyclopediaButton.position(this.windowWidth - 279, 10);
+        this.encyclopediaButton.size(219, 40);
+        this.encyclopediaButton.mousePressed(() =>
+            this.#showEncyclopedia()
+        );
+        this.encyclopediaExit.mousePressed(() =>
+            this.#hideEncyclopedia()
+        );
     }
 
+    /*
     handleEscapeKeyPress() {
         if (!this.encyclopediaOpen)
             openSettings();
@@ -97,6 +110,7 @@ export class UIHandler {
             this.encyclopediaOpen = false;
         }
     }
+    */
 
     updateUIForGameMode(gameMode){
         if (gameMode === -1) {
@@ -119,6 +133,7 @@ export class UIHandler {
             this.gameOverScreen.hide();
             this.settingsButton.hide();
             this.muteButton.hide();
+            this.encyclopediaButton.hide();
         } else if (gameMode === 1) {
             this.upgradeRangeButton.show();
             this.upgradeFireRateButton.show();
@@ -207,32 +222,65 @@ export class UIHandler {
         ); 
     }
 
+    /* Possible idea:
+    Have rectangles over enemy info. If enemy appears on screen then remove rectangle 
+    to reveal info.
+    */
     #drawEncyclopedia() {
-        // encyclopedia
-        this.encyclopediaMenu = createGraphics(this.windowWidth - 200, this.windowHeight - 100); // container
-        this.encyclopediaMenu.addClass('encyclopedia');
-        this.encyclopediaButton = createImg('./assets/encyclopediaButton.png');
-        this.encyclopediaButton.position(this.windowWidth - 279, 10);
-        this.encyclopediaButton.size(219, 40);
-        
-        this.encyclopediaButton.mousePressed(() => {
-            if (!this.encyclopediaOpen) {
-                this.encyclopediaExitButton = createButton('X');
-                this.encyclopediaExitButton.addClass('encyclopedia-exit');
-                this.encyclopediaExitButton.position(this.windowWidth - 135, 55);
-                this.encyclopediaButton.style('display:block;');
-                this.encyclopediaOpen = true;
+        // container
+        this.encyclopediaMenu = createGraphics(this.windowWidth - 200, this.windowHeight - 100); 
+        this.encyclopediaMenu.addClass("encyclopedia");
+        this.encyclopediaMenu.style("display:block;");
 
-                this.encyclopediaExitButton.mousePressed(() => { // closes encyclopedia
-                    if (this.encyclopediaOpen) {
-                        this.encyclopediaButton.style('display:none');
-                        this.encyclopediaOpen = false;
-                        this.encyclopediaExitButton.hide();
-                        this.encyclopediaButton.show();
-                    }
-                });
-            }
-        });        
+        // exit button
+        this.encyclopediaExit = createButton('X');
+        this.encyclopediaExit.addClass('encyclopedia-exit');
+        this.encyclopediaExit.position(this.windowWidth - 145, 60);
+        this.encyclopediaMenu.textSize(15);
+        
+        // enemy info #1
+        this.encyclopediaMenu.image(this.enemy1, 10, 20, 225, 275);
+        this.encyclopediaMenu.text("Enemy 1", 250, 50, 200, 250);
+        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 250, 80, 200, 250);
+        this.encyclopediaMenu.text("Damage: 1", 250, 210, 200, 250);
+
+        // enemy info #2
+        this.encyclopediaMenu.image(this.enemy1, 10, 300, 225, 275);
+        this.encyclopediaMenu.text("Enemy 2", 250, 320, 200, 250);
+        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 250, 350, 200, 250);
+        this.encyclopediaMenu.text("Damage: 1", 250, 470, 200, 250);
+
+        // enemy info #3
+        this.encyclopediaMenu.image(this.enemy1, 500, 20, 225, 275);
+        this.encyclopediaMenu.text("Enemy 3", 750, 50, 200, 250);
+        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 80, 200, 250);
+        this.encyclopediaMenu.text("Damage: 1", 750, 210, 200, 250);
+
+        // enemy info #4
+        this.encyclopediaMenu.image(this.enemy1, 500, 300, 225, 275);
+        this.encyclopediaMenu.text("Enemy 4", 750, 320, 200, 250);
+        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 350, 200, 250);
+        this.encyclopediaMenu.text("Damage: 1", 750, 470, 200, 250);
+
+
+        this.encyclopediaMenu.hide();
+        this.encyclopediaExit.hide();
+    }
+
+    #showEncyclopedia() {
+        if (!this.encyclopediaOpen) {
+            this.encyclopediaMenu.show();
+            this.encyclopediaExit.show();
+            this.encyclopediaOpen = true;
+        }
+    }
+
+    #hideEncyclopedia() {
+        if (this.encyclopediaOpen) {
+            this.encyclopediaMenu.hide();
+            this.encyclopediaExit.hide();
+            this.encyclopediaOpen = false;
+        }
     }
 
     #drawTowerUpgradeMenu() {
