@@ -15,6 +15,7 @@ export class UIHandler {
         // STATE VARIABLES
         this.settingsOpen = false;
         this.encyclopediaOpen = false;
+        this.ignoreNextClick = false;
         /**
          * 0 - place tower (default)
          * 1 - upgrade range
@@ -277,6 +278,7 @@ export class UIHandler {
 
     #hideEncyclopedia() {
         if (this.encyclopediaOpen) {
+            this.ignoreNextClick = true;
             this.encyclopediaMenu.hide();
             this.encyclopediaExit.hide();
             this.encyclopediaOpen = false;
