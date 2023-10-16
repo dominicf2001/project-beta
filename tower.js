@@ -17,6 +17,7 @@ export class Tower {
         this.y = y;
         this.range = 100;
         this.damage = 1;
+        this.health = 30;
         this.fireRate = 1;
         this.coolDown = 5;
         this.fireSpeed = 1;
@@ -41,6 +42,17 @@ export class Tower {
             circle(this.x, this.y, this.range * 2);
         }
         noStroke();
+        // health bar
+        let healthBarWidth = 0;
+        if (this.health > 30) { // max width
+            healthBarWidth = 30 % this.health;
+        } else {
+            healthBarWidth = this.health;
+        }
+        fill(0, 200, 0);
+        stroke(0, 180, 0);
+        rectMode(CENTER);
+        rect(this.x, this.y + 60, healthBarWidth, 5);
         pop();
     }
 
