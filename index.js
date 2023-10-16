@@ -181,8 +181,9 @@ window.mousePressed = function (event) {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
                 }
-                if (mouseY < bottomPath(mouseX) && mouseY > topPath(mouseX)) {
-                    throw new Error("Cannot place a tower on the path!");
+                if (mouseY < maps[0].bottomPath(mouseX) + 10 && mouseY > maps[0].topPath(mouseX) - 35) {
+                    // throw new Error("Cannot place a tower on the path!");
+                    return;
                 }
                 let t = new Tower(mouseX, mouseY);
                 if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
