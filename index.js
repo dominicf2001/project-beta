@@ -18,6 +18,8 @@ let f_Andale;
 let beginGame = false;
 let gameOver = false;
 
+let debugConsole;
+
 let game;
 
 // map width & height
@@ -101,7 +103,7 @@ let dragTower = null;
 let playSound = false;
 
 // player variables
-let totalCurrency = 0;
+let totalCurrency = 600;
 let totalHealth = 50;
 
 // checks for next wave button.
@@ -147,6 +149,11 @@ window.mousePressed = function (event) {
 
             if (towers[t].mouseInside() && uiHandler.towerTool == 2) {
                 towers[t].upgradeFireRate();
+                break;
+            }
+
+            if (towers[t].mouseInside() && uiHandler.towerTool == 3) {
+                towers[t].upgradeFireSpeed();
                 break;
             }
         }
@@ -263,7 +270,7 @@ function dealDamage() {
     }
 }
 
-window.keyPressed = function () {
+window.keyPressed = function (e) {
     if (keyCode === ESCAPE) { // use escape to open/close settings
         if (beginGame && !encyclopiaOpen)
             openSettings();
@@ -284,8 +291,12 @@ window.keyPressed = function () {
             enemies: enemies,
 
         }
-        debugConsole.style('display', 'block');
-        debugConsole.html(JSON.stringify(gameData));
+        console.log(gameData);
+        uiHandler.showDebugConsole(JSON.stringify(gameData));
+    }
+    if(e.keyCode == 67 && e.altKey) {
+        console.log("Adding 1000 currency");
+        totalCurrency += 1000;
     }
 
 }
@@ -295,6 +306,8 @@ window.setup = function () {
     game = createCanvas(windowWidth, windowHeight);
     
     uiHandler.initializeUI();
+
+    
     
     uiHandler.onSaveClick = function () {
         // Save game state

@@ -16,9 +16,13 @@ def get_debug_data(browser):
     json_data = json.loads(data)
     return json_data
 
+def increase_currency_hack(browser):
+    action = webdriver.ActionChains(browser).key_down(Keys.ALT).key_down(Keys.SHIFT).key_down('c').key_up('c').key_up(Keys.SHIFT).key_up(Keys.ALT)
+    action.perform()
+
 class TestClass:
-    app = subprocess.Popen(["npm", "start"])
-    time.sleep(5)
+    # app = subprocess.Popen(["npm", "start"])
+    # time.sleep(5)
     browser = webdriver.Chrome()
     browser.get("http://localhost:3000")
 
@@ -79,7 +83,7 @@ class TestClass:
         debug_console_old = get_debug_data(self.browser)
         time.sleep(2)
 
-        action = webdriver.ActionChains(self.browser).move_by_offset(200, 200).click()
+        action = webdriver.ActionChains(self.browser).move_to_element_with_offset(self.browser.find_element(By.ID, "defaultCanvas0"), 200, 200).click()
         action.perform()
 
         time.sleep(2)
@@ -87,7 +91,8 @@ class TestClass:
 
         assert len(debug_console_new["towers"]) == len(debug_console_old["towers"]) + 1, "Tower not placed"
         assert debug_console_new["towers"][0]["x"] == 200, "Tower x position incorrect"
-        assert debug_console_new["towers"][0]["y"] == 200, "Tower y position incorrect"
+        assert debug_console_new["towers"][0]["y"] == 178, "Tower y position incorrect"
+        assert debug_console_new["totalCurrency"] == debug_console_old["totalCurrency"] - 400, "Currency not deducted"
 
     @pytest.mark.dependency(depends=["test_title_screen", "test_debug"])
     def test_wave_spawn(self):
@@ -108,10 +113,58 @@ class TestClass:
         time.sleep(4)
         debug_console_new = get_debug_data(self.browser)
         assert debug_console_new["enemies"][0]["x"] > debug_console["enemies"][0]["x"], "Enemy has not moved"
+        assert debug_console["currentWave"] == 1, "Wave not incremented"
 
-        
+    @pytest.mark.dependency(depends=["test_place_tower", "test_debug"])
+    def test_tower_upgrades(self):
+
+        increase_currency_hack(self.browser)
+        increase_currency_hack(self.browser)
+
+        # Create another tower
+        action = webdriver.ActionChains(self.browser).move_to_element_with_offset(self.browser.find_element(By.ID, "defaultCanvas0"), 400, 400).click()
+        action.perform()
+
+        upgrade_range_button = self.browser.find_element(By.ID, "upgradeRangeButton")
+        upgrade_fire_rate_button = self.browser.find_element(By.ID, "upgradeFireRateButton")
+        upgrade_fire_speed_button = self.browser.find_element(By.ID, "upgradeFireSpeedButton")
+
+        debug_console_old = get_debug_data(self.browser)
+        time.sleep(2)
+        upgrade_range_button.click()
+        time.sleep(2)
+        action = webdriver.ActionChains(self.browser).move_to_element_with_offset(self.browser.find_element(By.ID, "defaultCanvas0"), 200, 200).click()
+        action.perform()
+        time.sleep(2)
+        debug_console_new = get_debug_data(self.browser)
+        assert debug_console_new["towers"][0]["range"] > debug_console_old["towers"][0]["range"], "Range not upgraded"
+        assert debug_console_new["towers"][1]["range"] == debug_console_old["towers"][1]["range"], "Range upgraded on wrong tower"
+
+        debug_console_old = debug_console_new
+        time.sleep(2)
+        upgrade_fire_rate_button.click()
+        time.sleep(2)
+        action = webdriver.ActionChains(self.browser).move_to_element_with_offset(self.browser.find_element(By.ID, "defaultCanvas0"), 400, 400).click()
+        action.perform()
+        time.sleep(2)
+        debug_console_new = get_debug_data(self.browser)
+        assert debug_console_new["towers"][1]["fireRate"] > debug_console_old["towers"][1]["fireRate"], "Fire rate not upgraded"
+        assert debug_console_new["towers"][0]["fireRate"] == debug_console_old["towers"][0]["fireRate"], "Fire rate upgraded on wrong tower"
+
+        debug_console_old = debug_console_new
+        time.sleep(2)
+        upgrade_fire_speed_button.click()
+        time.sleep(2)
+        action = webdriver.ActionChains(self.browser).move_to_element_with_offset(self.browser.find_element(By.ID, "defaultCanvas0"), 200, 200).click()
+        action.perform()
+        time.sleep(2)
+        debug_console_new = get_debug_data(self.browser)
+        assert debug_console_new["towers"][0]["fireSpeed"] > debug_console_old["towers"][0]["fireSpeed"], "Fire speed not upgraded"
+        assert debug_console_new["towers"][1]["fireSpeed"] == debug_console_old["towers"][1]["fireSpeed"], "Fire speed upgraded on wrong tower"
+
+
 
     @pytest.mark.last
     def test_close(self):
         self.browser.close()
-        self.app.terminate()
+        # self.app.terminate()
