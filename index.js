@@ -130,7 +130,7 @@ window.preload = function () {
 // EVENT LISTENERS
 
 window.mousePressed = function (event) {
-    if (gameMode == 1 && uiHandler.ignoreNextClick == false) {
+    if (gameMode == 1 && uiHandler.ignoreNextClick == false && !uiHandler.encyclopediaOpen) {
         // Check if mouse is inside a tower
         for (let t = 0; t < towers.length; t++) {
             if (towers[t].mouseInside() && uiHandler.towerTool == 0) {
