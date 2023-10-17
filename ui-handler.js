@@ -4,13 +4,6 @@ export class UIHandler {
     constructor(windowWidth, windowHeight){
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-        
-        // CLICK HANDLERS
-        this.onSaveClick = () => {};
-        this.onLoadClick = () => {};
-        this.onStartClick = () => {};
-        this.onMuteClick = () => {};
-        this.onNextWaveClick = () => {};
 
         // STATE VARIABLES
         this.settingsOpen = false;
@@ -63,16 +56,10 @@ export class UIHandler {
         this.startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
         this.startButton.addClass('startButton');
         this.startButton.size(200, 100);
-        this.startButton.mousePressed(() =>
-            this.onStartClick()
-        );
 
         // draw "next wave" button
         this.nextWaveButton = createButton('Next Wave')
         this.nextWaveButton.position(this.windowWidth - 100, this.windowHeight + 15);
-        this.nextWaveButton.mousePressed(() =>
-            this.onNextWaveClick()
-        );
 
         this.settingsButton = createImg('./assets/settingsbutton.png');
         this.settingsButton.addClass('settingsMenu');
@@ -86,9 +73,6 @@ export class UIHandler {
         this.muteButton.addClass('settingsMenu');
         this.muteButton.position(this.windowWidth - 50, 60);
         this.muteButton.size(40, 40);
-        this.muteButton.mousePressed(() =>
-            this.onMuteClick()
-        );
 
         this.encyclopediaButton = createImg('./assets/encyclopediaButton.png');
         this.encyclopediaButton.position(this.windowWidth - 279, 10);
@@ -173,9 +157,6 @@ export class UIHandler {
         this.placeTowerButton.style('padding', '5px 10px');
         this.placeTowerButton.style('font-weight', 'bold');
         this.placeTowerButton.position(10, this.windowHeight - 40);
-        this.placeTowerButton.mousePressed(() => {
-            this.towerTool = 0;
-        });
 
         this.upgradeRangeButton = createButton('Upgrade Range');
         this.upgradeRangeButton.style('font-family', 'Andale Mono');
@@ -187,9 +168,7 @@ export class UIHandler {
         this.upgradeRangeButton.style('padding', '5px 10px');
         this.upgradeRangeButton.style('font-weight', 'bold');
         this.upgradeRangeButton.position(160, this.windowHeight - 40);
-        this.upgradeRangeButton.mousePressed(() => {
-            this.towerTool = 1;
-        });
+
         this.upgradeFireRateButton = createButton('Upgrade Fire Speed');
         this.upgradeFireRateButton.style('font-family', 'Andale Mono');
         this.upgradeFireRateButton.style('font-size', '18px');
@@ -200,9 +179,6 @@ export class UIHandler {
         this.upgradeFireRateButton.style('padding', '5px 10px');
         this.upgradeFireRateButton.style('font-weight', 'bold');
         this.upgradeFireRateButton.position(335, this.windowHeight - 40);
-        this.upgradeFireRateButton.mousePressed(() => {
-            this.towerTool = 2;
-        });    
     }
 
     #drawLoadAndSave() {
@@ -210,17 +186,11 @@ export class UIHandler {
         this.saveButton.addClass('settingsMenu');
         this.saveButton.size(100, 40);
         this.saveButton.position(this.windowWidth - 500, 10);
-        this.saveButton.mousePressed(()=>
-            this.onSaveClick()
-        );
 
         this.loadButton = createImg('./assets/loadButton.png');
         this.loadButton.addClass('settingsMenu');
         this.loadButton.size(100, 40);
         this.loadButton.position(this.windowWidth - 390, 10);
-        this.loadButton.mousePressed(()=>
-            this.onLoadClick()
-        ); 
     }
 
     /* Possible idea:
