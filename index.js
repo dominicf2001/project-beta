@@ -102,7 +102,7 @@ let bullets = [];
 let playSound = false;
 
 // other relevant variables
-let totalCurrency = 850;
+let totalCurrency = 1000;
 let totalHealth = 50;
 
 // checks for next wave button.
@@ -147,7 +147,7 @@ window.mousePressed = function (event) {
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
 
-        if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight)) && uiHandler.towerTool == 0) {
+        if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -400,7 +400,7 @@ window.draw = function () {
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
 
-        if (uiHandler.towerTool == 0 && totalCurrency >= 400) {
+        if (totalCurrency >= 400) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
                 tint(255, 0, 0, 200);

@@ -9,12 +9,8 @@ export class UIHandler {
         this.settingsOpen = false;
         this.encyclopediaOpen = false;
         this.ignoreNextClick = false;
-        /**
-         * 0 - place tower (default)
-         * 1 - upgrade range
-         * 2 - upgrade fire rate
-        */
-        this.towerTool = 0;
+        this.placeTowerButtonSelected = false;
+
 
         // UI IMAGE VARIABLES
         this.titleImg;
