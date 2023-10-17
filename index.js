@@ -102,11 +102,7 @@ let dragTower = null;
 let playSound = false;
 
 // other relevant variables
-<<<<<<< Updated upstream
-let totalCurrency = 550;
-=======
 let totalCurrency = 850;
->>>>>>> Stashed changes
 let totalHealth = 50;
 
 // checks for next wave button.
@@ -178,11 +174,8 @@ window.mousePressed = function (event) {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
                 }
-<<<<<<< Updated upstream
-                if (mouseY < maps[0].bottomPath(mouseX) + 10 && mouseY > maps[0].topPath(mouseX) - 35) {
-=======
+
                 if (maps[0].isColliding(mouseX, 30)) {
->>>>>>> Stashed changes
                     // throw new Error("Cannot place a tower on the path!");
                     return;
                 }

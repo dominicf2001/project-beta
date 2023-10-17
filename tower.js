@@ -104,13 +104,10 @@ export class Tower {
     upgradeFireRate() {
         this.fireRate += 1;
     }
-<<<<<<< Updated upstream
 
     upgradeFireSpeed() {
         this.fireSpeed += 1;
     }
-
-=======
     
     /**
      * Method to stun the tower
@@ -141,7 +138,6 @@ export class Tower {
     upgradeFireSpeed() {
         this.fireSpeed += 1;
     }
->>>>>>> Stashed changes
 };
 
 export class Bullet {
