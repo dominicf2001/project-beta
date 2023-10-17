@@ -20,6 +20,10 @@ let f_Andale;
 // 2 - upgrade fire rate
 let towerTool = 0;
 let beginGame = false;
+let gameOver = false;
+
+let game;
+let gameOverScreen;
 
 // buttons
 let upgradeRange;
@@ -62,27 +66,34 @@ function switchMap() {
 
 //function path(x) { return 166.8354 + 1.043129*x - 0.003942524*(x*x) + 0.00000607239*(x*x*x) - 4.46637e-9*(x*x*x*x) + 1.352265e-12*(x*x*x*x*x); }
 
-function path(x) { return 246.768 + 0.6824144*x - 0.002826065*(x*x) + 0.000004403122*(x*x*x) - 3.39375e-9*(x*x*x*x) + 1.15278e-12*(x*x*x*x*x); }
 
-// function path(x) {
-//     if (x < 768) { 
-//     return (5.00842e-27*Math.pow(x, 11) - 1.79629e-23*Math.pow(x,10)
-//     + 2.6735e-20*Math.pow(x, 9) - 2.14461e-17*Math.pow(x, 8)
-//     + 1.02276e-14*Math.pow(x, 7) - 3.17496e-12*Math.pow(x, 6)
-//     + 7.82401e-10*Math.pow(x, 5) - 1.90207e-7*Math.pow(x, 4)
-//     + 4.10456e-5*Math.pow(x, 3) - 6.97063e-3*Math.pow(x, 2)
-//     + 7.67275e-1*x + 3.11e2); }
-//     else if (x >= 768) { 
-//     let t = x - 768;
-//     return (-3.17081e-23*Math.pow(t,11) + 7.03199e-20*Math.pow(t,10)
-//     - 6.63488e-17*Math.pow(t,9) + 3.46794e-14*Math.pow(t,8)
-//     - 1.09391e-11*Math.pow(t,7) + 2.12115e-9*Math.pow(t,6)
-//     - 2.45005e-7*Math.pow(t,5) + 1.51765e-5*Math.pow(t,4)
-//     - 3.54811e-4*Math.pow(t,3) - 3.55384e-3*Math.pow(t,2)
-//     + 2.33631e-1*t + 250);
-//     }
-// }
-//////////////////////////////     
+// PATHING FUNCTIONS
+
+function topPath(x) { return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x); }
+
+function middlePath(x) { return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x); }
+
+function bottomPath(x) {
+    if (x < 768) {
+        return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
+            + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
+            + 1.02276e-14 * Math.pow(x, 7) - 3.17496e-12 * Math.pow(x, 6)
+            + 7.82401e-10 * Math.pow(x, 5) - 1.90207e-7 * Math.pow(x, 4)
+            + 4.10456e-5 * Math.pow(x, 3) - 6.97063e-3 * Math.pow(x, 2)
+            + 7.67275e-1 * x + 3.11e2);
+    }
+    else if (x >= 768) {
+        let t = x - 768;
+        return (-3.17081e-23 * Math.pow(t, 11) + 7.03199e-20 * Math.pow(t, 10)
+            - 6.63488e-17 * Math.pow(t, 9) + 3.46794e-14 * Math.pow(t, 8)
+            - 1.09391e-11 * Math.pow(t, 7) + 2.12115e-9 * Math.pow(t, 6)
+            - 2.45005e-7 * Math.pow(t, 5) + 1.51765e-5 * Math.pow(t, 4)
+            - 3.54811e-4 * Math.pow(t, 3) - 3.55384e-3 * Math.pow(t, 2)
+            + 2.33631e-1 * t + 250);
+    }
+}
+
+//////////////////////////////
 // CONSTRUCT LEVEL
 const waveAmount = 4;
 let currentWave = 0;
@@ -106,6 +117,21 @@ let enemies = [];
 /*
 const test_waveData = [1, 3, 4, 1];
 const test_spawnPriority = [1, 2, 0, 3];
+function selectMap(mapID) {
+    switch (mapID) {
+        case 1:
+            mapImg = loadImage('Maps/Space Map 1.png');
+            break;
+        case 2:
+            mapImg = loadImage('Maps/Space Map Version 2.png');
+            break;
+        default:
+            break;
+    }
+    return;
+}
+const test_waveData = [0, 0, 0, 1];
+const test_spawnPriority = [3];
 
 const newWave = new Wave(test_waveData, test_spawnPriority, path, 4);
 
@@ -126,6 +152,26 @@ let totalCurrency = 0;
 let totalHealth = 50;
 let encyclopedia;
 let nextWave;
+
+
+let mapImg;
+let titleImg;
+var startButton;
+let towerSprite;
+
+window.preload = function () {
+    mySound = loadSound('./assets/potassium.mp3');
+    deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3')
+    f_Andale = loadFont('./assets/Andale-Mono.ttf');
+    towerSprite = loadImage('./assets/RedMoonTower.png');
+    //mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    //mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
+    selectMap(mapID);
+    titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+    gameOverImg = loadImage('./assets/Game_OVER_Screen.png');
+}
+
+
 
 // EVENT LISTENERS
 
@@ -159,6 +205,9 @@ window.mousePressed = function (event) {
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
+                }
+                if (mouseY < bottomPath(mouseX) && mouseY > topPath(mouseX)) {
+                    throw new Error("Cannot place a tower on the path!");
                 }
                 let t = new Tower(mouseX, mouseY);
                 if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
@@ -246,24 +295,12 @@ function fireBullets() {
 
 // GAME LOOP
 let mySound;
+let deathSound;
 
 let settingsOpen = false;
 let settings;
 let settingsMute;
 
-let mapImg;
-let titleImg;
-var startButton;
-let towerSprite;
-
-window.preload = function () {
-    mySound = loadSound('./assets/potassium.mp3');
-    f_Andale = loadFont('./assets/Andale-Mono.ttf');
-    towerSprite = loadImage('./assets/RedMoonTower.png');
-    //mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
-    selectMap(mapID);
-    titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
-}
 
 window.keyPressed = function() {
     if (keyCode === ESCAPE) { // use escape to open/close settings
@@ -274,7 +311,7 @@ window.keyPressed = function() {
 
 window.setup = function () {
 
-    createCanvas(windowWidth, windowHeight);
+    game = createCanvas(windowWidth, windowHeight);
 
     //Poll for bullets every 100ms
 
@@ -377,6 +414,9 @@ window.setup = function () {
 
     image(titleImg, windowWidth/2, (windowHeight/2)-100, 650, 375);
 
+    gameOverScreen = createImg('./assets/Game_OVER_Screen.png');
+    gameOverScreen.addClass('gameOver');
+
     startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
     startButton.addClass('startButton');
     startButton.size(200,100);
@@ -388,8 +428,6 @@ window.setup = function () {
         }
         beginGame = true;
     });
-
-    settingsMenu();
 
     // // draw encyclopedia
     // push();
@@ -429,8 +467,6 @@ window.setup = function () {
                 playSound = true;
             }
             })
-        
-        
 }
 
 
@@ -448,6 +484,7 @@ window.draw = function() {
         saveButton.hide();
         nextWave.hide();
         nextLevel.hide();
+        gameOverScreen.hide();
 
         settings.hide();
         settingsMute.hide();
@@ -460,12 +497,11 @@ window.draw = function() {
     if (gameMode == 1) {
 
         // Show upgrade buttons
-        loadSaveButton.show();
-        saveButton.show();
         upgradeRange.show();
         upgradeFireRate.show();
         startButton.hide();
         nextWave.show();
+        gameOverScreen.hide();
 
         settings.show();
         settings.mousePressed(openSettings);
@@ -513,6 +549,11 @@ window.draw = function() {
         text(totalHealth, 40, 40);
         pop();
 
+        if (totalHealth <= 0) {
+            gameMode = -1;
+            gameOver = true;
+        }
+
         // draw Wave information
         push();
         textSize(20);
@@ -523,6 +564,7 @@ window.draw = function() {
         // draw or remove enemies
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
+            nextWave.hide();
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
                 // Implement game over screen if needed
@@ -561,13 +603,29 @@ window.draw = function() {
             }
         }
 
-        // Draw towers
-        for (const t of towers) {
-            t.draw();
-        }
-
         // Draw tower upgrade menu
         towerUpgradeMenu(windowHeight + 50, canvasWidth);
+
+        
+    }
+
+    if (gameMode == -1 && gameOver == true) {
+        upgradeRange.hide();
+        upgradeFireRate.hide();
+        loadSaveButton.hide();
+        placeTower.hide();
+        saveButton.hide();
+        nextWave.hide();
+        gameOverScreen.hide();
+        settings.hide();
+        settingsMute.hide();
+        game.hide();
+        gameOverScreen.show();
+
+        if (mySound.isPlaying()) {
+            mySound.pause();
+            deathSound.play();
+        }
     }
 }
 
@@ -604,7 +662,7 @@ function spawnNextWave() {
 * @param {number} currentLevel - the wave that the game is currently in. From 1 to waveAmount
 */
 function spawnWave(waveData, spawnPriority, currentLevel) {
-    const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], path, 4);
+    const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], middlePath, 4);
 
     return currentWave;
 }
@@ -653,37 +711,6 @@ function towerUpgradeMenu(height, width) {
     pop();
 }
 
-function mainMenu() {
-    background('#141414');
-    image(titleImg, canvasWidth / 2, (canvasHeight / 2) - 100, 650, 375);
-
-
-
-}
-
-function settingsMenu() {
-    let settingsX = windowWidth - 35
-    let b1settingsY = 15;
-    let b2settingsY = 50;
-    settings = createImg('./assets/settingsbutton.png');
-    settings.position(settingsX, b1settingsY);
-    settings.size(30, 30);
-    settings.mousePressed(function () {
-        settingsMute = createImg('./assets/audiobutton.png');
-        settingsMute.position(settingsX, b2settingsY);
-        settingsMute.size(30, 30);
-        settingsMute.mousePressed(function () {
-            if (playSound) {
-                mySound.pause();
-                playSound = false;
-            } else {
-                mySound.play();
-                playSound = true;
-            }
-            })
-    })
-    
-}
 function openSettings() {
     if (!settingsOpen) {
         settingsMute.show();
@@ -697,3 +724,4 @@ function openSettings() {
         settingsOpen = false;
     }
 }
+
