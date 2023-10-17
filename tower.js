@@ -104,11 +104,44 @@ export class Tower {
     upgradeFireRate() {
         this.fireRate += 1;
     }
+<<<<<<< Updated upstream
 
     upgradeFireSpeed() {
         this.fireSpeed += 1;
     }
 
+=======
+    
+    /**
+     * Method to stun the tower
+     * @returns {void} stun the tower by making it needed to be clicked 7 times
+     */
+    stun() {
+        // this.fireRate = 0;
+        this.stunAmmount = 5;
+    }
+    
+    /**
+     * Method to "unstun" the tower by clicking on it
+     * @returns {void} reduce the amount of clicks needed by 1
+     * PREREQUISITE: this.isStunned() == true
+     */
+    reduceStun(st) {
+        this.stunAmmount--;
+        if (this.stunAmmount == 0) st.amount = 0;
+    }
+
+    /**
+     * Method to check if tower is stunned
+     * @returns {boolean} true if tower is stunned, false otherwise
+     */
+    isStunned() {
+        return (this.stunAmmount > 0);
+    }
+    upgradeFireSpeed() {
+        this.fireSpeed += 1;
+    }
+>>>>>>> Stashed changes
 };
 
 export class Bullet {
