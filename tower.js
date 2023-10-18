@@ -5,7 +5,7 @@ var spriteSheet;
 var towerAnimation;
 
 export class Tower {
-    static TOWER_SIZE = 40;
+    static TOWER_SIZE = 90;
     
     /**
      * Constructs a tower with x and y coordinates
@@ -15,7 +15,7 @@ export class Tower {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.range = 50;
+        this.range = 100;
         this.damage = 1;
         this.fireRate = 1;
         this.coolDown = 5;
@@ -29,15 +29,9 @@ export class Tower {
     draw(towerSprite) {
         
         push();
-        fill(152, 84, 235);
 
-        //tower as a rectangle
-        rect(this.x - (Tower.TOWER_SIZE / 4), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE/2, Tower.TOWER_SIZE, 10, 10, 0, 0);
-        
-        //tower as a sprite (DOESNT WORK)
-        //image(towerSprite, this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-        //img = loadImage('assets/RedMoonTower.png');
-        //image(img, 0, 0);
+        // Draw tower
+        image(towerSprite, this.x, this.y, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
 
         strokeWeight(2);
         stroke(255);
@@ -114,12 +108,7 @@ export class Bullet {
         this.damage = tower.damage;
         this.target = target;
         
-        let xDist = target.x - tower.x;
-        let yDist = target.y - tower.y;
-        this.angle = atan2(yDist, xDist);
-
-        this.xMove = Math.cos(this.angle);
-        this.yMove = Math.sin(this.angle);
+        this.updateDirection();
     }
 
     /**
@@ -134,10 +123,15 @@ export class Bullet {
         strokeWeight(2);
         fill(255, 0, 0);
         ellipse(this.x, this.y, 5, 5);
-        this.x += this.xMove;
-        this.y += this.yMove;
+        this.x += this.xMove * 2;
+        this.y += this.yMove * 2;
         this.range--;
         pop();
+
+        // update only every 15 frames to ease computation
+        if (this.range % 15 === 0){
+            this.updateDirection();   
+        }
     }
 
     /**
@@ -148,8 +142,7 @@ export class Bullet {
         return this.range <= 0;
     }
 
-    /**
-     * Method to check if bullet has hit its target
+    /**     * Method to check if bullet has hit its target
      * @returns {boolean} boolean that if true, indicates the bullet has hit its target
      */
     hasHitTarget() {
@@ -158,5 +151,14 @@ export class Bullet {
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         return distance <= 8;
+    }
+
+    updateDirection() {
+        const xDist = this.target.x - this.x;
+        const yDist = this.target.y - this.y;
+        
+        this.angle = Math.atan2(yDist, xDist);
+        this.xMove = Math.cos(this.angle);
+        this.yMove = Math.sin(this.angle);
     }
 }
