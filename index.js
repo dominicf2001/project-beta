@@ -1,6 +1,6 @@
-import { Tank, Standard, Rapid, Wave } from "./enemy.js";
+import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
 import { Tower, Bullet } from "./tower.js";
-
+import { UIHandler } from "./ui-handler.js";
 
 // GLOBAL VARIABLES
 
@@ -15,27 +15,49 @@ const secondaryColor = "color(81, 176, 101)"; // green
 var gameMode = 0;
 let f_Andale;
 
-// 0 - place tower (default)
-// 1 - upgrade range
-// 2 - upgrade fire rate
-let towerTool = 0;
 let beginGame = false;
 let gameOver = false;
 
-let game;
-let gameOverScreen;
+let debugConsole;
 
-// buttons
-let upgradeRange;
-let upgradeFireRate;
-let placeTower;
-let saveButton;
-let loadSaveButton;
+let game;
 
 // map width & height
 let windowWidth = 1200;
 let windowHeight = 700;
-let mapID = 2;
+
+var mapID = 0;
+var levelComplete = false;
+// Select Map Function
+function selectMap(mapID) {
+    switch (mapID) {
+        case 0:
+            mapImg = loadImage('Maps/Space Map 1.png');
+            break;
+        case 1:
+            mapImg = loadImage('Maps/Space Map Version 2.png');
+            break;
+        case 2:
+            //mapImg = loadImage('Maps/Boss Map.png');
+            break;
+        default:
+            break;
+    }
+    return;
+}
+// Reset the Map variables
+function switchMap() {
+    ++mapID;
+    currentWave = 0;
+    levelComplete = false;
+    enemies = []; // Reset Enemies
+    towers = []; // resets towers
+    selectMap(mapID);
+    nextLevel.hide();
+    redraw();
+}
+
+let uiHandler = new UIHandler(windowWidth, windowHeight);
 
 /*
 const path = [
@@ -50,98 +72,110 @@ const path = [
     { x: 1190, y: 420 },
 ]; */
 
-
-// PATHING FUNCTIONS
-
-function topPath(x) { return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x); }
-
-function middlePath(x) { return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x); }
-
-function bottomPath(x) {
-    if (x < 768) {
-        return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
-            + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
-            + 1.02276e-14 * Math.pow(x, 7) - 3.17496e-12 * Math.pow(x, 6)
-            + 7.82401e-10 * Math.pow(x, 5) - 1.90207e-7 * Math.pow(x, 4)
-            + 4.10456e-5 * Math.pow(x, 3) - 6.97063e-3 * Math.pow(x, 2)
-            + 7.67275e-1 * x + 3.11e2);
-    }
-    else if (x >= 768) {
-        let t = x - 768;
-        return (-3.17081e-23 * Math.pow(t, 11) + 7.03199e-20 * Math.pow(t, 10)
-            - 6.63488e-17 * Math.pow(t, 9) + 3.46794e-14 * Math.pow(t, 8)
-            - 1.09391e-11 * Math.pow(t, 7) + 2.12115e-9 * Math.pow(t, 6)
-            - 2.45005e-7 * Math.pow(t, 5) + 1.51765e-5 * Math.pow(t, 4)
-            - 3.54811e-4 * Math.pow(t, 3) - 3.55384e-3 * Math.pow(t, 2)
-            + 2.33631e-1 * t + 250);
-    }
-}
+export let maps = [
+// First map
+    {
+        topPath: function(x) {
+            return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x);
+        },
+        middlePath: function(x) {
+            return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x);
+        },
+        bottomPath: function(x) {
+            if (x < 768) {
+                return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
+                    + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
+                    + 1.02276e-14 * Math.pow(x, 7) - 3.17496e-12 * Math.pow(x, 6)
+                    + 7.82401e-10 * Math.pow(x, 5) - 1.90207e-7 * Math.pow(x, 4)
+                    + 4.10456e-5 * Math.pow(x, 3) - 6.97063e-3 * Math.pow(x, 2)
+                    + 7.67275e-1 * x + 3.11e2);
+            }
+            else if (x >= 768) {
+                let t = x - 768;
+                return (-3.17081e-23 * Math.pow(t, 11) + 7.03199e-20 * Math.pow(t, 10)
+                    - 6.63488e-17 * Math.pow(t, 9) + 3.46794e-14 * Math.pow(t, 8)
+                    - 1.09391e-11 * Math.pow(t, 7) + 2.12115e-9 * Math.pow(t, 6)
+                    - 2.45005e-7 * Math.pow(t, 5) + 1.51765e-5 * Math.pow(t, 4)
+                    - 3.54811e-4 * Math.pow(t, 3) - 3.55384e-3 * Math.pow(t, 2)
+                    + 2.33631e-1 * t + 250);
+            }
+        },
+        isColliding: function(x, diameter) {
+            return mouseY < maps[0].bottomPath(x) && mouseY > maps[0].topPath(x) - diameter;
+        }
+    },
+    {}
+];
 
 //////////////////////////////
 // CONSTRUCT LEVEL
-const waveAmount = 4;
 let currentWave = 0;
 
-const levelWaveData = [
-    [0, 3],
-    [0, 0, 6],
-    [2],
-    [0, 0, 0, 1]
+// The Level Data
+const levels = [
+    { // Level 1 Data
+        leveldata: [
+            [0, 3],
+            [0, 0, 6],
+            [2],
+            [0, 0, 0, 1]
+        ],
+        spawnPriority: [
+            [1, 0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0]
+        ]
+    },
+    { // Level 2 Data
+        leveldata: [
+            [0, 3],
+            [0, 0, 6],
+            [2],
+            [0, 0, 0, 1]
+        ],
+        spawnPriority: [
+            [1, 0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0]
+        ]
+    }
 ];
 
-const levelSpawnPriority = [
-    [1, 0],
-    [2, 1, 0],
-    [0],
-    [3, 2, 1, 0]
-];
+// needs to be generalized for all levels
+const waveAmount = levels[0].leveldata.length;
 
 let enemies = [];
-/////////////////////////////
-/*
-const test_waveData = [1, 3, 4, 1];
-const test_spawnPriority = [1, 2, 0, 3];
-function selectMap(mapID) {
-    switch (mapID) {
-        case 1:
-            mapImg = loadImage('Maps/Space Map 1.png');
-            break;
-        case 2:
-            mapImg = loadImage('Maps/Space Map Version 2.png');
-            break;
-        default:
-            break;
-    }
-    return;
-}
-const test_waveData = [0, 0, 0, 1];
-const test_spawnPriority = [3];
-
-const newWave = new Wave(test_waveData, test_spawnPriority, path, 4);
-
-newWave.debugPrintWave();
-newWave.spawn();
-const enemies = newWave.getEnemies();
-*/
 
 // tower variables
 const towerLimit = 5;
 let towers = [];
 let bullets = [];
-let dragTower = null;
+// let dragTower = null;
 let playSound = false;
 
 // other relevant variables
-let totalCurrency = 0;
+let totalCurrency = 1000;
 let totalHealth = 50;
-let encyclopedia;
-let nextWave;
 
+// checks for next wave button.
+// can cause error if new ways that enemies disapear arise so keep in mind
+let nextWaveCheck = { 
+    amount: 0
+}
 
+// checks for stunned towers
+let stunCooldown = {
+    amount: 0,
+    trigger: 400
+}
+
+// Assets
 let mapImg;
-let titleImg;
-var startButton;
 let towerSprite;
+let mySound;
+let deathSound;
 
 window.preload = function () {
     mySound = loadSound('./assets/potassium.mp3');
@@ -149,91 +183,89 @@ window.preload = function () {
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
-    titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
-    gameOverImg = loadImage('./assets/Game_OVER_Screen.png');
+    selectMap(mapID); // Loads the Map
+    uiHandler.preloadAssets();
 }
-
-
 
 // EVENT LISTENERS
 
 window.mousePressed = function (event) {
-    if (gameMode == 1) {
-        console.log(event);
-
+    if (gameMode == 1 && uiHandler.ignoreNextClick == false && !uiHandler.encyclopediaOpen) {
         // Check if mouse is inside a tower
-        for(let t = 0; t < towers.length; t++) {
-            if (towers[t].mouseInside() && towerTool == 0) {
-                dragTower = towers.splice(t, 1)[0];
-                dragTower.hover = true;
-                towers.push(dragTower);
-                break;
-            }
-
-            if (towers[t].mouseInside() && towerTool == 1) {
-                towers[t].upgradeRange();
-                break;
-            }
-
-            if (towers[t].mouseInside() && towerTool == 2) {
-                towers[t].upgradeFireRate();
-                break;
+        for (let t = 0; t < towers.length; t++) {
+            if (towers[t].mouseInside()) {
+                towers[t].selected = true;
+                // dragTower = towers.splice(t, 1)[0];
+                // dragTower.hover = true;
+                // towers.push(dragTower);
+            } else {
+                towers[t].selected = false;
             }
         }
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
-        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))&& towerTool == 0) {        
+
+        if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
                 }
-                if (mouseY < bottomPath(mouseX) && mouseY > topPath(mouseX)) {
-                    throw new Error("Cannot place a tower on the path!");
+
+                if (maps[0].isColliding(mouseX, 30)) {
+                    // throw new Error("Cannot place a tower on the path!");
+                    return;
                 }
                 let t = new Tower(mouseX, mouseY);
                 if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
                     // throw new Error("NO");
                 } else {
-                    towers.push(t);
+                    if(totalCurrency<400){
+                    }
+                    else{  
+                        towers.push(t);
+                        totalCurrency -= 400;
+                        }   
                 }
 
             } catch (e) {
                 alert(e);
             }
         }
+    } else {
+        uiHandler.ignoreNextClick = false;
     }
 }
 
-window.mouseDragged = function () {
-    // Move tower if it's being dragged
-    if (dragTower != null) {
-        dragTower.x = mouseX;
-        dragTower.y = mouseY;
-    }
-}
+// window.mouseDragged = function () {
+//     // Move tower if it's being dragged
+//     if (dragTower != null) {
+//         dragTower.x = mouseX;
+//         dragTower.y = mouseY;
+//     }
+// }
 
-window.mouseReleased = function () {
-    // Stop dragging tower
-    if (dragTower != null) {
-        dragTower.x = mouseX;
-        dragTower.y = mouseY;
-        dragTower.hover = false;
-        dragTower = null;
-    }
-}
+// window.mouseReleased = function () {
+//     // Stop dragging tower
+//     if (dragTower != null) {
+//         dragTower.x = mouseX;
+//         dragTower.y = mouseY;
+//         dragTower.hover = false;
+//         dragTower = null;
+//     }
+// }
 
 window.mouseMoved = function () {
     // Change cursor if mouse is inside a tower
     for (let t of towers) {
         if (t.mouseInside()) {
             t.hover = true;
-            if(towerTool == 0) {
-                cursor('grab');
-            }
-            if (towerTool == 1 || towerTool == 2) {
-                cursor('crosshair');
-            }
+            // if(uiHandler.towerTool == 0) {
+            cursor('grab');
+            // }
+            // if (uiHandler.towerTool == 1 || uiHandler.towerTool == 2 || uiHandler.towerTool == 3) {
+            //     cursor('crosshair');
+            // }
             return;
         }
     }
@@ -244,6 +276,14 @@ window.mouseMoved = function () {
 }
 
 // HELPERS
+
+function getSelectedTower() {
+    for (let t of towers) {
+        if (t.selected) {
+            return t;
+        }
+    }
+}
 
 function fireBullets() {
     // Generate bullets for each tower
@@ -273,76 +313,57 @@ function fireBullets() {
         }
     }
 }
-
-
-// GAME LOOP
-let mySound;
-let deathSound;
-
-let settingsOpen = false;
-let settings;
-let settingsMute;
-
-window.keyPressed = function() {
-    if (keyCode === ESCAPE) { // use escape to open/close settings
-        if (beginGame)
-            openSettings();
+    
+function dealDamage() {
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].damageTowers(towers);
+    }
+    for (let i = 0; i < towers.length; i++) {
+        if (towers[i].health <= 0) {
+            towers.splice(i, 1);
+        }
     }
 }
 
+window.keyPressed = function (e) {
+    if (keyCode === ESCAPE) { // use escape to open/close settings
+        if (beginGame && !encyclopiaOpen)
+            openSettings();
+        if (encyclopiaOpen) {
+            encyclopedia.hide();
+            encyclopediaExit.hide();
+            encyclopiaOpen = false;
+        }
+    }
+    if(e.key === 'd') { // use d to open/close debug console
+        let gameData = {
+            gameMode: gameMode,
+            totalCurrency: totalCurrency,
+            totalHealth: totalHealth,
+            waveAmount: waveAmount,
+            currentWave: currentWave,
+            towers: towers,
+            enemies: enemies,
+
+        }
+        console.log(gameData);
+        uiHandler.showDebugConsole(JSON.stringify(gameData));
+    }
+    if(e.keyCode == 67 && e.altKey) {
+        console.log("Adding 1000 currency");
+        totalCurrency += 1000;
+    }
+
+}
+
 window.setup = function () {
-
     game = createCanvas(windowWidth, windowHeight);
+    
+    uiHandler.initializeUI();
 
-    //Poll for bullets every 100ms
-
-    setInterval(fireBullets, 100);
-    placeTower = createButton('Place Tower');
-    placeTower.style('font-family', 'Andale Mono');
-    placeTower.style('font-size', '18px');
-    placeTower.style('color', color(181, 43, 131));
-    placeTower.style('background-color', color(81,176,101));
-    placeTower.style('border', 'none');
-    placeTower.style('border-radius', '5px');
-    placeTower.style('padding', '5px 10px');
-    placeTower.style('font-weight', 'bold');
-    placeTower.position(10, windowHeight + 40);
-    placeTower.mousePressed(function() {
-        towerTool = 0;
-    });
-
-    upgradeRange = createButton('Upgrade Range');
-    upgradeRange.style('font-family', 'Andale Mono');
-    upgradeRange.style('font-size', '18px');
-    upgradeRange.style('color', color(181, 43, 131));
-    upgradeRange.style('background-color', color(81,176,101));
-    upgradeRange.style('border', 'none');
-    upgradeRange.style('border-radius', '5px');
-    upgradeRange.style('padding', '5px 10px');
-    upgradeRange.style('font-weight', 'bold');
-    upgradeRange.position(160, windowHeight + 40);
-    upgradeRange.mousePressed(function() {
-        towerTool = 1;
-    });
-    upgradeFireRate = createButton('Upgrade Fire Speed');
-    upgradeFireRate.style('font-family', 'Andale Mono');
-    upgradeFireRate.style('font-size', '18px');
-    upgradeFireRate.style('color', color(181, 43, 131));
-    upgradeFireRate.style('background-color', color(81,176,101));
-    upgradeFireRate.style('border', 'none');
-    upgradeFireRate.style('border-radius', '5px');
-    upgradeFireRate.style('padding', '5px 10px');
-    upgradeFireRate.style('font-weight', 'bold');
-    upgradeFireRate.position(335, windowHeight + 40);
-    upgradeFireRate.mousePressed(function() {
-        towerTool = 2;
-    });
-
-    saveButton = createImg('./assets/saveButton.png');
-    saveButton.addClass('settingsMenu');
-    saveButton.size(100,40);
-    saveButton.position(windowWidth-265, 10);
-    saveButton.mousePressed(function() {
+    
+    
+    uiHandler.saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
             towers: towers,
@@ -351,16 +372,11 @@ window.setup = function () {
         };
         localStorage.setItem("saveState", JSON.stringify(saveState));
     });
-
-    loadSaveButton = createImg('./assets/loadButton.png');
-    loadSaveButton.addClass('settingsMenu');
-    loadSaveButton.size(100,40);
-    loadSaveButton.position(windowWidth-160,10);
-    loadSaveButton.mousePressed(function() {
+    
+    uiHandler.loadButton.mousePressed(function() {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
         if (saveState) {
-
             // Load Tower data
             let towerData = JSON.parse(localStorage.getItem("saveState")).towers;
             for (let i = 0; i < towerData.length; i++) {
@@ -391,17 +407,20 @@ window.setup = function () {
         }
     });
 
-    imageMode(CENTER);
+    uiHandler.muteButton.mousePressed(function() {
+        if (playSound) {
+            mySound.pause();
+            this.playSound = false;
+        } else {
+            mySound.play();
+            playSound = true;
+        }
+    });
 
-    image(titleImg, windowWidth/2, (windowHeight/2)-100, 650, 375);
 
-    gameOverScreen = createImg('./assets/Game_OVER_Screen.png');
-    gameOverScreen.addClass('gameOver');
-
-    startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
-    startButton.addClass('startButton');
-    startButton.size(200,100);
-    startButton.mousePressed(function() {
+    console.log("test");
+    uiHandler.startButton.mousePressed(function() {
+        console.log("test");
         if (!playSound) {
             mySound.setVolume(0.1);
             mySound.play();
@@ -410,57 +429,38 @@ window.setup = function () {
         beginGame = true;
     });
 
-    // // draw encyclopedia
-    // push();
-    // encyclopedia = createButton('Encyclopedia');
-    // encyclopedia.position(1057, 150);
-    // encyclopedia.mousePressed(showEncyclopedia);
-    // pop();
+    uiHandler.nextWaveButton.mousePressed(function() {
+        spawnNextWave();
+    });
 
-    // draw "next wave" button
-    push();
-    nextWave = createButton('Next Wave')
-    nextWave.position(windowWidth - 100, windowHeight + 15);
-    nextWave.mousePressed(spawnNextWave);
-    pop();
+    uiHandler.upgradeFireRateButton.mousePressed(function() {
+        let selectedUpgradeTower = getSelectedTower();
+        selectedUpgradeTower.upgradeFireRate();
+    });
 
-    settings = createImg('./assets/settingsbutton.png');
-    settings.addClass('settingsMenu');
-    settings.position(windowWidth-50, 10);
-    settings.size(40,40);
-    settingsMute = createImg('./assets/audiobutton.png');
-    settingsMute.addClass('settingsMenu');
-    settingsMute.position(windowWidth-50, 60);
-    settingsMute.size(40,40);
-        settingsMute.mousePressed(function() {
-            if (playSound) {
-                mySound.pause();
-                playSound = false;
-            } else {
-                mySound.play();
-                playSound = true;
-            }
-            })
+    uiHandler.upgradeFireSpeedButton.mousePressed(function() {
+        let selectedUpgradeTower = getSelectedTower();
+        selectedUpgradeTower.upgradeFireSpeed();
+    });
+    
+    uiHandler.upgradeRangeButton.mousePressed(function() {
+        let selectedUpgradeTower = getSelectedTower();
+        selectedUpgradeTower.upgradeRange();
+    });
+
+    //Poll for bullets every 100ms
+
+    setInterval(fireBullets, 100);
+    setInterval(dealDamage, 100);
 }
 
 
 
-window.draw = function() {
+window.draw = function () {
     fill(0);
 
     if (gameMode == 0) {
-
-        // Hide buttons
-        upgradeRange.hide();
-        upgradeFireRate.hide();
-        loadSaveButton.hide();
-        placeTower.hide();
-        saveButton.hide();
-        nextWave.hide();
-        gameOverScreen.hide();
-
-        settings.hide();
-        settingsMute.hide();
+        uiHandler.updateUIForGameMode(gameMode);
 
         // Switch to game mode
         if (beginGame) {
@@ -469,19 +469,45 @@ window.draw = function() {
     }
     if (gameMode == 1) {
 
-        // Show upgrade buttons
-        upgradeRange.show();
-        upgradeFireRate.show();
-        startButton.hide();
-        nextWave.show();
-        gameOverScreen.hide();
 
-        settings.show();
-        settings.mousePressed(openSettings);
+        uiHandler.updateUIForGameMode(gameMode);
+
+        if (getSelectedTower()) {
+            uiHandler.upgradeFireRateButton.show();
+            uiHandler.upgradeRangeButton.show();
+            uiHandler.upgradeFireSpeedButton.show();
+        } else {
+            uiHandler.upgradeFireRateButton.hide();
+            uiHandler.upgradeRangeButton.hide();
+            uiHandler.upgradeFireSpeedButton.hide();
+        }
+        
+        // TODO
+        if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
+        else uiHandler.nextWaveButton.hide();
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
-
+        
+        // Displays Level Complete Text when all waves are done
+        if (levelComplete) {
+            push();
+            textAlign(CENTER);
+            textSize(40)
+            fill('red');
+            text('Level Complete', 600, 100);
+            pop();
+        }
+        if (totalCurrency >= 400) {
+            push();
+            if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
+                tint(255, 0, 0, 200);
+            } else {
+                tint(255, 200);
+            }
+            image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+            pop();
+        }
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -494,19 +520,8 @@ window.draw = function() {
         // Draw towers
         for (const t of towers) {
             t.draw(towerSprite);
+            if (t.isStunned()) t.drawStunned();
         }
-        // draw path
-
-        /* push();
-        strokeWeight(20);
-        stroke(255, 255, 255, 255);
-        noFill();
-        beginShape();
-        for (const point of path) {
-            vertex(point.x, point.y);
-        }
-        endShape();
-        pop(); */
 
         // draw currency holder
         push();
@@ -527,40 +542,52 @@ window.draw = function() {
             gameOver = true;
         }
 
-        // draw Wave information
+         // draw Wave information
         push();
         textSize(20);
         fill('white');
-        text('Wave: ' + currentWave + '/' + waveAmount, windowWidth - 120, windowHeight - 30);
+        text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 30);
         pop();
 
         // draw or remove enemies
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
-            nextWave.hide();
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
+                nextWaveCheck.amount -= 1;
+
                 // Implement game over screen if needed
                 enemies.splice(i, 1);
             } else if (enemies[i].health <= 0) {
                 totalCurrency += enemies[i].currency;
-
                 // handle spawner type enemies
                 if (enemies[i].spawn) {
-                    enemies[i].spawn(enemies);
+                    enemies[i].spawn(enemies, nextWaveCheck);
                 }
-
+                nextWaveCheck.amount -= 1;
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
-
+                // handle stunner type enemies
+                if (enemies[i].stunTower) {
+                    if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
+                    else {
+                        let stunIndex = enemies[i].stunTower(towers.length);
+                        // console.log(stunIndex ?? -1);
+                        if (stunIndex != -1) {
+                            if (!towers[stunIndex].isStunned()) {
+                                towers[stunIndex].stun();
+                            }
+                        }
+                        stunCooldown.amount = 0;
+                    }
+                }
                 // handle spawner type enemies
                 if (enemies[i].spawn && !enemies[i].onCooldown) {
                     enemies[i].spawn(enemies);
                 }
             }
         }
-
         // Draw bullets before towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -575,26 +602,14 @@ window.draw = function() {
                 bullets[i].draw();
             }
         }
-
-        // Draw tower upgrade menu
-        towerUpgradeMenu(windowHeight + 50, canvasWidth);
-
-        
     }
 
     if (gameMode == -1 && gameOver == true) {
-        upgradeRange.hide();
-        upgradeFireRate.hide();
-        loadSaveButton.hide();
-        placeTower.hide();
-        saveButton.hide();
-        nextWave.hide();
-        gameOverScreen.hide();
-        settings.hide();
-        settingsMute.hide();
-        game.hide();
-        gameOverScreen.show();
 
+        uiHandler.updateUIForGameMode(gameMode);
+        
+        game.hide();
+        
         if (mySound.isPlaying()) {
             mySound.pause();
             deathSound.play();
@@ -602,27 +617,26 @@ window.draw = function() {
     }
 }
 
-// Show the Encyclopedia when button is pressed. 
-function showEncyclopedia() {
-
-}
-
 // Spawns the next wave.
 function spawnNextWave() {
     try {
-        if (currentWave < waveAmount) {
+        if (currentWave < levels[mapID].leveldata.length) {
             currentWave = currentWave + 1;
-            let newWave = spawnWave(levelWaveData, levelSpawnPriority, currentWave);
+
+            let newWave = spawnWave(levels[mapID].leveldata, levels[mapID].spawnPriority, currentWave);
+            for (let t = 0; t < levels[mapID].leveldata[currentWave - 1].length; ++t)
+                nextWaveCheck.amount += levels[mapID].leveldata[currentWave - 1][t];
             newWave.debugPrintWave();
             newWave.spawn();
-            console.log(newWave)
+            console.log(newWave);
 
             enemies = newWave.getEnemies();
-            console.log(enemies);
         } else {
-            throw new Error("No more waves available");
+            // Next Level Button and Level Complete text Appears after all the Waves are done.
+            nextLevel.show(); 
+            levelComplete = true;
         }
-    } catch(e) {
+    } catch (e) {
         alert(e);
     }
 }
@@ -633,66 +647,7 @@ function spawnNextWave() {
 * @param {number} currentLevel - the wave that the game is currently in. From 1 to waveAmount
 */
 function spawnWave(waveData, spawnPriority, currentLevel) {
-    const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], middlePath, 4);
+    const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], maps[mapID].middlePath, 4);
 
     return currentWave;
 }
-
-function towerUpgradeMenu(height, width) {
-
-    const toolbarColor = color(51, 51, 51);
-    toolbarColor.setAlpha(200);
-
-    placeTower.show();
-    upgradeRange.show();
-    upgradeFireRate.show();
-
-    // Update button colors
-    switch(towerTool) {
-        case 0:
-            placeTower.style('background-color', color(181, 43, 131));
-            placeTower.style('color', color(81,176,101));
-            upgradeRange.style('background-color', color(81,176,101));
-            upgradeRange.style('color', color(181, 43, 131));
-            upgradeFireRate.style('background-color', color(81,176,101));
-            upgradeFireRate.style('color', color(181, 43, 131));
-            break;
-        case 1:
-            placeTower.style('background-color', color(81,176,101));
-            placeTower.style('color', color(181, 43, 131));
-            upgradeRange.style('background-color', color(181, 43, 131));
-            upgradeRange.style('color', color(81,176,101));
-            upgradeFireRate.style('background-color', color(81,176,101));
-            upgradeFireRate.style('color', color(181, 43, 131));
-            break;
-        case 2:
-            placeTower.style('background-color', color(81,176,101));
-            placeTower.style('color', color(181, 43, 131));
-            upgradeRange.style('background-color', color(81,176,101));
-            upgradeRange.style('color', color(181, 43, 131));
-            upgradeFireRate.style('background-color', color(181, 43, 131));
-            upgradeFireRate.style('color', color(81,176,101));
-            break;
-    }
-
-    push();
-    fill(toolbarColor);
-    noStroke();
-    rect(0, height - 50, width, 50);
-    pop();
-}
-
-function openSettings() {
-    if (!settingsOpen) {
-        settingsMute.show();
-        loadSaveButton.show();
-        saveButton.show();
-        settingsOpen = true;
-    } else {
-        settingsMute.hide();
-        loadSaveButton.hide();
-        saveButton.hide();
-        settingsOpen = false;
-    }
-}
-
