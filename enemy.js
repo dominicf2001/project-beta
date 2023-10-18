@@ -18,7 +18,8 @@ const ENEMY_BUILDERS = [
     (path, offset, x, y) => new Tank(path, offset, x, y),
     (path, offset, x, y) => new Standard(path, offset, x, y),
     (path, offset, x, y) => new Rapid(path, offset, x, y),
-    (path, offset, x, y) => new Spawner(path, offset, x, y)
+    (path, offset, x, y) => new Spawner(path, offset, x, y),
+    (path, offset, x, y) => new Stunner(path, offset, x, y)
 ];
 
 /** Class representing an enemy */
@@ -198,6 +199,25 @@ class Spawner extends Enemy {
         }
     }
 }
+
+/** The Stunner */
+class Stunner extends Enemy {
+    constructor(path, offset, x, y) {
+        super(0.6, 15, path, offset, 280, 3, x, y);
+    }
+    drawAppearance() {
+        fill(75);
+        noStroke();
+        triangle(this.x - 10, this.y + 10, this.x, this.y - 10, this.x + 10, this.y + 10);
+    }
+    stunTower(n) {
+        if (n > 0) {
+            let r = n % 3;
+            let q = Math.floor(n / 3);
+            return Math.floor(Math.random() * q);
+        } else return -1;
+    }
+}
     
 
 /** @module wave */
@@ -262,4 +282,4 @@ class Wave {
 };
 
 // ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
-export { Enemy, Tank, Standard, Rapid, Wave }
+export { Enemy, Tank, Standard, Rapid, Wave, Stunner }

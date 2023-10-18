@@ -1,4 +1,4 @@
-import { Tank, Standard, Rapid, Wave } from "./enemy.js";
+import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
 import { Tower, Bullet } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
@@ -43,6 +43,7 @@ const path = [
 ]; */
 
 export let maps = [
+// First map
     {
         topPath: function(x) {
             return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x);
@@ -74,29 +75,30 @@ export let maps = [
         }
     },
     {}
-]; 
+];
 
 //////////////////////////////
 // CONSTRUCT LEVEL
-const waveAmount = 4;
-let currentWave = 0;
-
 const levelWaveData = [
     [0, 3],
     [0, 0, 6],
     [2],
-    [0, 0, 0, 1]
+    [0, 0, 0, 1],
+    [0, 0, 0, 0, 1]
 ];
 
 const levelSpawnPriority = [
     [1, 0],
     [2, 1, 0],
     [0],
-    [3, 2, 1, 0]
+    [3, 2, 1, 0],
+    [4, 3, 2, 1, 0]
 ];
 
+const waveAmount = levelWaveData.length;
+let currentWave = 0;
+
 let enemies = [];
-/////////////////////////////
 
 // tower variables
 const towerLimit = 5;
@@ -115,6 +117,13 @@ let nextWaveCheck = {
     amount: 0
 }
 
+// checks for stunned towers
+let stunCooldown = {
+    amount: 0,
+    trigger: 400
+}
+
+// Assets
 let mapImg;
 let towerSprite;
 let mySound;
@@ -130,14 +139,14 @@ window.preload = function () {
     uiHandler.preloadAssets();
 }
 
-
-
 // EVENT LISTENERS
 
 window.mousePressed = function (event) {
     if (gameMode == 1 && uiHandler.ignoreNextClick == false && !uiHandler.encyclopediaOpen) {
         // Check if mouse is inside a tower
         for (let t = 0; t < towers.length; t++) {
+            if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
+            
             if (towers[t].mouseInside() && uiHandler.towerTool == 0) {
                 dragTower = towers.splice(t, 1)[0];
                 dragTower.hover = true;
@@ -443,6 +452,7 @@ window.draw = function () {
         // Draw towers
         for (const t of towers) {
             t.draw(towerSprite);
+            if (t.isStunned()) t.drawStunned();
         }
         // draw path
 
@@ -502,14 +512,26 @@ window.draw = function () {
                 enemies.splice(i, 1);
             } else {
                 enemies[i].draw();
-
+                // handle stunner type enemies
+                if (enemies[i].stunTower) {
+                    if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
+                    else {
+                        let stunIndex = enemies[i].stunTower(towers.length);
+                        // console.log(stunIndex ?? -1);
+                        if (stunIndex != -1) {
+                            if (!towers[stunIndex].isStunned()) {
+                                towers[stunIndex].stun();
+                            }
+                        }
+                        stunCooldown.amount = 0;
+                    }
+                }
                 // handle spawner type enemies
                 if (enemies[i].spawn && !enemies[i].onCooldown) {
                     enemies[i].spawn(enemies);
                 }
             }
         }
-
         // Draw bullets before towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {

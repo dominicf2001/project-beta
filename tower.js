@@ -22,6 +22,7 @@ export class Tower {
         this.coolDown = 5;
         this.fireSpeed = 1;
         this.hover = false;
+        this.stunAmmount = 0;
     }
     
     /**
@@ -53,6 +54,24 @@ export class Tower {
         stroke(0, 180, 0);
         rectMode(CENTER);
         rect(this.x, this.y + 60, healthBarWidth, 5);
+        console.log(this.stunAmmount);
+        pop();
+    }
+    
+    /**
+     * Method to draw a stunned tower on the canvas
+     * @returns {void} draws the tower on the canvas, but in a stunned state
+     */
+
+    drawStunned() {
+        
+        push();
+
+        // draw stunned box (triangle for now)
+        fill(255);
+        noStroke();
+        triangle(this.x - 15, this.y + 15, this.x, this.y - 15, this.x + 15, this.y + 15);
+
         pop();
     }
 
@@ -69,8 +88,7 @@ export class Tower {
      * @returns {boolean} boolean that if true, indicates the tower can fire a bullet
      */
     canFire() {
-        
-
+        if (this.stunAmmount > 0) return false;
         if (this.coolDown > this.fireRate) {
             this.coolDown--;
             return false;
@@ -134,9 +152,6 @@ export class Tower {
      */
     isStunned() {
         return (this.stunAmmount > 0);
-    }
-    upgradeFireSpeed() {
-        this.fireSpeed += 1;
     }
 };
 
