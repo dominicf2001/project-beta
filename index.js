@@ -38,14 +38,19 @@ let windowWidth = 1200;
 let windowHeight = 700;
 
 
-var mapID = 1;
+var mapID = 0;
+var levelComplete = false;
+// Select Map Function
 function selectMap(mapID) {
     switch (mapID) {
-        case 1:
+        case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
             break;
+        case 1:
+            mapImg = loadImage('Maps/Space Ship Map.png');
+            break;
         case 2:
-            mapImg = loadImage('Maps/Space Map Version 2.png');
+            //mapImg = loadImage('Maps/Boss Map.png');
             break;
         default:
             break;
@@ -56,11 +61,11 @@ function selectMap(mapID) {
 function switchMap() {
     ++mapID;
     currentWave = 0;
-    //for (let t of towers) {
-
-    //}
-    //enemies = [];
+    levelComplete = false;
+    enemies = []; // Reset Enemies
+    towers = []; // resets towers
     selectMap(mapID);
+    nextLevel.hide();
     redraw();
 }
 
@@ -98,18 +103,36 @@ function bottomPath(x) {
 const waveAmount = 4;
 let currentWave = 0;
 
-const levelWaveData = [
-    [0, 3],
-    [0, 0, 6],
-    [2],
-    [0, 0, 0, 1]
-];
-
-const levelSpawnPriority = [
-    [1, 0],
-    [2, 1, 0],
-    [0],
-    [3, 2, 1, 0]
+// The Level Data
+const levels = [
+    { // Level 1 Data
+        leveldata: [
+            [0, 3],
+            [0, 0, 6],
+            [2],
+            [0, 0, 0, 1]
+        ],
+        spawnPriority: [
+            [1, 0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0]
+        ]
+    },
+    { // Level 2 Data
+        leveldata: [
+            [0, 3],
+            [0, 0, 6],
+            [2],
+            [0, 0, 0, 1]
+        ],
+        spawnPriority: [
+            [1, 0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0]
+        ]
+    }
 ];
 
 let enemies = [];
@@ -117,19 +140,7 @@ let enemies = [];
 /*
 const test_waveData = [1, 3, 4, 1];
 const test_spawnPriority = [1, 2, 0, 3];
-function selectMap(mapID) {
-    switch (mapID) {
-        case 1:
-            mapImg = loadImage('Maps/Space Map 1.png');
-            break;
-        case 2:
-            mapImg = loadImage('Maps/Space Map Version 2.png');
-            break;
-        default:
-            break;
-    }
-    return;
-}
+
 const test_waveData = [0, 0, 0, 1];
 const test_spawnPriority = [3];
 
@@ -164,9 +175,7 @@ window.preload = function () {
     deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3')
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
-    //mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
-    //mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
-    selectMap(mapID);
+    selectMap(mapID); // Loads the Map
     titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
     gameOverImg = loadImage('./assets/Game_OVER_Screen.png');
 }
@@ -509,6 +518,15 @@ window.draw = function() {
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
 
+        // Displays Level Complete Text when all waves are done
+        if (levelComplete) {
+            push();
+            textAlign(CENTER);
+            textSize(40)
+            fill('red');
+            text('Level Complete', 600, 100);
+            pop();
+        }
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -522,18 +540,6 @@ window.draw = function() {
         for (const t of towers) {
             t.draw(towerSprite);
         }
-        // draw path
-
-        /* push();
-        strokeWeight(20);
-        stroke(255, 255, 255, 255);
-        noFill();
-        beginShape();
-        for (const point of path) {
-            vertex(point.x, point.y);
-        }
-        endShape();
-        pop(); */
 
         // draw currency holder
         push();
@@ -639,7 +645,7 @@ function spawnNextWave() {
     try {
         if (currentWave < waveAmount) {
             currentWave = currentWave + 1;
-            let newWave = spawnWave(levelWaveData, levelSpawnPriority, currentWave);
+            let newWave = spawnWave(levels[mapID].leveldata, levels[mapID].spawnPriority, currentWave);
             newWave.debugPrintWave();
             newWave.spawn();
             console.log(newWave)
@@ -647,9 +653,9 @@ function spawnNextWave() {
             enemies = newWave.getEnemies();
             console.log(enemies);
         } else {
-            //throw new Error("No more waves available");
-            // Next Level Button Appears after all the Waves are done.
+            // Next Level Button and Level Complete text Appears after all the Waves are done.
             nextLevel.show(); 
+            levelComplete = true;
         }
     } catch(e) {
         alert(e);
