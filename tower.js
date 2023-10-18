@@ -17,9 +17,12 @@ export class Tower {
         this.y = y;
         this.range = 100;
         this.damage = 1;
+        this.health = 30;
         this.fireRate = 1;
         this.coolDown = 5;
+        this.fireSpeed = 1;
         this.hover = false;
+        this.stunAmmount = 0;
     }
     
     /**
@@ -36,10 +39,39 @@ export class Tower {
         strokeWeight(2);
         stroke(255);
         noFill();
-        if(this.hover) {
+        if(this.hover || this.selected) {
             circle(this.x, this.y, this.range * 2);
         }
         noStroke();
+        // health bar
+        let healthBarWidth = 0;
+        if (this.health > 30) { // max width
+            healthBarWidth = 30 % this.health;
+        } else {
+            healthBarWidth = this.health;
+        }
+        fill(0, 200, 0);
+        stroke(0, 180, 0);
+        rectMode(CENTER);
+        rect(this.x, this.y + 60, healthBarWidth, 5);
+        console.log(this.stunAmmount);
+        pop();
+    }
+    
+    /**
+     * Method to draw a stunned tower on the canvas
+     * @returns {void} draws the tower on the canvas, but in a stunned state
+     */
+
+    drawStunned() {
+        
+        push();
+
+        // draw stunned box (triangle for now)
+        fill(255);
+        noStroke();
+        triangle(this.x - 15, this.y + 15, this.x, this.y - 15, this.x + 15, this.y + 15);
+
         pop();
     }
 
@@ -56,8 +88,7 @@ export class Tower {
      * @returns {boolean} boolean that if true, indicates the tower can fire a bullet
      */
     canFire() {
-        
-
+        if (this.stunAmmount > 0) return false;
         if (this.coolDown > this.fireRate) {
             this.coolDown--;
             return false;
@@ -92,6 +123,36 @@ export class Tower {
         this.fireRate += 1;
     }
 
+    upgradeFireSpeed() {
+        this.fireSpeed += 1;
+    }
+    
+    /**
+     * Method to stun the tower
+     * @returns {void} stun the tower by making it needed to be clicked 7 times
+     */
+    stun() {
+        // this.fireRate = 0;
+        this.stunAmmount = 5;
+    }
+    
+    /**
+     * Method to "unstun" the tower by clicking on it
+     * @returns {void} reduce the amount of clicks needed by 1
+     * PREREQUISITE: this.isStunned() == true
+     */
+    reduceStun(st) {
+        this.stunAmmount--;
+        if (this.stunAmmount == 0) st.amount = 0;
+    }
+
+    /**
+     * Method to check if tower is stunned
+     * @returns {boolean} true if tower is stunned, false otherwise
+     */
+    isStunned() {
+        return (this.stunAmmount > 0);
+    }
 };
 
 export class Bullet {
@@ -106,6 +167,7 @@ export class Bullet {
         this.y = tower.y;
         this.range = tower.range;
         this.damage = tower.damage;
+        this.fireSpeed = tower.fireSpeed;
         this.target = target;
         
         this.updateDirection();
@@ -123,9 +185,9 @@ export class Bullet {
         strokeWeight(2);
         fill(255, 0, 0);
         ellipse(this.x, this.y, 5, 5);
-        this.x += this.xMove * 2;
-        this.y += this.yMove * 2;
-        this.range--;
+        this.x += this.xMove * 2 * this.fireSpeed;
+        this.y += this.yMove * 2 * this.fireSpeed;
+        this.range -= this.fireSpeed;
         pop();
 
         // update only every 15 frames to ease computation

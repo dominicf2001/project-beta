@@ -2,15 +2,24 @@
 const canvasWidth = 1200;
 const canvasHeight = 700;
 
+import { maps } from "./index.js";
+
+// Generate offset within the bounds of the path
+function getOffset() {
+    let width = Math.floor(maps[0].bottomPath(0) - maps[0].topPath(0));
+    return Math.floor(Math.random() * width / 2.5) - Math.floor(width / 5);
+}
+
 /** @module enemy */
 
 /** The index of the builder is the ID of the enemy
  */
 const ENEMY_BUILDERS = [
-    (path, x, y) => new Tank(path, x, y),
-    (path, x, y) => new Standard(path, x, y),
-    (path, x, y) => new Rapid(path, x, y),
-    (path, x, y) => new Spawner(path, x, y)
+    (path, offset, x, y) => new Tank(path, offset, x, y),
+    (path, offset, x, y) => new Standard(path, offset, x, y),
+    (path, offset, x, y) => new Rapid(path, offset, x, y),
+    (path, offset, x, y) => new Spawner(path, offset, x, y),
+    (path, offset, x, y) => new Stunner(path, offset, x, y)
 ];
 
 /** Class representing an enemy */
@@ -21,20 +30,25 @@ class Enemy {
      * @param {number} speed - how quick an enemy moves along a path
      * @param {number} health - how much health an enemy has
      * @param {function} path - a path the enemy will be drawn on
+     * @param {number=} offset - how much enemy sways from the path, will never go off bounds
      * @param {number} currency - how much money you will receive
      * @param {number} damage - how much health an enemy takes away
+     * @param {number} damageDistance - how far away an enemy can damage a tower
      * @param {number=} x - the starting x coordinate (if undefined, defaults to start of path's x)
      * @param {number=} y - the starting y coordinate (if undefined, defaults to start of path's y)
      */
-    constructor(speed, health, path, currency, damage, x, y) {
+    constructor(speed, health, path, offset, currency, damage, damageDistance, x, y) {
         this.speed = speed;
         this.health = health;
         this.path = path;
+        this.offset = offset ?? 0;
         this.pathIndex = 0;
         this.x = x ?? 0;
-        this.y = y ?? this.path(0);
+        this.y = y ?? this.path(0) + this.offset;
         this.currency = currency;
         this.damage = damage;
+        this.damageDistance = damageDistance ?? 0;
+        this.coolDown = 0;
     }
 
     draw() {
@@ -57,7 +71,9 @@ class Enemy {
         //text(this.health, this.x-5, this.y - 20);
         
         this.x += this.speed;
-        this.y = this.path(this.x);
+
+        this.y = this.path(this.x) + this.offset;
+        pop();
 
         /*/ calculate distance to next point
         let dx = this.path[this.pathIndex + 1].x - this.x;
@@ -86,6 +102,19 @@ class Enemy {
     hasReachedEnd() {
         return this.x >= canvasWidth;
     }
+    
+    damageTowers(towers) {
+        for(let i = 0; i < towers.length; i++) {
+            let tower = towers[i];
+            let distance = dist(this.x, this.y, tower.x, tower.y);
+            if (distance < this.damageDistance && this.coolDown <= 0) {
+                tower.health -= this.damage;
+                this.coolDown = 5;
+            } else {
+                this.coolDown--;
+            }
+        }
+    }
 };
 // ------------------------------------------ //
 // ENEMY TYPE CLASSES
@@ -93,8 +122,8 @@ class Enemy {
 
 /** The Tank */
 class Tank extends Enemy {
-    constructor(path, x, y) {
-        super(0.2, 25, path, 300, 6, x, y);
+    constructor(path, offset, x, y) {
+        super(0.2, 25, path, offset, 300, 6, x, y);
     }
     drawAppearance() {
         fill(10);
@@ -105,8 +134,8 @@ class Tank extends Enemy {
 
 /** The Standard */
 class Standard extends Enemy {
-    constructor(path, x, y) {
-        super(0.5, 10, path, 140, 3, x, y);
+    constructor(path, offset, x, y) {
+        super(0.5, 10, path, offset, 140, 3, 50, x, y);
     }
     drawAppearance() {
         fill(100);
@@ -117,8 +146,8 @@ class Standard extends Enemy {
 
 /** The Rapid */
 class Rapid extends Enemy {
-    constructor(path, x, y) {
-        super(1, 5, path, 80, 1, x, y);
+    constructor(path, offset, x, y) {
+        super(1, 5, path, offset, 80, 1, 30, x, y);
     }
     drawAppearance() {
         fill(50);
@@ -129,8 +158,8 @@ class Rapid extends Enemy {
 
 /** The Spawner */
 class Spawner extends Enemy {    
-    constructor(path, x, y) {
-        super(0.4, 5, path, 80, 1, x, y);
+    constructor(path, offset, x, y) {
+        super(0.4, 5, path, offset, 80, 1, 40, x, y);
         
         this.spawnCount = 3;
         /**
@@ -159,15 +188,35 @@ class Spawner extends Enemy {
     /**
      * @param {Array} enemies - the array of enemies to insert into
      */
-    spawn(enemies) {
+    spawn(enemies, nextWaveCheck) {
         const shouldSpawn = !this.spawnType || (this.spawnType && this.health <= 0);
 
         if (shouldSpawn) {
+            nextWaveCheck.amount += this.spawnCount;
             for (let i = 0; i < this.spawnCount; ++i) {
-                enemies.push(ENEMY_BUILDERS[this.spawnedEnemyId](this.path, this.x, this.y));
+                enemies.push(ENEMY_BUILDERS[this.spawnedEnemyId](this.path, getOffset(), this.x, this.y));
             }
             this.startCooldown();
         }
+    }
+}
+
+/** The Stunner */
+class Stunner extends Enemy {
+    constructor(path, offset, x, y) {
+        super(0.6, 15, path, offset, 280, 3, x, y);
+    }
+    drawAppearance() {
+        fill(75);
+        noStroke();
+        triangle(this.x - 10, this.y + 10, this.x, this.y - 10, this.x + 10, this.y + 10);
+    }
+    stunTower(n) {
+        if (n > 0) {
+            let r = n % 3;
+            let q = Math.floor(n / 3);
+            return Math.floor(Math.random() * q);
+        } else return -1;
     }
 }
     
@@ -177,8 +226,8 @@ class Spawner extends Enemy {
 /** Class representing a wave of enemies. This class stores the number of enemies of each type to spawn and the spawning priority for each type.  */
 class Wave {
     /** Constructs a new Wave object
-     *  @param {array} spawnData - integer array representing how many of each enemy type to spawn where array index = enemy type id 
-     *  @param {array} spawnPriority - order to spawn enemy types in
+     * @param {array} spawnData - integer array representing how many of each enemy type to spawn where array index = enemy type id 
+     * @param {array} spawnPriority - order to spawn enemy types in
      * @param {function} path - path spawned enemies travel along
      * @param {number} delay - amount of time in seconds to wait between spawning enemies 
      */
@@ -202,11 +251,11 @@ class Wave {
 
     spawnLoopHelper(i, j, k) {
         setTimeout(() => {
-            var newEnemy = ENEMY_BUILDERS[k](this.path);
+            var newEnemy = ENEMY_BUILDERS[k](this.path, getOffset());
             this.spawnData[k]--;
             this.enemies.push(newEnemy);
             console.log("Spawned new enemy at ", this.delay * 1000 * i);
-        }, this.delay * 1000 * (i + j)); 
+        }, this.delay * 600 * (i + j)); 
     }
 
     /** Spawns all of the enemies in the wave 
@@ -234,4 +283,4 @@ class Wave {
 };
 
 // ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
-export { Enemy, Tank, Standard, Rapid, Wave }
+export { Enemy, Tank, Standard, Rapid, Wave, Stunner }
