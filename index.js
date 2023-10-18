@@ -390,6 +390,11 @@ window.setup = function () {
         selectedUpgradeTower.upgradeFireRate();
     });
 
+    uiHandler.upgradeFireSpeedButton.mousePressed(function() {
+        let selectedUpgradeTower = getSelectedTower();
+        selectedUpgradeTower.upgradeFireSpeed();
+    });
+
     uiHandler.upgradeRangeButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
         selectedUpgradeTower.upgradeRange();
@@ -422,9 +427,11 @@ window.draw = function () {
         if (getSelectedTower()) {
             uiHandler.upgradeFireRateButton.show();
             uiHandler.upgradeRangeButton.show();
+            uiHandler.upgradeFireSpeedButton.show();
         } else {
             uiHandler.upgradeFireRateButton.hide();
             uiHandler.upgradeRangeButton.hide();
+            uiHandler.upgradeFireSpeedButton.hide();
         }
         
         // TODO

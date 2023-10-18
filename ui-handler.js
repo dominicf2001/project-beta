@@ -188,8 +188,6 @@ export class UIHandler {
         });
         this.upgradeFireRateButton = createButton('Upgrade Fire Rate');
         this.upgradeFireRateButton.id('upgradeFireRateButton');
-
-        this.upgradeFireRateButton = createButton('Upgrade Fire Speed');
         this.upgradeFireRateButton.style('font-family', 'Andale Mono');
         this.upgradeFireRateButton.style('font-size', '18px');
         this.upgradeFireRateButton.style('color', color(181, 43, 131));
@@ -322,6 +320,7 @@ export class UIHandler {
         this.placeTowerButton.show();
         this.upgradeRangeButton.show();
         this.upgradeFireRateButton.show();
+        this.upgradeFireSpeedButton.show();
 
         // Update button colors
         switch (this.towerTool) {
