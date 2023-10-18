@@ -50,7 +50,7 @@ export let maps = [
         middlePath: function(x) {
             return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x);
         },
-        bottomPath: function bottomPath(x) {
+        bottomPath: function(x) {
             if (x < 768) {
                 return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
                     + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
@@ -68,6 +68,9 @@ export let maps = [
                     - 3.54811e-4 * Math.pow(t, 3) - 3.55384e-3 * Math.pow(t, 2)
                     + 2.33631e-1 * t + 250);
             }
+        },
+        isColliding: function(x, diameter) {
+            return mouseY < maps[0].bottomPath(x) && mouseY > maps[0].topPath(x) - diameter;
         }
     },
     {}
@@ -102,8 +105,8 @@ let bullets = [];
 let dragTower = null;
 let playSound = false;
 
-// player variables
-let totalCurrency = 600;
+// other relevant variables
+let totalCurrency = 850;
 let totalHealth = 50;
 
 // checks for next wave button.
@@ -141,20 +144,29 @@ window.mousePressed = function (event) {
                 towers.push(dragTower);
                 break;
             }
-
-            if (towers[t].mouseInside() && uiHandler.towerTool == 1) {
-                towers[t].upgradeRange();
-                break;
+            
+            if (towers[t].mouseInside() && towerTool == 1) {
+                if(totalCurrency>=100){
+                    towers[t].upgradeRange();
+                    totalCurrency -=100;
+                    break;
+                }
             }
 
-            if (towers[t].mouseInside() && uiHandler.towerTool == 2) {
-                towers[t].upgradeFireRate();
-                break;
+            if (towers[t].mouseInside() && towerTool == 2) {
+                if(totalCurrency>= 150){
+                    towers[t].upgradeFireRate();
+                    totalCurrency -=150;
+                    break;
+                }
             }
 
-            if (towers[t].mouseInside() && uiHandler.towerTool == 3) {
-                towers[t].upgradeFireSpeed();
-                break;
+            if (towers[t].mouseInside() && towerTool == 3) {
+                if(totalCurrency>= 100){
+                    towers[t].upgradeFireSpeed();
+                    totalCurrency -=100;
+                    break;
+                }
             }
         }
 
@@ -166,8 +178,10 @@ window.mousePressed = function (event) {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
                 }
-                if (mouseY < maps[0].bottomPath(mouseX) && mouseY > maps[0].topPath(mouseX)) {
-                    throw new Error("Cannot place a tower on the path!");
+
+                if (maps[0].isColliding(mouseX, 30)) {
+                    // throw new Error("Cannot place a tower on the path!");
+                    return;
                 }
                 let t = new Tower(mouseX, mouseY);
                 if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
@@ -216,7 +230,7 @@ window.mouseMoved = function () {
             if(uiHandler.towerTool == 0) {
                 cursor('grab');
             }
-            if (uiHandler.towerTool == 1 || uiHandler.towerTool == 2) {
+            if (uiHandler.towerTool == 1 || uiHandler.towerTool == 2 || uiHandler.towerTool == 3) {
                 cursor('crosshair');
             }
             return;
@@ -302,7 +316,6 @@ window.keyPressed = function (e) {
 }
 
 window.setup = function () {
-
     game = createCanvas(windowWidth, windowHeight);
     
     uiHandler.initializeUI();
@@ -388,7 +401,6 @@ window.draw = function () {
     fill(0);
 
     if (gameMode == 0) {
-
         uiHandler.updateUIForGameMode(gameMode);
 
         // Switch to game mode
@@ -407,6 +419,17 @@ window.draw = function () {
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
+
+        if (uiHandler.towerTool == 0 && totalCurrency >= 400) {
+            push();
+            if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
+                tint(255, 0, 0, 200);
+            } else {
+                tint(255, 200);
+            }
+            image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+            pop();
+        }
          
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
@@ -547,4 +570,3 @@ function spawnWave(waveData, spawnPriority, currentLevel) {
 
     return currentWave;
 }
-
