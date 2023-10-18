@@ -39,7 +39,7 @@ export class Tower {
         strokeWeight(2);
         stroke(255);
         noFill();
-        if(this.hover) {
+        if(this.hover || this.selected) {
             circle(this.x, this.y, this.range * 2);
         }
         noStroke();

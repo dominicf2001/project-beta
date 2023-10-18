@@ -104,11 +104,11 @@ let enemies = [];
 const towerLimit = 5;
 let towers = [];
 let bullets = [];
-let dragTower = null;
+// let dragTower = null;
 let playSound = false;
 
 // other relevant variables
-let totalCurrency = 850;
+let totalCurrency = 1000;
 let totalHealth = 50;
 
 // checks for next wave button.
@@ -145,44 +145,20 @@ window.mousePressed = function (event) {
     if (gameMode == 1 && uiHandler.ignoreNextClick == false && !uiHandler.encyclopediaOpen) {
         // Check if mouse is inside a tower
         for (let t = 0; t < towers.length; t++) {
-            if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
-            
-            if (towers[t].mouseInside() && uiHandler.towerTool == 0) {
-                dragTower = towers.splice(t, 1)[0];
-                dragTower.hover = true;
-                towers.push(dragTower);
-                break;
-            }
-            
-            if (towers[t].mouseInside() && towerTool == 1) {
-                if(totalCurrency>=100){
-                    towers[t].upgradeRange();
-                    totalCurrency -=100;
-                    break;
-                }
-            }
-
-            if (towers[t].mouseInside() && towerTool == 2) {
-                if(totalCurrency>= 150){
-                    towers[t].upgradeFireRate();
-                    totalCurrency -=150;
-                    break;
-                }
-            }
-
-            if (towers[t].mouseInside() && towerTool == 3) {
-                if(totalCurrency>= 100){
-                    towers[t].upgradeFireSpeed();
-                    totalCurrency -=100;
-                    break;
-                }
+            if (towers[t].mouseInside()) {
+                towers[t].selected = true;
+                // dragTower = towers.splice(t, 1)[0];
+                // dragTower.hover = true;
+                // towers.push(dragTower);
+            } else {
+                towers[t].selected = false;
             }
         }
 
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
 
-        if (((event.button === 0 && !dragTower) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight)) && uiHandler.towerTool == 0) {
+        if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
                 if (towers.length > towerLimit) {
                     throw new Error("No more towers allowed!");
@@ -213,35 +189,35 @@ window.mousePressed = function (event) {
     }
 }
 
-window.mouseDragged = function () {
-    // Move tower if it's being dragged
-    if (dragTower != null) {
-        dragTower.x = mouseX;
-        dragTower.y = mouseY;
-    }
-}
+// window.mouseDragged = function () {
+//     // Move tower if it's being dragged
+//     if (dragTower != null) {
+//         dragTower.x = mouseX;
+//         dragTower.y = mouseY;
+//     }
+// }
 
-window.mouseReleased = function () {
-    // Stop dragging tower
-    if (dragTower != null) {
-        dragTower.x = mouseX;
-        dragTower.y = mouseY;
-        dragTower.hover = false;
-        dragTower = null;
-    }
-}
+// window.mouseReleased = function () {
+//     // Stop dragging tower
+//     if (dragTower != null) {
+//         dragTower.x = mouseX;
+//         dragTower.y = mouseY;
+//         dragTower.hover = false;
+//         dragTower = null;
+//     }
+// }
 
 window.mouseMoved = function () {
     // Change cursor if mouse is inside a tower
     for (let t of towers) {
         if (t.mouseInside()) {
             t.hover = true;
-            if(uiHandler.towerTool == 0) {
-                cursor('grab');
-            }
-            if (uiHandler.towerTool == 1 || uiHandler.towerTool == 2 || uiHandler.towerTool == 3) {
-                cursor('crosshair');
-            }
+            // if(uiHandler.towerTool == 0) {
+            cursor('grab');
+            // }
+            // if (uiHandler.towerTool == 1 || uiHandler.towerTool == 2 || uiHandler.towerTool == 3) {
+            //     cursor('crosshair');
+            // }
             return;
         }
     }
@@ -252,6 +228,14 @@ window.mouseMoved = function () {
 }
 
 // HELPERS
+
+function getSelectedTower() {
+    for (let t of towers) {
+        if (t.selected) {
+            return t;
+        }
+    }
+}
 
 function fireBullets() {
     // Generate bullets for each tower
@@ -331,7 +315,7 @@ window.setup = function () {
 
     
     
-    uiHandler.onSaveClick = function () {
+    uiHandler.saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
             towers: towers,
@@ -339,9 +323,9 @@ window.setup = function () {
             enemies: enemies
         };
         localStorage.setItem("saveState", JSON.stringify(saveState));
-    };
+    });
     
-    uiHandler.onLoadClick = function() {
+    uiHandler.loadButton.mousePressed(function() {
         // Load game state
         let saveState = JSON.parse(localStorage.getItem("saveState"));
         if (saveState) {
@@ -373,9 +357,9 @@ window.setup = function () {
                 bullets.push(b);
             }
         }
-    }
+    });
 
-    uiHandler.onMuteClick = function() {
+    uiHandler.muteButton.mousePressed(function() {
         if (playSound) {
             mySound.pause();
             this.playSound = false;
@@ -383,20 +367,33 @@ window.setup = function () {
             mySound.play();
             playSound = true;
         }
-    }
+    });
 
 
-    uiHandler.onStartClick = function () {
-
+    console.log("test");
+    uiHandler.startButton.mousePressed(function() {
+        console.log("test");
         if (!playSound) {
             mySound.setVolume(0.1);
             mySound.play();
             playSound = true;
         }
         beginGame = true;
-    }
+    });
 
-    uiHandler.onNextWaveClick = spawnNextWave;
+    uiHandler.nextWaveButton.mousePressed(function() {
+        spawnNextWave();
+    });
+
+    uiHandler.upgradeFireRateButton.mousePressed(function() {
+        let selectedUpgradeTower = getSelectedTower();
+        selectedUpgradeTower.upgradeFireRate();
+    });
+
+    uiHandler.upgradeRangeButton.mousePressed(function() {
+        let selectedUpgradeTower = getSelectedTower();
+        selectedUpgradeTower.upgradeRange();
+    });
 
     //Poll for bullets every 100ms
 
@@ -421,6 +418,14 @@ window.draw = function () {
 
 
         uiHandler.updateUIForGameMode(gameMode);
+
+        if (getSelectedTower()) {
+            uiHandler.upgradeFireRateButton.show();
+            uiHandler.upgradeRangeButton.show();
+        } else {
+            uiHandler.upgradeFireRateButton.hide();
+            uiHandler.upgradeRangeButton.hide();
+        }
         
         // TODO
         if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
@@ -429,7 +434,7 @@ window.draw = function () {
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
 
-        if (uiHandler.towerTool == 0 && totalCurrency >= 400) {
+        if (totalCurrency >= 400) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
                 tint(255, 0, 0, 200);
