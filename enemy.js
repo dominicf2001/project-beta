@@ -71,6 +71,7 @@ class Enemy {
         //text(this.health, this.x-5, this.y - 20);
         
         this.x += this.speed;
+
         this.y = this.path(this.x) + this.offset;
         pop();
 

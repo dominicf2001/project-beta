@@ -25,7 +25,37 @@ let game;
 // map width & height
 let windowWidth = 1200;
 let windowHeight = 700;
-let mapID = 2;
+
+var mapID = 0;
+var levelComplete = false;
+// Select Map Function
+function selectMap(mapID) {
+    switch (mapID) {
+        case 0:
+            mapImg = loadImage('Maps/Space Map 1.png');
+            break;
+        case 1:
+            mapImg = loadImage('Maps/Space Map Version 2.png');
+            break;
+        case 2:
+            //mapImg = loadImage('Maps/Boss Map.png');
+            break;
+        default:
+            break;
+    }
+    return;
+}
+// Reset the Map variables
+function switchMap() {
+    ++mapID;
+    currentWave = 0;
+    levelComplete = false;
+    enemies = []; // Reset Enemies
+    towers = []; // resets towers
+    selectMap(mapID);
+    nextLevel.hide();
+    redraw();
+}
 
 let uiHandler = new UIHandler(windowWidth, windowHeight);
 
@@ -79,24 +109,42 @@ export let maps = [
 
 //////////////////////////////
 // CONSTRUCT LEVEL
-const levelWaveData = [
-    [0, 3],
-    [0, 0, 6],
-    [2],
-    [0, 0, 0, 1],
-    [0, 0, 0, 0, 1]
-];
-
-const levelSpawnPriority = [
-    [1, 0],
-    [2, 1, 0],
-    [0],
-    [3, 2, 1, 0],
-    [4, 3, 2, 1, 0]
-];
-
-const waveAmount = levelWaveData.length;
 let currentWave = 0;
+
+// The Level Data
+const levels = [
+    { // Level 1 Data
+        leveldata: [
+            [0, 3],
+            [0, 0, 6],
+            [2],
+            [0, 0, 0, 1]
+        ],
+        spawnPriority: [
+            [1, 0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0]
+        ]
+    },
+    { // Level 2 Data
+        leveldata: [
+            [0, 3],
+            [0, 0, 6],
+            [2],
+            [0, 0, 0, 1]
+        ],
+        spawnPriority: [
+            [1, 0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0]
+        ]
+    }
+];
+
+// needs to be generalized for all levels
+const waveAmount = levels[0].leveldata.length;
 
 let enemies = [];
 
@@ -135,7 +183,7 @@ window.preload = function () {
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
-
+    selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
 }
 
@@ -394,7 +442,7 @@ window.setup = function () {
         let selectedUpgradeTower = getSelectedTower();
         selectedUpgradeTower.upgradeFireSpeed();
     });
-
+    
     uiHandler.upgradeRangeButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
         selectedUpgradeTower.upgradeRange();
@@ -440,7 +488,16 @@ window.draw = function () {
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
-
+        
+        // Displays Level Complete Text when all waves are done
+        if (levelComplete) {
+            push();
+            textAlign(CENTER);
+            textSize(40)
+            fill('red');
+            text('Level Complete', 600, 100);
+            pop();
+        }
         if (totalCurrency >= 400) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
@@ -451,7 +508,6 @@ window.draw = function () {
             image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
             pop();
         }
-         
         // Draw bullets first, so they appear behind towers
         for (const i in bullets) {
             if (bullets[i].isOutOfRange()) {
@@ -466,18 +522,6 @@ window.draw = function () {
             t.draw(towerSprite);
             if (t.isStunned()) t.drawStunned();
         }
-        // draw path
-
-        /* push();
-        strokeWeight(20);
-        stroke(255, 255, 255, 255);
-        noFill();
-        beginShape();
-        for (const point of path) {
-            vertex(point.x, point.y);
-        }
-        endShape();
-        pop(); */
 
         // draw currency holder
         push();
@@ -502,7 +546,7 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
-        text('Wave: ' + currentWave + '/' + waveAmount, windowWidth - 120, windowHeight - 30);
+        text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 30);
         pop();
 
         // draw or remove enemies
@@ -576,18 +620,21 @@ window.draw = function () {
 // Spawns the next wave.
 function spawnNextWave() {
     try {
-        if (currentWave < waveAmount) {
+        if (currentWave < levels[mapID].leveldata.length) {
             currentWave = currentWave + 1;
-            for (let t = 0; t < levelWaveData[currentWave - 1].length; ++t)
-                    nextWaveCheck.amount += levelWaveData[currentWave - 1][t];
-            let newWave = spawnWave(levelWaveData, levelSpawnPriority, currentWave);
+
+            let newWave = spawnWave(levels[mapID].leveldata, levels[mapID].spawnPriority, currentWave);
+            for (let t = 0; t < levels[mapID].leveldata[currentWave - 1].length; ++t)
+                nextWaveCheck.amount += levels[mapID].leveldata[currentWave - 1][t];
             newWave.debugPrintWave();
             newWave.spawn();
             console.log(newWave);
 
             enemies = newWave.getEnemies();
         } else {
-            throw new Error("No more waves available");
+            // Next Level Button and Level Complete text Appears after all the Waves are done.
+            nextLevel.show(); 
+            levelComplete = true;
         }
     } catch (e) {
         alert(e);
@@ -600,7 +647,7 @@ function spawnNextWave() {
 * @param {number} currentLevel - the wave that the game is currently in. From 1 to waveAmount
 */
 function spawnWave(waveData, spawnPriority, currentLevel) {
-    const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], maps[0].middlePath, 4);
+    const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], maps[mapID].middlePath, 4);
 
     return currentWave;
 }
