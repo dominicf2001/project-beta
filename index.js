@@ -47,7 +47,7 @@ function selectMap(mapID) {
             mapImg = loadImage('Maps/Space Map 1.png');
             break;
         case 1:
-            mapImg = loadImage('Maps/Space Ship Map.png');
+            mapImg = loadImage('Maps/Space Map Version 2.png');
             break;
         case 2:
             //mapImg = loadImage('Maps/Boss Map.png');
