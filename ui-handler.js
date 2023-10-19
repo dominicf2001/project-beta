@@ -69,6 +69,11 @@ export class UIHandler {
         this.nextWaveButton.id('nextWaveButton');
         this.nextWaveButton.position(this.windowWidth - 100, this.windowHeight + 15);
 
+        // draw Next Level Button
+        this.nextLevelButton = createButton('Next Level');
+        this.nextLevelButton.id('nextLevelButton');
+        this.nextLevelButton.position(this.windowWidth - 100, this.windowHeight + 45);
+
         this.settingsButton = createImg('./assets/settingsbutton.png');
         this.settingsButton.id('settingsButton');
         this.settingsButton.addClass('settingsMenu');
