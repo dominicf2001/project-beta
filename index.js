@@ -35,10 +35,13 @@ function selectMap(mapID) {
             mapImg = loadImage('Maps/Space Map 1.png');
             break;
         case 1:
-            mapImg = loadImage('Maps/Space Map Version 2.png');
+            mapImg = loadImage('Maps/Space Ship Map.png');
             break;
         case 2:
             //mapImg = loadImage('Maps/Boss Map.png');
+            break;
+        case 3: 
+            //mapImg = loadImage('Maps/Bonus Level.png');
             break;
         default:
             break;
@@ -101,38 +104,48 @@ export let maps = [
             }
         },
         isColliding: function(x, diameter) {
-            return mouseY < maps[0].bottomPath(x) && mouseY > maps[0].topPath(x) - diameter;
+            return mouseY < maps[mapID].bottomPath(x) && mouseY > maps[mapID].topPath(x) - diameter;
         }
     },
     { // Second Map
         topPath: function(x) {
-            return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x);
+            //return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x);
+            return 520;
         },
         middlePath: function(x) {
-            return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x);
+            //return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x);
+            return 570;
         },
         bottomPath: function(x) {
             if (x < 768) {
-                return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
+                /*return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
                     + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
                     + 1.02276e-14 * Math.pow(x, 7) - 3.17496e-12 * Math.pow(x, 6)
                     + 7.82401e-10 * Math.pow(x, 5) - 1.90207e-7 * Math.pow(x, 4)
                     + 4.10456e-5 * Math.pow(x, 3) - 6.97063e-3 * Math.pow(x, 2)
-                    + 7.67275e-1 * x + 3.11e2);
+                    + 7.67275e-1 * x + 3.11e2);*/
+                    return 650;
             }
             else if (x >= 768) {
                 let t = x - 768;
-                return (-3.17081e-23 * Math.pow(t, 11) + 7.03199e-20 * Math.pow(t, 10)
+                /*return (-3.17081e-23 * Math.pow(t, 11) + 7.03199e-20 * Math.pow(t, 10)
                     - 6.63488e-17 * Math.pow(t, 9) + 3.46794e-14 * Math.pow(t, 8)
                     - 1.09391e-11 * Math.pow(t, 7) + 2.12115e-9 * Math.pow(t, 6)
                     - 2.45005e-7 * Math.pow(t, 5) + 1.51765e-5 * Math.pow(t, 4)
                     - 3.54811e-4 * Math.pow(t, 3) - 3.55384e-3 * Math.pow(t, 2)
-                    + 2.33631e-1 * t + 250);
+                    + 2.33631e-1 * t + 250);*/
+                    return 650;
             }
         },
         isColliding: function(x, diameter) {
-            return mouseY < maps[0].bottomPath(x) && mouseY > maps[0].topPath(x) - diameter;
+            return mouseY < maps[mapID].bottomPath(x) && mouseY > maps[mapID].topPath(x) - diameter;
         }
+    },
+    {
+
+    },
+    {
+
     }
 ];
 
@@ -159,9 +172,9 @@ const levels = [
     { // Level 2 Data
         leveldata: [
             [0, 3],
-            [0, 0, 6],
-            [2],
-            [0, 0, 0, 1]
+            [0, 1, 6],
+            [5],
+            [1, 1, 1, 4]
         ],
         spawnPriority: [
             [1, 0],
@@ -527,7 +540,8 @@ window.draw = function () {
             textAlign(CENTER);
             textSize(40)
             fill('red');
-            text('Level Complete', 600, 100);
+            var lev = mapID + 1
+            text('Level ' + lev + ' Complete', 600, 100);
             pop();
         }
         if (totalCurrency >= 400) {
