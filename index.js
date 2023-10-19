@@ -69,6 +69,8 @@ export let maps = [
             }
         }
     },
+
+// Second map
     {}
 ];
 
@@ -106,8 +108,9 @@ let playSound = false;
 let totalCurrency = 0;
 let totalHealth = 50;
 
-// checks for next wave button.
+// checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
+let initNextWave = 20;
 let nextWaveCheck = { 
     amount: 0
 }
@@ -350,7 +353,7 @@ window.setup = function () {
         beginGame = true;
     }
 
-    uiHandler.onNextWaveClick = spawnNextWave;
+    // uiHandler.onNextWaveClick = spawnNextWave;
 
     //Poll for bullets every 100ms
 
@@ -376,10 +379,6 @@ window.draw = function () {
 
 
         uiHandler.updateUIForGameMode(gameMode);
-        
-        // TODO
-        if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
-        else uiHandler.nextWaveButton.hide();
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
@@ -411,6 +410,31 @@ window.draw = function () {
         endShape();
         pop(); */
 
+        if (nextWaveCheck.amount < 1) {
+            if (currentWave == 0) {
+                push();
+                textSize(20);
+                fill('white');
+                text("Game starts in: " + initNextWave, windowWidth - 200, windowHeight - 50);
+                pop();
+            }
+            else if (currentWave < waveAmount) {
+                push();
+                textSize(20);
+                fill('white');
+                text("Next wave in: " + initNextWave, windowWidth - 185, windowHeight - 50);
+                pop();
+            }
+            if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
+            if (initNextWave == 0) {
+                if (currentWave < waveAmount) spawnNextWave();
+                initNextWave = 10;
+            }
+        }
+        console.log(initNextWave);
+        // uiHandler.nextWaveButton.show();
+        // else uiHandler.nextWaveButton.hide();
+
         // draw currency holder
         push();
         textSize(20);
@@ -434,7 +458,7 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
-        text('Wave: ' + currentWave + '/' + waveAmount, windowWidth - 120, windowHeight - 30);
+        text('Wave: ' + currentWave + '/' + waveAmount, windowWidth - 120, windowHeight - 20);
         pop();
 
         // draw or remove enemies
