@@ -20,6 +20,7 @@ export class Tower {
         this.health = 30;
         this.fireRate = 1;
         this.coolDown = 5;
+        this.fireSpeed = 1;
         this.hover = false;
         this.stunAmmount = 0;
     }
@@ -38,7 +39,7 @@ export class Tower {
         strokeWeight(2);
         stroke(255);
         noFill();
-        if(this.hover) {
+        if(this.hover || this.selected) {
             circle(this.x, this.y, this.range * 2);
         }
         noStroke();
@@ -122,6 +123,10 @@ export class Tower {
         this.fireRate += 1;
     }
 
+    upgradeFireSpeed() {
+        this.fireSpeed += 1;
+    }
+    
     /**
      * Method to stun the tower
      * @returns {void} stun the tower by making it needed to be clicked 7 times
@@ -162,6 +167,7 @@ export class Bullet {
         this.y = tower.y;
         this.range = tower.range;
         this.damage = tower.damage;
+        this.fireSpeed = tower.fireSpeed;
         this.target = target;
         
         this.updateDirection();
@@ -179,9 +185,9 @@ export class Bullet {
         strokeWeight(2);
         fill(255, 0, 0);
         ellipse(this.x, this.y, 5, 5);
-        this.x += this.xMove * 2;
-        this.y += this.yMove * 2;
-        this.range--;
+        this.x += this.xMove * 2 * this.fireSpeed;
+        this.y += this.yMove * 2 * this.fireSpeed;
+        this.range -= this.fireSpeed;
         pop();
 
         // update only every 15 frames to ease computation

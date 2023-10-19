@@ -1,0 +1,20 @@
+* Enemies
+** Fix bug where spawned enemy goes wrong direction
+** Enemies attacking towers
+** Freeze up or be destroyed?
+
+* Map
+** Work on enemy pathing to make more accurate the map
+*** Enemy tower attacking
+
+* Towers
+** Mortar tower types
+
+* misc
+** Lagging bug
+** Start menu tower menu tower placement bug
+
+* UI
+** Individual tower upgrade menu
+** Continue working on settings menu
+

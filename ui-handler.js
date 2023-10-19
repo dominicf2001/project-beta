@@ -4,13 +4,6 @@ export class UIHandler {
     constructor(windowWidth, windowHeight){
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-        
-        // CLICK HANDLERS
-        this.onSaveClick = () => {};
-        this.onLoadClick = () => {};
-        this.onStartClick = () => {};
-        this.onMuteClick = () => {};
-        this.onNextWaveClick = () => {};
 
         // STATE VARIABLES
         this.settingsOpen = false;
@@ -20,8 +13,11 @@ export class UIHandler {
          * 0 - place tower (default)
          * 1 - upgrade range
          * 2 - upgrade fire rate
+         * 3 - upgrade fire speed
         */
         this.towerTool = 0;
+        this.placeTowerButtonSelected = false;
+
 
         // UI IMAGE VARIABLES
         this.titleImg;
@@ -33,8 +29,10 @@ export class UIHandler {
         this.placeTowerButton;
         this.upgradeRangeButton;
         this.upgradeFireRateButton;
+        this.upgradeFireSpeedButton;
         this.saveButton;
         this.loadButton;
+        this.debugConsole;
 
         this.encyclopediaMenu;
         this.encyclopediaButton;
@@ -57,15 +55,14 @@ export class UIHandler {
 
         this.#drawEncyclopedia();
 
+        this.#initializeDebugConsole();
+
         this.gameOverScreen = createImg('./assets/Game_OVER_Screen.png');
         this.gameOverScreen.addClass('gameOver');
 
         this.startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
         this.startButton.addClass('startButton');
         this.startButton.size(200, 100);
-        this.startButton.mousePressed(() =>
-            this.onStartClick()
-        );
 
         // draw "next wave" button
         // this.nextWaveButton = createButton('Next Wave')
@@ -75,6 +72,7 @@ export class UIHandler {
         // );
 
         this.settingsButton = createImg('./assets/settingsbutton.png');
+        this.settingsButton.id('settingsButton');
         this.settingsButton.addClass('settingsMenu');
         this.settingsButton.position(this.windowWidth - 50, 10);
         this.settingsButton.size(40, 40);
@@ -84,11 +82,9 @@ export class UIHandler {
         
         this.muteButton = createImg('./assets/audiobutton.png');
         this.muteButton.addClass('settingsMenu');
+        this.muteButton.id('audioButton');
         this.muteButton.position(this.windowWidth - 50, 60);
         this.muteButton.size(40, 40);
-        this.muteButton.mousePressed(() =>
-            this.onMuteClick()
-        );
 
         this.encyclopediaButton = createImg('./assets/encyclopediaButton.png');
         this.encyclopediaButton.position(this.windowWidth - 279, 10);
@@ -117,6 +113,7 @@ export class UIHandler {
         if (gameMode === -1) {
             this.upgradeRangeButton.hide();
             this.upgradeFireRateButton.hide();
+            this.upgradeFireSpeedButton.hide();
             this.loadButton.hide();
             this.placeTowerButton.hide();
             this.saveButton.hide();
@@ -127,6 +124,7 @@ export class UIHandler {
         } else if (gameMode === 0) {
             this.upgradeRangeButton.hide();
             this.upgradeFireRateButton.hide();
+            this.upgradeFireSpeedButton.hide();
             this.loadButton.hide();
             this.placeTowerButton.hide();
             this.saveButton.hide();
@@ -138,6 +136,7 @@ export class UIHandler {
         } else if (gameMode === 1) {
             this.upgradeRangeButton.show();
             this.upgradeFireRateButton.show();
+            this.upgradeFireSpeedButton.show();
             this.startButton.hide();
             // this.nextWaveButton.show();
             this.gameOverScreen.hide();
@@ -164,6 +163,7 @@ export class UIHandler {
 
     #drawToolbar() {
         this.placeTowerButton = createButton('Place Tower');
+        this.placeTowerButton.id('placeTowerButton');
         this.placeTowerButton.style('font-family', 'Andale Mono');
         this.placeTowerButton.style('font-size', '18px');
         this.placeTowerButton.style('color', color(181, 43, 131));
@@ -173,11 +173,9 @@ export class UIHandler {
         this.placeTowerButton.style('padding', '5px 10px');
         this.placeTowerButton.style('font-weight', 'bold');
         this.placeTowerButton.position(10, this.windowHeight - 40);
-        this.placeTowerButton.mousePressed(() => {
-            this.towerTool = 0;
-        });
 
         this.upgradeRangeButton = createButton('Upgrade Range');
+        this.upgradeRangeButton.id('upgradeRangeButton');
         this.upgradeRangeButton.style('font-family', 'Andale Mono');
         this.upgradeRangeButton.style('font-size', '18px');
         this.upgradeRangeButton.style('color', color(181, 43, 131));
@@ -190,7 +188,8 @@ export class UIHandler {
         this.upgradeRangeButton.mousePressed(() => {
             this.towerTool = 1;
         });
-        this.upgradeFireRateButton = createButton('Upgrade Fire Speed');
+        this.upgradeFireRateButton = createButton('Upgrade Fire Rate');
+        this.upgradeFireRateButton.id('upgradeFireRateButton');
         this.upgradeFireRateButton.style('font-family', 'Andale Mono');
         this.upgradeFireRateButton.style('font-size', '18px');
         this.upgradeFireRateButton.style('color', color(181, 43, 131));
@@ -202,25 +201,38 @@ export class UIHandler {
         this.upgradeFireRateButton.position(335, this.windowHeight - 40);
         this.upgradeFireRateButton.mousePressed(() => {
             this.towerTool = 2;
-        });    
+        }); 
+
+        this.upgradeFireSpeedButton = createButton('Upgrade Fire Speed');
+        this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
+        this.upgradeFireSpeedButton.style('font-family', 'Andale Mono');
+        this.upgradeFireSpeedButton.style('font-size', '18px');
+        this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
+        this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
+        this.upgradeFireSpeedButton.style('border', 'none');
+        this.upgradeFireSpeedButton.style('border-radius', '5px');
+        this.upgradeFireSpeedButton.style('padding', '5px 10px');
+        this.upgradeFireSpeedButton.style('font-weight', 'bold');
+        this.upgradeFireSpeedButton.position(565, this.windowHeight - 40);
+        this.upgradeFireSpeedButton.mousePressed(() => {
+            this.towerTool = 3;
+        });
+        
+        
     }
 
     #drawLoadAndSave() {
         this.saveButton = createImg('./assets/saveButton.png');
+        this.saveButton.id('saveButton');
         this.saveButton.addClass('settingsMenu');
         this.saveButton.size(100, 40);
         this.saveButton.position(this.windowWidth - 500, 10);
-        this.saveButton.mousePressed(()=>
-            this.onSaveClick()
-        );
 
         this.loadButton = createImg('./assets/loadButton.png');
         this.loadButton.addClass('settingsMenu');
+        this.loadButton.id('loadButton')
         this.loadButton.size(100, 40);
         this.loadButton.position(this.windowWidth - 390, 10);
-        this.loadButton.mousePressed(()=>
-            this.onLoadClick()
-        ); 
     }
 
     /* Possible idea:
@@ -285,6 +297,24 @@ export class UIHandler {
         }
     }
 
+    #initializeDebugConsole() {
+        this.debugConsole = createP('DEBUG TEXT');
+        this.debugConsole.id('debugConsole');
+        this.debugConsole.style('max-height', '100%');
+        this.debugConsole.style('width', '100%');
+        this.debugConsole.style('font-family', 'Andale Mono');
+        this.debugConsole.style('font-size', '18px');
+        this.debugConsole.style('color', color(255, 255, 255));
+        this.debugConsole.style('background-color', color(81,176,101, 60));
+        this.debugConsole.style('display', 'none');
+        this.debugConsole.position(0, 0);
+    }
+
+    showDebugConsole(gameData) {
+        this.debugConsole.style('display', 'block');
+        this.debugConsole.html(gameData);
+    }
+
     #drawTowerUpgradeMenu() {
         const toolbarColor = color(51, 51, 51);
         toolbarColor.setAlpha(200);
@@ -292,6 +322,7 @@ export class UIHandler {
         this.placeTowerButton.show();
         this.upgradeRangeButton.show();
         this.upgradeFireRateButton.show();
+        this.upgradeFireSpeedButton.show();
 
         // Update button colors
         switch (this.towerTool) {
@@ -302,6 +333,8 @@ export class UIHandler {
                 this.upgradeRangeButton.style('color', color(181, 43, 131));
                 this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
                 this.upgradeFireRateButton.style('color', color(181, 43, 131));
+                this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
+                this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
                 break;
             case 1:
                 this.placeTowerButton.style('background-color', color(81, 176, 101));
@@ -310,6 +343,8 @@ export class UIHandler {
                 this.upgradeRangeButton.style('color', color(81, 176, 101));
                 this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
                 this.upgradeFireRateButton.style('color', color(181, 43, 131));
+                this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
+                this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
                 break;
             case 2:
                 this.placeTowerButton.style('background-color', color(81, 176, 101));
@@ -318,6 +353,18 @@ export class UIHandler {
                 this.upgradeRangeButton.style('color', color(181, 43, 131));
                 this.upgradeFireRateButton.style('background-color', color(181, 43, 131));
                 this.upgradeFireRateButton.style('color', color(81, 176, 101));
+                this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
+                this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
+                break;
+            case 3:
+                this.placeTowerButton.style('background-color', color(81, 176, 101));
+                this.placeTowerButton.style('color', color(181, 43, 131));
+                this.upgradeRangeButton.style('background-color', color(81, 176, 101));
+                this.upgradeRangeButton.style('color', color(181, 43, 131));
+                this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
+                this.upgradeFireRateButton.style('color', color(181, 43, 131));
+                this.upgradeFireSpeedButton.style('background-color', color(181, 43, 131));
+                this.upgradeFireSpeedButton.style('color', color(81, 176, 101));
                 break;
         }
 
