@@ -176,6 +176,9 @@ let mapImg;
 let towerSprite;
 let mySound;
 let deathSound;
+let basicEnemy;
+let summonerEnemy;
+let summoneeEnemy;
 
 window.preload = function () {
     mySound = loadSound('./assets/potassium.mp3');
@@ -185,6 +188,9 @@ window.preload = function () {
     mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
+    basicEnemy = loadImage('./assets/Basic_Enemy.png');
+    summonerEnemy = loadImage('./assets/Summoner.png');
+    summoneeEnemy = loadImage('./assets/Summonee.png');
 }
 
 // EVENT LISTENERS
@@ -567,7 +573,25 @@ window.draw = function () {
                 nextWaveCheck.amount -= 1;
                 enemies.splice(i, 1);
             } else {
-                enemies[i].draw();
+                switch(enemies[i].appearance) {
+                    case "standard":
+                        enemies[i].draw(basicEnemy);
+                        break;
+                    case "spawner":
+                        enemies[i].draw(summonerEnemy);
+                        break;
+                    case "rapid":
+                        enemies[i].draw(summoneeEnemy);
+                        break;
+                    case "tank":
+                        // TODO: Add custom sprite
+                        enemies[i].draw(summonerEnemy);
+                        break;
+                    default:
+                        enemies[i].drawBasic();
+                        break;
+                }    
+                
                 // handle stunner type enemies
                 if (enemies[i].stunTower) {
                     if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;

@@ -27,6 +27,7 @@ const ENEMY_BUILDERS = [
 class Enemy {
     /**
      * Constructs an enemy based on speed, and the path it will follow
+     * @param {string} appearance - the appearance of the enemy
      * @param {number} speed - how quick an enemy moves along a path
      * @param {number} health - how much health an enemy has
      * @param {function} path - a path the enemy will be drawn on
@@ -37,7 +38,8 @@ class Enemy {
      * @param {number=} x - the starting x coordinate (if undefined, defaults to start of path's x)
      * @param {number=} y - the starting y coordinate (if undefined, defaults to start of path's y)
      */
-    constructor(speed, health, path, offset, currency, damage, damageDistance, x, y) {
+    constructor(appearance, speed, health, path, offset, currency, damage, damageDistance, x, y) {
+        this.appearance = appearance;
         this.speed = speed;
         this.health = health;
         this.path = path;
@@ -51,7 +53,30 @@ class Enemy {
         this.coolDown = 0;
     }
 
-    draw() {
+    draw(sprite) {
+        // draw enemy
+        push();
+        image(sprite, this.x, this.y, 60, 60);
+
+        // health bar
+        let healthBarWidth = 0;
+        if (this.health > 30) { // max width
+            healthBarWidth = 30 % this.health;
+        } else {
+            healthBarWidth = this.health;
+        }
+        fill(0, 200, 0);
+        stroke(0, 180, 0);
+        rectMode(CENTER);
+        rect(this.x, this.y + 40, healthBarWidth, 5);
+
+        this.x += this.speed;
+        this.y = this.path(this.x) + this.offset;
+        pop();
+
+    }
+
+    drawBasic() {
         // draw enemy
         push();
         
@@ -123,7 +148,7 @@ class Enemy {
 /** The Tank */
 class Tank extends Enemy {
     constructor(path, offset, x, y) {
-        super(0.2, 25, path, offset, 300, 6, x, y);
+        super("tank", 0.2, 25, path, offset, 300, 6, x, y);
     }
     drawAppearance() {
         fill(10);
@@ -135,7 +160,7 @@ class Tank extends Enemy {
 /** The Standard */
 class Standard extends Enemy {
     constructor(path, offset, x, y) {
-        super(0.5, 10, path, offset, 140, 3, 50, x, y);
+        super("standard", 0.5, 10, path, offset, 140, 3, 50, x, y);
     }
     drawAppearance() {
         fill(100);
@@ -147,7 +172,7 @@ class Standard extends Enemy {
 /** The Rapid */
 class Rapid extends Enemy {
     constructor(path, offset, x, y) {
-        super(1, 5, path, offset, 80, 1, 30, x, y);
+        super("rapid", 1, 5, path, offset, 80, 1, 30, x, y);
     }
     drawAppearance() {
         fill(50);
@@ -159,7 +184,7 @@ class Rapid extends Enemy {
 /** The Spawner */
 class Spawner extends Enemy {    
     constructor(path, offset, x, y) {
-        super(0.4, 5, path, offset, 80, 1, 40, x, y);
+        super("spawner", 0.4, 5, path, offset, 80, 1, 40, x, y);
         
         this.spawnCount = 3;
         /**
@@ -204,7 +229,7 @@ class Spawner extends Enemy {
 /** The Stunner */
 class Stunner extends Enemy {
     constructor(path, offset, x, y) {
-        super(0.6, 15, path, offset, 280, 3, x, y);
+        super("stunner", 0.6, 15, path, offset, 280, 3, x, y);
     }
     drawAppearance() {
         fill(75);
