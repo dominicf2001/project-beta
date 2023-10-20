@@ -45,6 +45,7 @@ function selectMap(mapID) {
     }
     return;
 }
+
 // Reset the Map variables
 function switchMap() {
     ++mapID;
@@ -158,6 +159,7 @@ let towers = [];
 let bullets = [];
 // let dragTower = null;
 let playSound = false;
+let placeTower = false;
 
 // other relevant variables
 let totalCurrency = 1000;
@@ -200,6 +202,7 @@ window.mousePressed = function (event) {
         for (let t = 0; t < towers.length; t++) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
+                if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -213,26 +216,29 @@ window.mousePressed = function (event) {
 
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
-                if (towers.length > towerLimit) {
-                    throw new Error("No more towers allowed!");
-                }
-
-                if (maps[0].isColliding(mouseX, 30)) {
-                    // throw new Error("Cannot place a tower on the path!");
-                    return;
-                }
-                let t = new Tower(mouseX, mouseY);
-                if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
-                    // throw new Error("NO");
-                } else {
-                    if(totalCurrency<400){
+                if (placeTower) {
+                    placeTower = false;
+                    if (towers.length > towerLimit) {
+                        throw new Error("No more towers allowed!");
                     }
-                    else{  
-                        towers.push(t);
-                        totalCurrency -= 400;
-                        }   
-                }
 
+                    if (maps[mapID].isColliding(mouseX, 30)) {
+                        // throw new Error("Cannot place a tower on the path!");
+                        return;
+                    }
+                    let t = new Tower(mouseX, mouseY);
+                    if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
+                        // throw new Error("NO");
+                    } else {
+                        if (totalCurrency < 400) {
+                            throw new Error("Not enough money!");
+                        }
+                        else {
+                            towers.push(t);
+                            totalCurrency -= 400;
+                        }
+                    }
+                }
             } catch (e) {
                 alert(e);
             }
@@ -367,7 +373,6 @@ window.setup = function () {
     uiHandler.initializeUI();
 
     
-    
     uiHandler.saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
@@ -437,6 +442,10 @@ window.setup = function () {
     // uiHandler.nextWaveButton.mousePressed(function() {
     //     spawnNextWave();
     // });
+
+    uiHandler.placeTowerButton.mousePressed(function() {
+        placeTower = true;
+    });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
@@ -561,7 +570,7 @@ window.draw = function () {
                 initNextWave = 10;
             }
         }
-        console.log(initNextWave);
+        //console.log(initNextWave);
         // uiHandler.nextWaveButton.show();
         // else uiHandler.nextWaveButton.hide();
 
@@ -614,12 +623,13 @@ window.draw = function () {
                 if (enemies[i].stunTower) {
                     if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
                     else {
-                        let stunIndex = enemies[i].stunTower(towers.length);
-                        // console.log(stunIndex ?? -1);
+                        let n = towers.length;
+                        let stunIndex = enemies[i].stunTower(n);
                         if (stunIndex != -1) {
-                            if (!towers[stunIndex].isStunned()) {
-                                towers[stunIndex].stun();
+                            while (stunIndex < n && towers[stunIndex].isStunned()) {
+                                stunIndex ++
                             }
+                            if (stunIndex < n) towers[stunIndex].stun();
                         }
                         stunCooldown.amount = 0;
                     }
