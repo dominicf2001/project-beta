@@ -217,6 +217,7 @@ window.mousePressed = function (event) {
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
                 if (placeTower) {
+                    console.log("test");
                     placeTower = false;
                     if (towers.length > towerLimit) {
                         throw new Error("No more towers allowed!");
@@ -512,9 +513,9 @@ window.draw = function () {
             text('Level Complete', 600, 100);
             pop();
         }
-        if (totalCurrency >= 400) {
+        if (placeTower) {
             push();
-            if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
+            if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
                 tint(255, 0, 0, 200);
             } else {
                 tint(255, 200);

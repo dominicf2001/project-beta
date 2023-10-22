@@ -7,7 +7,7 @@ import { maps } from "./index.js";
 // Generate offset within the bounds of the path
 function getOffset() {
     let width = Math.floor(maps[0].bottomPath(0) - maps[0].topPath(0));
-    return Math.floor(Math.random() * width / 2.5) - Math.floor(width / 5);
+    return Math.floor(Math.random() * width / 3) - Math.floor(width / 6);
 }
 
 /** @module enemy */
