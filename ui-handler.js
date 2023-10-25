@@ -69,7 +69,6 @@ export class UIHandler {
         // this.nextWaveButton.mousePressed(() =>
         //     this.onNextWaveClick()
         // );
-
         // draw Next Level Button
         this.nextLevelButton = createButton('Next Level');
         this.nextLevelButton.id('nextLevelButton');
@@ -211,8 +210,8 @@ export class UIHandler {
         this.upgradeFireRateButton.mousePressed(() => {
             this.towerTool = 2;
         });
+        
         this.upgradeFireSpeedButton = createButton('Upgrade Bullet Speed');
->>>>>>> main
         this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
         this.upgradeFireSpeedButton.style('font-family', 'Andale Mono');
         this.upgradeFireSpeedButton.style('font-size', '18px');
