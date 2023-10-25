@@ -169,7 +169,7 @@ export class UIHandler {
     }
 
     #drawToolbar() {
-        this.placeTowerButton = createButton('Place Tower (400)');
+        this.placeTowerButton = createButton('Place Tower');
         this.placeTowerButton.id('placeTowerButton');
         this.placeTowerButton.style('font-family', 'Andale Mono');
         this.placeTowerButton.style('font-size', '18px');
@@ -181,7 +181,7 @@ export class UIHandler {
         this.placeTowerButton.style('font-weight', 'bold');
         this.placeTowerButton.position(10, this.windowHeight - 40);
 
-        this.upgradeRangeButton = createButton('Upgrade Range (200)');
+        this.upgradeRangeButton = createButton('Upgrade Range');
         this.upgradeRangeButton.id('upgradeRangeButton');
         this.upgradeRangeButton.style('font-family', 'Andale Mono');
         this.upgradeRangeButton.style('font-size', '18px');
@@ -196,7 +196,7 @@ export class UIHandler {
             this.towerTool = 1;
         });
 
-        this.upgradeFireRateButton = createButton('Upgrade Fire Rate (200)');
+        this.upgradeFireRateButton = createButton('Upgrade Fire Rate');
         this.upgradeFireRateButton.id('upgradeFireRateButton');
         this.upgradeFireRateButton.style('font-family', 'Andale Mono');
         this.upgradeFireRateButton.style('font-size', '18px');
