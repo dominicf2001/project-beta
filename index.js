@@ -156,7 +156,7 @@ let bullets = [];
 let playSound = false;
 
 // other relevant variables
-let totalCurrency = 1000;
+let totalCurrency = 800;
 let totalHealth = 50;
 
 // checks for next wave button.
@@ -637,27 +637,34 @@ function spawnNextWave() {
 
 function toggleToolbarButtonLocks() {
     if (totalCurrency < 400) {
-        uiHandler.placeTowerButton.style('background-color', color(0, 0, 0));
+        uiHandler.placeTowerButton.style('color', color(181, 43, 131, 100));
+        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101, 50));
     } else {
         uiHandler.placeTowerButton.style('color', color(181, 43, 131));
         uiHandler.placeTowerButton.style('background-color', color(81, 176, 101));
     }
     
     if (totalCurrency < 200) {
-        uiHandler.upgradeFireRateButton.style('background-color', color(0, 0, 0));
+        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131, 100));        
+        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101, 50));
     } else {
+        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131));        
         uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101));
     }
 
     if (totalCurrency < 200) {
-        uiHandler.upgradeFireSpeedButton.style('background-color', color(0, 0, 0));
+        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131, 100));        
+        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101, 50));
     } else {
+        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131));        
         uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
     }
 
     if (totalCurrency < 200) {
-        uiHandler.upgradeRangeButton.style('background-color', color(0, 0, 0));
+        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131, 100));        
+        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101, 50));
     } else {
+        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131));        
         uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101));
     }
 }
