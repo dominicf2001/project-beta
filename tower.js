@@ -54,7 +54,7 @@ export class Tower {
         stroke(0, 180, 0);
         rectMode(CENTER);
         rect(this.x, this.y + 60, healthBarWidth, 5);
-        console.log(this.stunAmmount);
+        //console.log(this.stunAmmount);
         pop();
     }
     
