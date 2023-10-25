@@ -70,6 +70,11 @@ export class UIHandler {
         //     this.onNextWaveClick()
         // );
 
+        // draw Next Level Button
+        this.nextLevelButton = createButton('Next Level');
+        this.nextLevelButton.id('nextLevelButton');
+        this.nextLevelButton.position(this.windowWidth - 100, this.windowHeight + 45);
+
         this.settingsButton = createImg('./assets/settingsbutton.png');
         this.settingsButton.id('settingsButton');
         this.settingsButton.addClass('settingsMenu');
@@ -120,6 +125,7 @@ export class UIHandler {
             this.settingsButton.hide();
             this.muteButton.hide();
             this.gameOverScreen.show();
+            this.nextLevelButton.hide();
         } else if (gameMode === 0) {
             this.upgradeRangeButton.hide();
             this.upgradeFireRateButton.hide();
@@ -130,6 +136,7 @@ export class UIHandler {
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
+            this.nextLevelButton.hide();
             this.muteButton.hide();
             this.encyclopediaButton.hide();
         } else if (gameMode === 1) {
@@ -138,6 +145,8 @@ export class UIHandler {
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
             // this.nextWaveButton.show();
+
+            this.nextLevelButton.show();
             this.gameOverScreen.hide();
             this.encyclopediaButton.show();
             this.settingsButton.show();
@@ -201,9 +210,9 @@ export class UIHandler {
         this.upgradeFireRateButton.position(335, this.windowHeight - 40);
         this.upgradeFireRateButton.mousePressed(() => {
             this.towerTool = 2;
-        }); 
-
-        this.upgradeFireSpeedButton = createButton('Upgrade Fire Speed (200)');
+        });
+        this.upgradeFireSpeedButton = createButton('Upgrade Bullet Speed');
+>>>>>>> main
         this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
         this.upgradeFireSpeedButton.style('font-family', 'Andale Mono');
         this.upgradeFireSpeedButton.style('font-size', '18px');
