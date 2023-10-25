@@ -201,7 +201,7 @@ export class UIHandler {
             this.towerTool = 2;
         }); 
 
-        this.upgradeFireSpeedButton = createButton('Upgrade Fire Speed');
+        this.upgradeFireSpeedButton = createButton('Upgrade Bullet Speed');
         this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
         this.upgradeFireSpeedButton.style('font-family', 'Andale Mono');
         this.upgradeFireSpeedButton.style('font-size', '18px');
