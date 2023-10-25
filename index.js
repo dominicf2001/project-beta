@@ -419,10 +419,6 @@ window.setup = function () {
     game = createCanvas(windowWidth, windowHeight);
     
     uiHandler.initializeUI();
-<<<<<<< HEAD
-=======
-
->>>>>>> main
     
     uiHandler.saveButton.mousePressed(function() {
         // Save game state
@@ -490,13 +486,10 @@ window.setup = function () {
     // uiHandler.nextWaveButton.mousePressed(function() {
     //     spawnNextWave();
     // });
-<<<<<<< HEAD
-=======
 
     uiHandler.placeTowerButton.mousePressed(function() {
         placeTower = true;
     });
->>>>>>> main
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
