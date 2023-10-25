@@ -33,27 +33,36 @@ function selectMap(mapID) {
     switch (mapID) {
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
+            currentLevelMusic = level1Music;
             break;
         case 1:
-            mapImg = loadImage('Maps/Space Map Version 2.png');
+            mapImg = loadImage('Maps/Space Ship Map.png');
+            currentLevelMusic = level2Music;
             break;
         case 2:
             //mapImg = loadImage('Maps/Boss Map.png');
+            currentLevelMusic = level3Music;
+            break;
+        case 3: 
+            //mapImg = loadImage('Maps/Bonus Level.png');
             break;
         default:
             break;
     }
     return;
 }
+
 // Reset the Map variables
 function switchMap() {
     ++mapID;
     currentWave = 0;
     levelComplete = false;
+    currentLevelMusic.stop();
     enemies = []; // Reset Enemies
     towers = []; // resets towers
     selectMap(mapID);
-    nextLevel.hide();
+    uiHandler.nextLevelButton.hide();
+    currentLevelMusic.loop();
     redraw();
 }
 
@@ -101,10 +110,34 @@ export let maps = [
             }
         },
         isColliding: function(x, diameter) {
-            return mouseY < maps[0].bottomPath(x) && mouseY > maps[0].topPath(x) - diameter;
+            return mouseY < maps[mapID].bottomPath(x) && mouseY > maps[mapID].topPath(x) - diameter;
         }
     },
-    {}
+    { // Second Map
+        topPath: function(x) {
+            return 520;
+        },
+        middlePath: function(x) {
+            return 570;
+        },
+        bottomPath: function(x) {
+            if (x < 768) {
+                    return 650;
+            }
+            else if (x >= 768) {
+                    return 650;
+            }
+        },
+        isColliding: function(x, diameter) {
+            return mouseY < maps[mapID].bottomPath(x) && mouseY > maps[mapID].topPath(x) - diameter;
+        }
+    },
+    { // Third Map
+
+    }, 
+    { // Bonus Map
+
+    }
 ];
 
 //////////////////////////////
@@ -118,7 +151,23 @@ const levels = [
             [0, 3],
             [0, 0, 6],
             [2],
-            [0, 0, 0, 1]
+            [0, 0, 0, 1],
+            [0, 0, 0, 0, 3]
+        ],
+        spawnPriority: [
+            [1, 0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0],
+            [4, 3, 2, 1, 0]
+        ]
+    },
+    { // Level 2 Data
+        leveldata: [
+            [0, 3],
+            [0, 1, 6],
+            [5],
+            [1, 1, 1, 4]
         ],
         spawnPriority: [
             [1, 0],
@@ -127,24 +176,16 @@ const levels = [
             [3, 2, 1, 0]
         ]
     },
-    { // Level 2 Data
-        leveldata: [
-            [0, 3],
-            [0, 0, 6],
-            [2],
-            [0, 0, 0, 1]
-        ],
-        spawnPriority: [
-            [1, 0],
-            [2, 1, 0],
-            [0],
-            [3, 2, 1, 0]
-        ]
+    { // Level 3 Data
+
+    },
+    { // Bonus Level Data
+
     }
 ];
 
 // needs to be generalized for all levels
-const waveAmount = levels[0].leveldata.length;
+const waveAmount = levels[mapID].leveldata.length;
 
 let enemies = [];
 
@@ -154,13 +195,15 @@ let towers = [];
 let bullets = [];
 // let dragTower = null;
 let playSound = false;
+let placeTower = false;
 
 // other relevant variables
 let totalCurrency = 1000;
 let totalHealth = 50;
 
-// checks for next wave button.
+// checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
+let initNextWave = 20;
 let nextWaveCheck = { 
     amount: 0
 }
@@ -174,17 +217,28 @@ let stunCooldown = {
 // Assets
 let mapImg;
 let towerSprite;
-let mySound;
+let currentLevelMusic;
+let level1Music;
+let level2Music;
+let level3Music;
 let deathSound;
+let basicEnemy;
+let summonerEnemy;
+let summoneeEnemy;
 
 window.preload = function () {
-    mySound = loadSound('./assets/potassium.mp3');
-    deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3')
+    // Loads the Level Music
+    level1Music = loadSound('./assets/potassium.mp3');
+    level2Music = loadSound('./assets/Project_Beta_Song2.mp3');
+    level3Music = loadSound('./assets/Project_Beta_Boat_Song.mp3');
+    deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
-    mapImg = loadImage('Maps/Space Map 1.png'); // Loads the Map
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
+    basicEnemy = loadImage('./assets/Basic_Enemy.png');
+    summonerEnemy = loadImage('./assets/Summoner.png');
+    summoneeEnemy = loadImage('./assets/Summonee.png');
 }
 
 // EVENT LISTENERS
@@ -195,6 +249,7 @@ window.mousePressed = function (event) {
         for (let t = 0; t < towers.length; t++) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
+                if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -208,26 +263,30 @@ window.mousePressed = function (event) {
 
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
-                if (towers.length > towerLimit) {
-                    throw new Error("No more towers allowed!");
-                }
-
-                if (maps[0].isColliding(mouseX, 30)) {
-                    // throw new Error("Cannot place a tower on the path!");
-                    return;
-                }
-                let t = new Tower(mouseX, mouseY);
-                if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
-                    // throw new Error("NO");
-                } else {
-                    if(totalCurrency<400){
+                if (placeTower) {
+                    console.log("test");
+                    placeTower = false;
+                    if (towers.length > towerLimit) {
+                        throw new Error("No more towers allowed!");
                     }
-                    else{  
-                        towers.push(t);
-                        totalCurrency -= 400;
-                        }   
-                }
 
+                    if (maps[mapID].isColliding(mouseX, 30)) {
+                        // throw new Error("Cannot place a tower on the path!");
+                        return;
+                    }
+                    let t = new Tower(mouseX, mouseY);
+                    if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
+                        // throw new Error("NO");
+                    } else {
+                        if (totalCurrency < 400) {
+                            throw new Error("Not enough money!");
+                        }
+                        else {
+                            towers.push(t);
+                            totalCurrency -= 400;
+                        }
+                    }
+                }
             } catch (e) {
                 alert(e);
             }
@@ -362,7 +421,6 @@ window.setup = function () {
     uiHandler.initializeUI();
 
     
-    
     uiHandler.saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
@@ -409,10 +467,10 @@ window.setup = function () {
 
     uiHandler.muteButton.mousePressed(function() {
         if (playSound) {
-            mySound.pause();
-            this.playSound = false;
+            currentLevelMusic.pause();
+            playSound = false;
         } else {
-            mySound.play();
+            currentLevelMusic.loop();
             playSound = true;
         }
     });
@@ -422,15 +480,19 @@ window.setup = function () {
     uiHandler.startButton.mousePressed(function() {
         console.log("test");
         if (!playSound) {
-            mySound.setVolume(0.1);
-            mySound.play();
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
             playSound = true;
         }
         beginGame = true;
     });
 
-    uiHandler.nextWaveButton.mousePressed(function() {
-        spawnNextWave();
+    // uiHandler.nextWaveButton.mousePressed(function() {
+    //     spawnNextWave();
+    // });
+
+    uiHandler.placeTowerButton.mousePressed(function() {
+        placeTower = true;
     });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
@@ -447,6 +509,9 @@ window.setup = function () {
         let selectedUpgradeTower = getSelectedTower();
         selectedUpgradeTower.upgradeRange();
     });
+    uiHandler.nextLevelButton.mousePressed(function() {
+        switchMap();
+    })
 
     //Poll for bullets every 100ms
 
@@ -461,6 +526,7 @@ window.draw = function () {
 
     if (gameMode == 0) {
         uiHandler.updateUIForGameMode(gameMode);
+        uiHandler.nextLevelButton.hide();
 
         // Switch to game mode
         if (beginGame) {
@@ -483,8 +549,8 @@ window.draw = function () {
         }
         
         // TODO
-        if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
-        else uiHandler.nextWaveButton.hide();
+        // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
+        // else uiHandler.nextWaveButton.hide();
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
@@ -495,12 +561,15 @@ window.draw = function () {
             textAlign(CENTER);
             textSize(40)
             fill('red');
-            text('Level Complete', 600, 100);
+            var lev = mapID + 1
+            stroke(0);
+            strokeWeight(4);
+            text('Level ' + lev + ' Complete', 600, 100);
             pop();
         }
-        if (totalCurrency >= 400) {
+        if (placeTower) {
             push();
-            if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
+            if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
                 tint(255, 0, 0, 200);
             } else {
                 tint(255, 200);
@@ -522,11 +591,54 @@ window.draw = function () {
             t.draw(towerSprite);
             if (t.isStunned()) t.drawStunned();
         }
+        // draw path
+
+        /* push();
+        strokeWeight(20);
+        stroke(255, 255, 255, 255);
+        noFill();
+        beginShape();
+        for (const point of path) {
+            vertex(point.x, point.y);
+        }
+        endShape();
+        pop(); */
+
+        if (nextWaveCheck.amount < 1) {
+            if (currentWave == 0) {
+                push();
+                textSize(20);
+                fill('white');
+                stroke(0);
+                strokeWeight(4);
+                text("Game starts in: " + initNextWave, windowWidth - 200, windowHeight - 50);
+                pop();
+            }
+            else if (currentWave < waveAmount) {
+                push();
+                textSize(20);
+                fill('white');
+                stroke(0);
+                strokeWeight(4);
+                text("Next wave in: " + initNextWave, windowWidth - 185, windowHeight - 50);
+                pop();
+            }
+            if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
+            if (initNextWave == 0) {
+                if (currentWave < waveAmount) spawnNextWave();
+                initNextWave = 10;
+            }
+        }
+        //console.log(initNextWave);
+        // uiHandler.nextWaveButton.show();
+        // else uiHandler.nextWaveButton.hide();
 
         // draw currency holder
         push();
         textSize(20);
         fill('white');
+        stroke(0);
+        strokeWeight(4);
         text(totalCurrency, 100, 40);
         pop();
 
@@ -534,6 +646,8 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
+        stroke(0);
+        strokeWeight(4);
         text(totalHealth, 40, 40);
         pop();
 
@@ -546,7 +660,9 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
-        text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 30);
+        stroke(0);
+        strokeWeight(4);
+        text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 25);
         pop();
 
         // draw or remove enemies
@@ -567,17 +683,36 @@ window.draw = function () {
                 nextWaveCheck.amount -= 1;
                 enemies.splice(i, 1);
             } else {
-                enemies[i].draw();
+                switch(enemies[i].appearance) {
+                    case "standard":
+                        enemies[i].draw(basicEnemy);
+                        break;
+                    case "spawner":
+                        enemies[i].draw(summonerEnemy);
+                        break;
+                    case "rapid":
+                        enemies[i].draw(summoneeEnemy);
+                        break;
+                    case "tank":
+                        // TODO: Add custom sprite
+                        enemies[i].draw(summonerEnemy);
+                        break;
+                    default:
+                        enemies[i].drawBasic();
+                        break;
+                }    
+                
                 // handle stunner type enemies
                 if (enemies[i].stunTower) {
                     if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
                     else {
-                        let stunIndex = enemies[i].stunTower(towers.length);
-                        // console.log(stunIndex ?? -1);
+                        let n = towers.length;
+                        let stunIndex = enemies[i].stunTower(n);
                         if (stunIndex != -1) {
-                            if (!towers[stunIndex].isStunned()) {
-                                towers[stunIndex].stun();
+                            while (stunIndex < n && towers[stunIndex].isStunned()) {
+                                stunIndex ++
                             }
+                            if (stunIndex < n) towers[stunIndex].stun();
                         }
                         stunCooldown.amount = 0;
                     }
@@ -610,8 +745,8 @@ window.draw = function () {
         
         game.hide();
         
-        if (mySound.isPlaying()) {
-            mySound.pause();
+        if (currentLevelMusic.isPlaying()) {
+            currentLevelMusic.pause();
             deathSound.play();
         }
     }
@@ -633,7 +768,7 @@ function spawnNextWave() {
             enemies = newWave.getEnemies();
         } else {
             // Next Level Button and Level Complete text Appears after all the Waves are done.
-            nextLevel.show(); 
+            uiHandler.nextLevelButton.show(); 
             levelComplete = true;
         }
     } catch (e) {
