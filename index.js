@@ -45,6 +45,7 @@ function selectMap(mapID) {
     }
     return;
 }
+
 // Reset the Map variables
 function switchMap() {
     ++mapID;
@@ -104,6 +105,8 @@ export let maps = [
             return mouseY < maps[0].bottomPath(x) && mouseY > maps[0].topPath(x) - diameter;
         }
     },
+
+// Second map
     {}
 ];
 
@@ -118,13 +121,15 @@ const levels = [
             [0, 3],
             [0, 0, 6],
             [2],
-            [0, 0, 0, 1]
+            [0, 0, 0, 1],
+            [0, 0, 0, 0, 3]
         ],
         spawnPriority: [
             [1, 0],
             [2, 1, 0],
             [0],
-            [3, 2, 1, 0]
+            [3, 2, 1, 0],
+            [4, 3, 2, 1, 0]
         ]
     },
     { // Level 2 Data
@@ -144,7 +149,7 @@ const levels = [
 ];
 
 // needs to be generalized for all levels
-const waveAmount = levels[0].leveldata.length;
+const waveAmount = levels[mapID].leveldata.length;
 
 let enemies = [];
 
@@ -154,13 +159,15 @@ let towers = [];
 let bullets = [];
 // let dragTower = null;
 let playSound = false;
+let placeTower = false;
 
 // other relevant variables
 let totalCurrency = 1000;
 let totalHealth = 50;
 
-// checks for next wave button.
+// checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
+let initNextWave = 20;
 let nextWaveCheck = { 
     amount: 0
 }
@@ -201,6 +208,7 @@ window.mousePressed = function (event) {
         for (let t = 0; t < towers.length; t++) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
+                if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -214,26 +222,30 @@ window.mousePressed = function (event) {
 
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
-                if (towers.length > towerLimit) {
-                    throw new Error("No more towers allowed!");
-                }
-
-                if (maps[0].isColliding(mouseX, 30)) {
-                    // throw new Error("Cannot place a tower on the path!");
-                    return;
-                }
-                let t = new Tower(mouseX, mouseY);
-                if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
-                    // throw new Error("NO");
-                } else {
-                    if(totalCurrency<400){
+                if (placeTower) {
+                    console.log("test");
+                    placeTower = false;
+                    if (towers.length > towerLimit) {
+                        throw new Error("No more towers allowed!");
                     }
-                    else{  
-                        towers.push(t);
-                        totalCurrency -= 400;
-                        }   
-                }
 
+                    if (maps[mapID].isColliding(mouseX, 30)) {
+                        // throw new Error("Cannot place a tower on the path!");
+                        return;
+                    }
+                    let t = new Tower(mouseX, mouseY);
+                    if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
+                        // throw new Error("NO");
+                    } else {
+                        if (totalCurrency < 400) {
+                            throw new Error("Not enough money!");
+                        }
+                        else {
+                            towers.push(t);
+                            totalCurrency -= 400;
+                        }
+                    }
+                }
             } catch (e) {
                 alert(e);
             }
@@ -368,7 +380,6 @@ window.setup = function () {
     uiHandler.initializeUI();
 
     
-    
     uiHandler.saveButton.mousePressed(function() {
         // Save game state
         let saveState = {
@@ -435,8 +446,12 @@ window.setup = function () {
         beginGame = true;
     });
 
-    uiHandler.nextWaveButton.mousePressed(function() {
-        spawnNextWave();
+    // uiHandler.nextWaveButton.mousePressed(function() {
+    //     spawnNextWave();
+    // });
+
+    uiHandler.placeTowerButton.mousePressed(function() {
+        placeTower = true;
     });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
@@ -489,8 +504,8 @@ window.draw = function () {
         }
         
         // TODO
-        if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
-        else uiHandler.nextWaveButton.hide();
+        // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
+        // else uiHandler.nextWaveButton.hide();
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
@@ -504,9 +519,9 @@ window.draw = function () {
             text('Level Complete', 600, 100);
             pop();
         }
-        if (totalCurrency >= 400) {
+        if (placeTower) {
             push();
-            if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
+            if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
                 tint(255, 0, 0, 200);
             } else {
                 tint(255, 200);
@@ -528,6 +543,43 @@ window.draw = function () {
             t.draw(towerSprite);
             if (t.isStunned()) t.drawStunned();
         }
+        // draw path
+
+        /* push();
+        strokeWeight(20);
+        stroke(255, 255, 255, 255);
+        noFill();
+        beginShape();
+        for (const point of path) {
+            vertex(point.x, point.y);
+        }
+        endShape();
+        pop(); */
+
+        if (nextWaveCheck.amount < 1) {
+            if (currentWave == 0) {
+                push();
+                textSize(20);
+                fill('white');
+                text("Game starts in: " + initNextWave, windowWidth - 200, windowHeight - 50);
+                pop();
+            }
+            else if (currentWave < waveAmount) {
+                push();
+                textSize(20);
+                fill('white');
+                text("Next wave in: " + initNextWave, windowWidth - 185, windowHeight - 50);
+                pop();
+            }
+            if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
+            if (initNextWave == 0) {
+                if (currentWave < waveAmount) spawnNextWave();
+                initNextWave = 10;
+            }
+        }
+        //console.log(initNextWave);
+        // uiHandler.nextWaveButton.show();
+        // else uiHandler.nextWaveButton.hide();
 
         // draw currency holder
         push();
@@ -552,7 +604,7 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
-        text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 30);
+        text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 25);
         pop();
 
         // draw or remove enemies
@@ -596,12 +648,13 @@ window.draw = function () {
                 if (enemies[i].stunTower) {
                     if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
                     else {
-                        let stunIndex = enemies[i].stunTower(towers.length);
-                        // console.log(stunIndex ?? -1);
+                        let n = towers.length;
+                        let stunIndex = enemies[i].stunTower(n);
                         if (stunIndex != -1) {
-                            if (!towers[stunIndex].isStunned()) {
-                                towers[stunIndex].stun();
+                            while (stunIndex < n && towers[stunIndex].isStunned()) {
+                                stunIndex ++
                             }
+                            if (stunIndex < n) towers[stunIndex].stun();
                         }
                         stunCooldown.amount = 0;
                     }

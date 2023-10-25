@@ -23,7 +23,7 @@ export class UIHandler {
         this.titleImg;
         this.gameOverScreen;
         this.startButton;
-        this.nextWaveButton;
+        //this.nextWaveButton;
         this.settingsButton;
         this.muteButton;
         this.placeTowerButton;
@@ -65,9 +65,11 @@ export class UIHandler {
         this.startButton.size(200, 100);
 
         // draw "next wave" button
-        this.nextWaveButton = createButton('Next Wave')
-        this.nextWaveButton.id('nextWaveButton');
-        this.nextWaveButton.position(this.windowWidth - 100, this.windowHeight + 15);
+        // this.nextWaveButton = createButton('Next Wave')
+        // this.nextWaveButton.position(this.windowWidth - 100, this.windowHeight + 15);
+        // this.nextWaveButton.mousePressed(() =>
+        //     this.onNextWaveClick()
+        // );
 
         this.settingsButton = createImg('./assets/settingsbutton.png');
         this.settingsButton.id('settingsButton');
@@ -115,7 +117,7 @@ export class UIHandler {
             this.loadButton.hide();
             this.placeTowerButton.hide();
             this.saveButton.hide();
-            this.nextWaveButton.hide();
+            // this.nextWaveButton.hide();
             this.settingsButton.hide();
             this.muteButton.hide();
             this.gameOverScreen.show();
@@ -126,7 +128,7 @@ export class UIHandler {
             this.loadButton.hide();
             this.placeTowerButton.hide();
             this.saveButton.hide();
-            this.nextWaveButton.hide();
+            // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
             this.muteButton.hide();
@@ -136,7 +138,7 @@ export class UIHandler {
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
-            this.nextWaveButton.show();
+            // this.nextWaveButton.show();
             this.gameOverScreen.hide();
             this.encyclopediaButton.show();
             this.settingsButton.show();

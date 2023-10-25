@@ -7,7 +7,7 @@ import { maps } from "./index.js";
 // Generate offset within the bounds of the path
 function getOffset() {
     let width = Math.floor(maps[0].bottomPath(0) - maps[0].topPath(0));
-    return Math.floor(Math.random() * width / 2.5) - Math.floor(width / 5);
+    return Math.floor(Math.random() * width / 3) - Math.floor(width / 6);
 }
 
 /** @module enemy */
@@ -236,11 +236,14 @@ class Stunner extends Enemy {
         noStroke();
         triangle(this.x - 10, this.y + 10, this.x, this.y - 10, this.x + 10, this.y + 10);
     }
+
+    // Returns the index of the tower that will be stunned.
+    // Generated at random from 0 to n (number of towers)
     stunTower(n) {
         if (n > 0) {
-            let r = n % 3;
-            let q = Math.floor(n / 3);
-            return Math.floor(Math.random() * q);
+            // let r = n % 3;
+            // let q = Math.floor(n / 3);
+            return Math.floor(Math.random() * n);
         } else return -1;
     }
 }
