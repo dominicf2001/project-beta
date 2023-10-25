@@ -33,12 +33,15 @@ function selectMap(mapID) {
     switch (mapID) {
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
+            currentLevelMusic = level1Music;
             break;
         case 1:
             mapImg = loadImage('Maps/Space Ship Map.png');
+            currentLevelMusic = level2Music;
             break;
         case 2:
             //mapImg = loadImage('Maps/Boss Map.png');
+            currentLevelMusic = level3Music;
             break;
         case 3: 
             //mapImg = loadImage('Maps/Bonus Level.png');
@@ -53,10 +56,12 @@ function switchMap() {
     ++mapID;
     currentWave = 0;
     levelComplete = false;
+    currentLevelMusic.stop();
     enemies = []; // Reset Enemies
     towers = []; // resets towers
     selectMap(mapID);
     uiHandler.nextLevelButton.hide();
+    currentLevelMusic.loop();
     redraw();
 }
 
@@ -109,31 +114,16 @@ export let maps = [
     },
     { // Second Map
         topPath: function(x) {
-            //return 166.8354 + 1.043129 * x - 0.003942524 * (x * x) + 0.00000607239 * (x * x * x) - 4.46637e-9 * (x * x * x * x) + 1.352265e-12 * (x * x * x * x * x);
             return 520;
         },
         middlePath: function(x) {
-            //return 246.768 + 0.6824144 * x - 0.002826065 * (x * x) + 0.000004403122 * (x * x * x) - 3.39375e-9 * (x * x * x * x) + 1.15278e-12 * (x * x * x * x * x);
             return 570;
         },
         bottomPath: function(x) {
             if (x < 768) {
-                /*return (5.00842e-27 * Math.pow(x, 11) - 1.79629e-23 * Math.pow(x, 10)
-                    + 2.6735e-20 * Math.pow(x, 9) - 2.14461e-17 * Math.pow(x, 8)
-                    + 1.02276e-14 * Math.pow(x, 7) - 3.17496e-12 * Math.pow(x, 6)
-                    + 7.82401e-10 * Math.pow(x, 5) - 1.90207e-7 * Math.pow(x, 4)
-                    + 4.10456e-5 * Math.pow(x, 3) - 6.97063e-3 * Math.pow(x, 2)
-                    + 7.67275e-1 * x + 3.11e2);*/
                     return 650;
             }
             else if (x >= 768) {
-                let t = x - 768;
-                /*return (-3.17081e-23 * Math.pow(t, 11) + 7.03199e-20 * Math.pow(t, 10)
-                    - 6.63488e-17 * Math.pow(t, 9) + 3.46794e-14 * Math.pow(t, 8)
-                    - 1.09391e-11 * Math.pow(t, 7) + 2.12115e-9 * Math.pow(t, 6)
-                    - 2.45005e-7 * Math.pow(t, 5) + 1.51765e-5 * Math.pow(t, 4)
-                    - 3.54811e-4 * Math.pow(t, 3) - 3.55384e-3 * Math.pow(t, 2)
-                    + 2.33631e-1 * t + 250);*/
                     return 650;
             }
         },
@@ -141,10 +131,10 @@ export let maps = [
             return mouseY < maps[mapID].bottomPath(x) && mouseY > maps[mapID].topPath(x) - diameter;
         }
     },
-    {
+    { // Third Map
 
-    },
-    {
+    }, 
+    { // Bonus Map
 
     }
 ];
@@ -182,6 +172,12 @@ const levels = [
             [0],
             [3, 2, 1, 0]
         ]
+    },
+    { // Level 3 Data
+
+    },
+    { // Bonus Level Data
+
     }
 ];
 
@@ -216,12 +212,18 @@ let stunCooldown = {
 // Assets
 let mapImg;
 let towerSprite;
-let mySound;
+let currentLevelMusic;
+let level1Music;
+let level2Music;
+let level3Music;
 let deathSound;
 
 window.preload = function () {
-    mySound = loadSound('./assets/potassium.mp3');
-    deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3')
+    // Loads the Level Music
+    level1Music = loadSound('./assets/potassium.mp3');
+    level2Music = loadSound('./assets/Project_Beta_Song2.mp3');
+    level3Music = loadSound('./assets/Project_Beta_Boat_Song.mp3');
+    deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3');
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     selectMap(mapID); // Loads the Map
@@ -450,10 +452,10 @@ window.setup = function () {
 
     uiHandler.muteButton.mousePressed(function() {
         if (playSound) {
-            mySound.pause();
-            this.playSound = false;
+            currentLevelMusic.pause();
+            playSound = false;
         } else {
-            mySound.play();
+            currentLevelMusic.loop();
             playSound = true;
         }
     });
@@ -463,8 +465,8 @@ window.setup = function () {
     uiHandler.startButton.mousePressed(function() {
         console.log("test");
         if (!playSound) {
-            mySound.setVolume(0.1);
-            mySound.play();
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
             playSound = true;
         }
         beginGame = true;
@@ -544,6 +546,7 @@ window.draw = function () {
             text('Level ' + lev + ' Complete', 600, 100);
             pop();
         }
+
         if (totalCurrency >= 400) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency<400) {
@@ -656,8 +659,8 @@ window.draw = function () {
         
         game.hide();
         
-        if (mySound.isPlaying()) {
-            mySound.pause();
+        if (currentLevelMusic.isPlaying()) {
+            currentLevelMusic.pause();
             deathSound.play();
         }
     }
