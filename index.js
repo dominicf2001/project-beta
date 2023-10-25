@@ -360,8 +360,6 @@ window.setup = function () {
     game = createCanvas(windowWidth, windowHeight);
     
     uiHandler.initializeUI();
-
-    
     
     uiHandler.saveButton.mousePressed(function() {
         // Save game state
@@ -416,11 +414,8 @@ window.setup = function () {
             playSound = true;
         }
     });
-
-
-    console.log("test");
+    
     uiHandler.startButton.mousePressed(function() {
-        console.log("test");
         if (!playSound) {
             mySound.setVolume(0.1);
             mySound.play();
@@ -429,9 +424,9 @@ window.setup = function () {
         beginGame = true;
     });
 
-    uiHandler.nextWaveButton.mousePressed(function() {
-        spawnNextWave();
-    });
+    // uiHandler.nextWaveButton.mousePressed(function() {
+    //     spawnNextWave();
+    // });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
@@ -449,7 +444,6 @@ window.setup = function () {
     });
 
     //Poll for bullets every 100ms
-
     setInterval(fireBullets, 100);
     setInterval(dealDamage, 100);
 }
@@ -468,8 +462,6 @@ window.draw = function () {
         }
     }
     if (gameMode == 1) {
-
-
         uiHandler.updateUIForGameMode(gameMode);
 
         if (getSelectedTower()) {
@@ -483,8 +475,8 @@ window.draw = function () {
         }
         
         // TODO
-        if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
-        else uiHandler.nextWaveButton.hide();
+        // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
+        // else uiHandler.nextWaveButton.hide();
 
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
@@ -602,6 +594,8 @@ window.draw = function () {
                 bullets[i].draw();
             }
         }
+
+        toggleToolbarButtonLocks();
     }
 
     if (gameMode == -1 && gameOver == true) {
@@ -638,6 +632,33 @@ function spawnNextWave() {
         }
     } catch (e) {
         alert(e);
+    }
+}
+
+function toggleToolbarButtonLocks() {
+    if (totalCurrency < 400) {
+        uiHandler.placeTowerButton.style('background-color', color(0, 0, 0));
+    } else {
+        uiHandler.placeTowerButton.style('color', color(181, 43, 131));
+        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101));
+    }
+    
+    if (totalCurrency < 200) {
+        uiHandler.upgradeFireRateButton.style('background-color', color(0, 0, 0));
+    } else {
+        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101));
+    }
+
+    if (totalCurrency < 200) {
+        uiHandler.upgradeFireSpeedButton.style('background-color', color(0, 0, 0));
+    } else {
+        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
+    }
+
+    if (totalCurrency < 200) {
+        uiHandler.upgradeRangeButton.style('background-color', color(0, 0, 0));
+    } else {
+        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101));
     }
 }
 

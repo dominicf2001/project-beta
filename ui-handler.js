@@ -17,13 +17,12 @@ export class UIHandler {
         */
         this.towerTool = 0;
         this.placeTowerButtonSelected = false;
-
-
+        
         // UI IMAGE VARIABLES
         this.titleImg;
         this.gameOverScreen;
         this.startButton;
-        this.nextWaveButton;
+        //this.nextWaveButton;
         this.settingsButton;
         this.muteButton;
         this.placeTowerButton;
@@ -65,9 +64,11 @@ export class UIHandler {
         this.startButton.size(200, 100);
 
         // draw "next wave" button
-        this.nextWaveButton = createButton('Next Wave')
-        this.nextWaveButton.id('nextWaveButton');
-        this.nextWaveButton.position(this.windowWidth - 100, this.windowHeight + 15);
+        // this.nextWaveButton = createButton('Next Wave')
+        // this.nextWaveButton.position(this.windowWidth - 100, this.windowHeight + 15);
+        // this.nextWaveButton.mousePressed(() =>
+        //     this.onNextWaveClick()
+        // );
 
         this.settingsButton = createImg('./assets/settingsbutton.png');
         this.settingsButton.id('settingsButton');
@@ -115,7 +116,7 @@ export class UIHandler {
             this.loadButton.hide();
             this.placeTowerButton.hide();
             this.saveButton.hide();
-            this.nextWaveButton.hide();
+            // this.nextWaveButton.hide();
             this.settingsButton.hide();
             this.muteButton.hide();
             this.gameOverScreen.show();
@@ -126,7 +127,7 @@ export class UIHandler {
             this.loadButton.hide();
             this.placeTowerButton.hide();
             this.saveButton.hide();
-            this.nextWaveButton.hide();
+            // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
             this.muteButton.hide();
@@ -136,7 +137,7 @@ export class UIHandler {
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
-            this.nextWaveButton.show();
+            // this.nextWaveButton.show();
             this.gameOverScreen.hide();
             this.encyclopediaButton.show();
             this.settingsButton.show();
@@ -160,7 +161,7 @@ export class UIHandler {
     }
 
     #drawToolbar() {
-        this.placeTowerButton = createButton('Place Tower');
+        this.placeTowerButton = createButton('Place Tower (400)');
         this.placeTowerButton.id('placeTowerButton');
         this.placeTowerButton.style('font-family', 'Andale Mono');
         this.placeTowerButton.style('font-size', '18px');
@@ -172,7 +173,7 @@ export class UIHandler {
         this.placeTowerButton.style('font-weight', 'bold');
         this.placeTowerButton.position(10, this.windowHeight - 40);
 
-        this.upgradeRangeButton = createButton('Upgrade Range');
+        this.upgradeRangeButton = createButton('Upgrade Range (200)');
         this.upgradeRangeButton.id('upgradeRangeButton');
         this.upgradeRangeButton.style('font-family', 'Andale Mono');
         this.upgradeRangeButton.style('font-size', '18px');
@@ -186,7 +187,8 @@ export class UIHandler {
         this.upgradeRangeButton.mousePressed(() => {
             this.towerTool = 1;
         });
-        this.upgradeFireRateButton = createButton('Upgrade Fire Rate');
+
+        this.upgradeFireRateButton = createButton('Upgrade Fire Rate (200)');
         this.upgradeFireRateButton.id('upgradeFireRateButton');
         this.upgradeFireRateButton.style('font-family', 'Andale Mono');
         this.upgradeFireRateButton.style('font-size', '18px');
@@ -201,7 +203,7 @@ export class UIHandler {
             this.towerTool = 2;
         }); 
 
-        this.upgradeFireSpeedButton = createButton('Upgrade Fire Speed');
+        this.upgradeFireSpeedButton = createButton('Upgrade Fire Speed (200)');
         this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
         this.upgradeFireSpeedButton.style('font-family', 'Andale Mono');
         this.upgradeFireSpeedButton.style('font-size', '18px');
@@ -215,8 +217,6 @@ export class UIHandler {
         this.upgradeFireSpeedButton.mousePressed(() => {
             this.towerTool = 3;
         });
-        
-        
     }
 
     #drawLoadAndSave() {
