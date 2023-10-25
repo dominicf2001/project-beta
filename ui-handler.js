@@ -126,6 +126,7 @@ export class UIHandler {
             this.settingsButton.hide();
             this.muteButton.hide();
             this.gameOverScreen.show();
+            this.nextLevelButton.hide();
         } else if (gameMode === 0) {
             this.upgradeRangeButton.hide();
             this.upgradeFireRateButton.hide();
@@ -136,6 +137,7 @@ export class UIHandler {
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
+            this.nextLevelButton.hide();
             this.muteButton.hide();
             this.encyclopediaButton.hide();
         } else if (gameMode === 1) {
@@ -144,6 +146,7 @@ export class UIHandler {
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
             // this.nextWaveButton.show();
+            this.nextLevelButton.show();
             this.gameOverScreen.hide();
             this.encyclopediaButton.show();
             this.settingsButton.show();

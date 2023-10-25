@@ -562,6 +562,8 @@ window.draw = function () {
             textSize(40)
             fill('red');
             var lev = mapID + 1
+            stroke(0);
+            strokeWeight(4);
             text('Level ' + lev + ' Complete', 600, 100);
             pop();
         }
@@ -607,6 +609,8 @@ window.draw = function () {
                 push();
                 textSize(20);
                 fill('white');
+                stroke(0);
+                strokeWeight(4);
                 text("Game starts in: " + initNextWave, windowWidth - 200, windowHeight - 50);
                 pop();
             }
@@ -614,6 +618,8 @@ window.draw = function () {
                 push();
                 textSize(20);
                 fill('white');
+                stroke(0);
+                strokeWeight(4);
                 text("Next wave in: " + initNextWave, windowWidth - 185, windowHeight - 50);
                 pop();
             }
@@ -631,6 +637,8 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
+        stroke(0);
+        strokeWeight(4);
         text(totalCurrency, 100, 40);
         pop();
 
@@ -638,6 +646,8 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
+        stroke(0);
+        strokeWeight(4);
         text(totalHealth, 40, 40);
         pop();
 
@@ -650,6 +660,8 @@ window.draw = function () {
         push();
         textSize(20);
         fill('white');
+        stroke(0);
+        strokeWeight(4);
         text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 25);
         pop();
 
