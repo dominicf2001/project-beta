@@ -169,6 +169,8 @@ export class UIHandler {
     }
 
     #drawToolbar() {
+        const hoverOpacity = .9;
+        
         this.placeTowerButton = createButton('Place Tower');
         this.placeTowerButton.id('placeTowerButton');
         this.placeTowerButton.style('font-family', 'Andale Mono');
@@ -180,6 +182,12 @@ export class UIHandler {
         this.placeTowerButton.style('padding', '5px 10px');
         this.placeTowerButton.style('font-weight', 'bold');
         this.placeTowerButton.position(10, this.windowHeight - 40);
+        this.placeTowerButton.mouseOver(()=>{
+            this.placeTowerButton.style('opacity', hoverOpacity);            
+        });
+        this.placeTowerButton.mouseOut(() => {
+            this.placeTowerButton.style('opacity', 1);
+        });
 
         this.upgradeRangeButton = createButton('Upgrade Range');
         this.upgradeRangeButton.id('upgradeRangeButton');
@@ -194,6 +202,12 @@ export class UIHandler {
         this.upgradeRangeButton.position(160, this.windowHeight - 40);
         this.upgradeRangeButton.mousePressed(() => {
             this.towerTool = 1;
+        });
+        this.upgradeRangeButton.mouseOver(() => {
+            this.upgradeRangeButton.style('opacity', hoverOpacity);
+        });
+        this.upgradeRangeButton.mouseOut(() => {
+            this.upgradeRangeButton.style('opacity', 1);
         });
 
         this.upgradeFireRateButton = createButton('Upgrade Fire Rate');
@@ -210,6 +224,12 @@ export class UIHandler {
         this.upgradeFireRateButton.mousePressed(() => {
             this.towerTool = 2;
         });
+        this.upgradeFireRateButton.mouseOver(() => {
+            this.upgradeFireRateButton.style('opacity', hoverOpacity);
+        });
+        this.upgradeFireRateButton.mouseOut(() => {
+            this.upgradeFireRateButton.style('opacity', 1);
+        });
         
         this.upgradeFireSpeedButton = createButton('Upgrade Bullet Speed');
         this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
@@ -224,6 +244,12 @@ export class UIHandler {
         this.upgradeFireSpeedButton.position(565, this.windowHeight - 40);
         this.upgradeFireSpeedButton.mousePressed(() => {
             this.towerTool = 3;
+        });
+        this.upgradeFireSpeedButton.mouseOver(() => {
+            this.upgradeFireSpeedButton.style('opacity', hoverOpacity);
+        });
+        this.upgradeFireSpeedButton.mouseOut(() => {
+            this.upgradeFireSpeedButton.style('opacity', 1);
         });
     }
 
