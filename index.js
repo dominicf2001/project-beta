@@ -34,14 +34,17 @@ function selectMap(mapID) {
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
             currentLevelMusic = level1Music;
+            currentLevelMusic.setVolume(0.1);
             break;
         case 1:
             mapImg = loadImage('Maps/Space Ship Map.png');
             currentLevelMusic = level2Music;
+            currentLevelMusic.setVolume(0.1);
             break;
         case 2:
             //mapImg = loadImage('Maps/Boss Map.png');
             currentLevelMusic = level3Music;
+            currentLevelMusic.setVolume(0.1);
             break;
         case 3: 
             //mapImg = loadImage('Maps/Bonus Level.png');
@@ -57,6 +60,7 @@ function switchMap() {
     ++mapID;
     currentWave = 0;
     waveAmount = levels[mapID].leveldata.length;
+    initNextWave = 20;
     levelComplete = false;
     currentLevelMusic.stop();
     enemies = []; // Reset Enemies
