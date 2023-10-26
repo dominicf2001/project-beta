@@ -56,6 +56,7 @@ function selectMap(mapID) {
 function switchMap() {
     ++mapID;
     currentWave = 0;
+    waveAmount = levels[mapID].leveldata.length;
     levelComplete = false;
     currentLevelMusic.stop();
     enemies = []; // Reset Enemies
@@ -67,19 +68,6 @@ function switchMap() {
 }
 
 let uiHandler = new UIHandler(windowWidth, windowHeight);
-
-/*
-const path = [
-    { x: 0, y: 230 },
-    { x: 100, y: 270 },
-    { x: 250, y: 260 },
-    { x: 500, y: 235 },
-    { x: 900, y: 220 },
-    { x: 1000, y: 260 },
-    { x: 1100, y: 300 },
-    { x: 1150, y: 350 },
-    { x: 1190, y: 420 },
-]; */
 
 export let maps = [
 // First map
@@ -185,7 +173,7 @@ const levels = [
 ];
 
 // needs to be generalized for all levels
-const waveAmount = levels[mapID].leveldata.length;
+var waveAmount = levels[mapID].leveldata.length;
 
 let enemies = [];
 
@@ -555,7 +543,8 @@ window.draw = function () {
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
         
-        // Displays Level Complete Text when all waves are done
+        // Displays Level Complete Text and button when all waves are done
+        uiHandler.nextLevelButton.hide();
         if (levelComplete) {
             push();
             textAlign(CENTER);
@@ -566,6 +555,7 @@ window.draw = function () {
             strokeWeight(4);
             text('Level ' + lev + ' Complete', 600, 100);
             pop();
+            uiHandler.nextLevelButton.show(); 
         }
         if (placeTower) {
             push();
@@ -591,18 +581,6 @@ window.draw = function () {
             t.draw(towerSprite);
             if (t.isStunned()) t.drawStunned();
         }
-        // draw path
-
-        /* push();
-        strokeWeight(20);
-        stroke(255, 255, 255, 255);
-        noFill();
-        beginShape();
-        for (const point of path) {
-            vertex(point.x, point.y);
-        }
-        endShape();
-        pop(); */
 
         if (nextWaveCheck.amount < 1) {
             if (currentWave == 0) {
@@ -622,6 +600,9 @@ window.draw = function () {
                 strokeWeight(4);
                 text("Next wave in: " + initNextWave, windowWidth - 185, windowHeight - 50);
                 pop();
+            }
+            else {
+                levelComplete = true;
             }
             if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
             if (initNextWave == 0) {
@@ -767,9 +748,7 @@ function spawnNextWave() {
 
             enemies = newWave.getEnemies();
         } else {
-            // Next Level Button and Level Complete text Appears after all the Waves are done.
-            uiHandler.nextLevelButton.show(); 
-            levelComplete = true;
+
         }
     } catch (e) {
         alert(e);
