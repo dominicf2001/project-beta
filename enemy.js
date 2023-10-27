@@ -37,6 +37,8 @@ class Enemy {
      * @param {number} damageDistance - how far away an enemy can damage a tower
      * @param {number=} x - the starting x coordinate (if undefined, defaults to start of path's x)
      * @param {number=} y - the starting y coordinate (if undefined, defaults to start of path's y)
+     * @param {boolean} unFreeze - the x coordinate where the enemy stop being frozen
+     * @param {boolean} unPoison - the x coordinate where the enemy stop being poisoned
      */
     constructor(appearance, speed, health, path, offset, currency, damage, damageDistance, x, y) {
         this.appearance = appearance;
@@ -51,6 +53,8 @@ class Enemy {
         this.damage = damage;
         this.damageDistance = damageDistance ?? 0;
         this.coolDown = 0;
+        this.unFreeze = -1;
+        this.unPoison = -1;
     }
 
     draw(sprite) {
@@ -117,7 +121,6 @@ class Enemy {
         }
         pop(); */
 
-
     }
     
     /**
@@ -138,6 +141,17 @@ class Enemy {
             } else {
                 this.coolDown--;
             }
+        }
+    }
+
+    checkStatus() {
+        if (this.unFreeze != -1 && this.x >= this.unFreeze) {
+            this.speed *= 2;
+            this.unFreeze = -1;
+        }
+        if (this.unPoison != -1) {
+            if (this.x < this.unPoison) this.health = this.health - 0.03;
+            else this.unPoison = -1;
         }
     }
 };
