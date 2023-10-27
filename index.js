@@ -225,6 +225,8 @@ let deathSound;
 let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
+let healthSprite;
+let coinSprite;
 
 window.preload = function () {
     // Loads the Level Music
@@ -239,6 +241,9 @@ window.preload = function () {
     basicEnemy = loadImage('./assets/Basic_Enemy.png');
     summonerEnemy = loadImage('./assets/Summoner.png');
     summoneeEnemy = loadImage('./assets/Summonee.png');
+
+    healthSprite = loadImage('./assets/heart.png');
+    coinSprite = loadImage('./assets/coin.png');
 }
 
 // EVENT LISTENERS
@@ -628,15 +633,17 @@ window.draw = function () {
 
         // draw currency holder
         push();
+        image(coinSprite, 90, 35, 20, 20);
         textSize(20);
         fill('white');
         stroke(0);
         strokeWeight(4);
-        text(totalCurrency, 100, 40);
+        text(totalCurrency, 105, 40);
         pop();
 
         // draw current health
         push();
+        image(healthSprite, 25, 35, 20, 20);
         textSize(20);
         fill('white');
         stroke(0);
