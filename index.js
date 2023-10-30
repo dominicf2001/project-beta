@@ -13,7 +13,6 @@ const secondaryColor = "color(81, 176, 101)"; // green
 // 0 - main menu
 // 1 - start game
 var gameMode = 0;
-let f_Andale;
 
 let beginGame = false;
 let gameOver = false;
@@ -234,7 +233,6 @@ window.preload = function () {
     level2Music = loadSound('./assets/Project_Beta_Song2.mp3');
     level3Music = loadSound('./assets/Project_Beta_Boat_Song.mp3');
     deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3');
-    f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
@@ -537,10 +535,12 @@ window.draw = function () {
         uiHandler.updateUIForGameMode(gameMode);
 
         if (getSelectedTower()) {
+            uiHandler.upgradeTxt.show();
             uiHandler.upgradeFireRateButton.show();
             uiHandler.upgradeRangeButton.show();
             uiHandler.upgradeFireSpeedButton.show();
         } else {
+            uiHandler.upgradeTxt.hide();
             uiHandler.upgradeFireRateButton.hide();
             uiHandler.upgradeRangeButton.hide();
             uiHandler.upgradeFireSpeedButton.hide();

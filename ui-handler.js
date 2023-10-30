@@ -26,6 +26,7 @@ export class UIHandler {
         this.settingsButton;
         this.muteButton;
         this.placeTowerButton;
+        this.upgradeTxt;
         this.upgradeRangeButton;
         this.upgradeFireRateButton;
         this.upgradeFireSpeedButton;
@@ -74,22 +75,23 @@ export class UIHandler {
         this.nextLevelButton.id('nextLevelButton');
         this.nextLevelButton.position(this.windowWidth - 100, this.windowHeight + 45);
 
-        this.settingsButton = createImg('./assets/settingsbutton.png');
+        this.settingsButton = createSpan('settings');
         this.settingsButton.id('settingsButton');
-        this.settingsButton.addClass('settingsMenu');
+        this.settingsButton.addClass('material-symbols-outlined');
         this.settingsButton.position(this.windowWidth - 50, 10);
         this.settingsButton.size(40, 40);
         this.settingsButton.mousePressed(() =>
             this.#toggleSettings()
         );
         
-        this.muteButton = createImg('./assets/audiobutton.png');
-        this.muteButton.addClass('settingsMenu');
+        this.muteButton = createSpan('volume_up');
         this.muteButton.id('audioButton');
+        this.muteButton.addClass('material-symbols-outlined');
         this.muteButton.position(this.windowWidth - 50, 60);
         this.muteButton.size(40, 40);
 
-        this.encyclopediaButton = createImg('./assets/encyclopediaButton.png');
+        this.encyclopediaButton = createButton('Encyclopedia');
+        this.encyclopediaButton.addClass('ui_buttons');
         this.encyclopediaButton.position(this.windowWidth - 279, 10);
         this.encyclopediaButton.size(219, 40);
         this.encyclopediaButton.mousePressed(() =>
@@ -115,6 +117,7 @@ export class UIHandler {
     updateUIForGameMode(gameMode){
         if (gameMode === -1) {
             this.upgradeRangeButton.hide();
+            this.upgradeTxt.hide();
             this.upgradeFireRateButton.hide();
             this.upgradeFireSpeedButton.hide();
             this.loadButton.hide();
@@ -126,6 +129,7 @@ export class UIHandler {
             this.gameOverScreen.show();
             this.nextLevelButton.hide();
         } else if (gameMode === 0) {
+            this.upgradeTxt.hide();
             this.upgradeRangeButton.hide();
             this.upgradeFireRateButton.hide();
             this.upgradeFireSpeedButton.hide();
@@ -139,6 +143,7 @@ export class UIHandler {
             this.muteButton.hide();
             this.encyclopediaButton.hide();
         } else if (gameMode === 1) {
+            this.upgradeTxt.show();
             this.upgradeRangeButton.show();
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
@@ -172,16 +177,9 @@ export class UIHandler {
         const hoverOpacity = .9;
         
         this.placeTowerButton = createButton('Place Tower');
-        this.placeTowerButton.id('placeTowerButton');
-        this.placeTowerButton.style('font-family', 'Andale Mono');
-        this.placeTowerButton.style('font-size', '18px');
-        this.placeTowerButton.style('color', color(181, 43, 131));
-        this.placeTowerButton.style('background-color', color(81, 176, 101));
-        this.placeTowerButton.style('border', 'none');
-        this.placeTowerButton.style('border-radius', '5px');
-        this.placeTowerButton.style('padding', '5px 10px');
-        this.placeTowerButton.style('font-weight', 'bold');
-        this.placeTowerButton.position(10, this.windowHeight - 40);
+        this.placeTowerButton.addClass('ui_buttons');
+        this.placeTowerButton.addClass('toolbar');
+        this.placeTowerButton.position(10, this.windowHeight - 45);
         this.placeTowerButton.mouseOver(()=>{
             this.placeTowerButton.style('opacity', hoverOpacity);            
         });
@@ -189,17 +187,16 @@ export class UIHandler {
             this.placeTowerButton.style('opacity', 1);
         });
 
-        this.upgradeRangeButton = createButton('Upgrade Range');
-        this.upgradeRangeButton.id('upgradeRangeButton');
-        this.upgradeRangeButton.style('font-family', 'Andale Mono');
-        this.upgradeRangeButton.style('font-size', '18px');
-        this.upgradeRangeButton.style('color', color(181, 43, 131));
-        this.upgradeRangeButton.style('background-color', color(81, 176, 101));
-        this.upgradeRangeButton.style('border', 'none');
-        this.upgradeRangeButton.style('border-radius', '5px');
-        this.upgradeRangeButton.style('padding', '5px 10px');
-        this.upgradeRangeButton.style('font-weight', 'bold');
-        this.upgradeRangeButton.position(160, this.windowHeight - 40);
+        this.upgradeTxt = createButton('Upgrades');
+        this.upgradeTxt.addClass('toolbar_upgrades');
+        this.upgradeTxt.position(175, this.windowHeight - 65);
+
+
+        this.upgradeRangeButton = createButton('Range');
+        this.upgradeRangeButton.addClass('ui_buttons');
+        this.upgradeRangeButton.addClass('toolbar');
+    
+        this.upgradeRangeButton.position(180, this.windowHeight - 45);
         this.upgradeRangeButton.mousePressed(() => {
             this.towerTool = 1;
         });
@@ -210,17 +207,10 @@ export class UIHandler {
             this.upgradeRangeButton.style('opacity', 1);
         });
 
-        this.upgradeFireRateButton = createButton('Upgrade Fire Rate');
-        this.upgradeFireRateButton.id('upgradeFireRateButton');
-        this.upgradeFireRateButton.style('font-family', 'Andale Mono');
-        this.upgradeFireRateButton.style('font-size', '18px');
-        this.upgradeFireRateButton.style('color', color(181, 43, 131));
-        this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
-        this.upgradeFireRateButton.style('border', 'none');
-        this.upgradeFireRateButton.style('border-radius', '5px');
-        this.upgradeFireRateButton.style('padding', '5px 10px');
-        this.upgradeFireRateButton.style('font-weight', 'bold');
-        this.upgradeFireRateButton.position(335, this.windowHeight - 40);
+        this.upgradeFireRateButton = createButton('Fire Rate');
+        this.upgradeFireRateButton.addClass('ui_buttons');
+        this.upgradeFireRateButton.addClass('toolbar');
+        this.upgradeFireRateButton.position(340, this.windowHeight - 45);
         this.upgradeFireRateButton.mousePressed(() => {
             this.towerTool = 2;
         });
@@ -231,17 +221,10 @@ export class UIHandler {
             this.upgradeFireRateButton.style('opacity', 1);
         });
         
-        this.upgradeFireSpeedButton = createButton('Upgrade Bullet Speed');
-        this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
-        this.upgradeFireSpeedButton.style('font-family', 'Andale Mono');
-        this.upgradeFireSpeedButton.style('font-size', '18px');
-        this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
-        this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
-        this.upgradeFireSpeedButton.style('border', 'none');
-        this.upgradeFireSpeedButton.style('border-radius', '5px');
-        this.upgradeFireSpeedButton.style('padding', '5px 10px');
-        this.upgradeFireSpeedButton.style('font-weight', 'bold');
-        this.upgradeFireSpeedButton.position(565, this.windowHeight - 40);
+        this.upgradeFireSpeedButton = createButton('Bullet Speed');
+        this.upgradeFireSpeedButton.addClass('ui_buttons');
+        this.upgradeFireSpeedButton.addClass('toolbar');
+        this.upgradeFireSpeedButton.position(500, this.windowHeight - 45);
         this.upgradeFireSpeedButton.mousePressed(() => {
             this.towerTool = 3;
         });
@@ -254,15 +237,15 @@ export class UIHandler {
     }
 
     #drawLoadAndSave() {
-        this.saveButton = createImg('./assets/saveButton.png');
+        this.saveButton = createButton('Save');
         this.saveButton.id('saveButton');
-        this.saveButton.addClass('settingsMenu');
+        this.saveButton.addClass('ui_buttons');
         this.saveButton.size(100, 40);
         this.saveButton.position(this.windowWidth - 500, 10);
 
-        this.loadButton = createImg('./assets/loadButton.png');
-        this.loadButton.addClass('settingsMenu');
+        this.loadButton = createButton('Load');
         this.loadButton.id('loadButton')
+        this.loadButton.addClass('ui_buttons');
         this.loadButton.size(100, 40);
         this.loadButton.position(this.windowWidth - 390, 10);
     }
