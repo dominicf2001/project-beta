@@ -66,6 +66,10 @@ body {
     text-shadow:1px 1px #00ecff;
 }
 
+.ui_buttons:hover {
+    opacity: 80%;
+}
+
 .toolbar {
     width:1000px;
 }
