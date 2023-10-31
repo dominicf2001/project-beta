@@ -4,6 +4,16 @@
 var spriteSheet;
 var towerAnimation;
 
+// export values for visual display
+export const towerCosts = Object.freeze({
+    standard: {
+        placeTowerCost: 400,
+        fireRateCost: 200,
+        fireSpeedCost: 100,
+        rangeCost: 200
+    }
+});
+
 export class Tower {
     static TOWER_SIZE = 90;
     
@@ -23,6 +33,8 @@ export class Tower {
         this.fireSpeed = 1;
         this.hover = false;
         this.stunAmmount = 0;
+        // merge the tower cost properties
+         Object.assign(this, towerCosts["standard"]);
     }
     
     /**

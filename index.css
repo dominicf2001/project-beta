@@ -1,0 +1,123 @@
+body {
+    height:700;
+    width: 1200;
+    padding: 0;
+    margin: auto;
+    overflow: hidden;
+    background:#000;
+    position:relative;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size:13px;
+}
+
+.p5Canvas {
+    height:100%;
+    width: 100%;
+
+}
+
+.startButton {
+    left:auto;
+    top:65%;
+    position:absolute;
+
+}
+
+.gameOver {
+    position: absolute;
+}
+
+.encyclopedia {
+    background:#eee9b3;
+    stroke:#000 5px solid;
+    border-radius:10px;
+    position:absolute;
+    padding:0;
+    margin:0;
+}
+
+.encyclopedia-card {
+    color: #261c3f;
+    position:absolute;
+}
+
+.encyclopedia-exit {
+    position:absolute;
+    padding:5px 10px;
+    font-size:20px;
+    background-color: #aa3434;
+    border:none;
+    color:#FFFFFF;
+    border-radius: 5px;
+}
+
+.ui_buttons {
+    font-family: 'Anton', sans-serif;
+    background-color: #51b065;
+    color:#b52b83;
+    font-size:22px;
+    text-transform: uppercase;
+    border:none;
+    border-radius:5px;
+    cursor: pointer;
+    width: 200px;
+    text-shadow:1px 1px #00ecff;
+}
+
+.toolbar {
+    width:1000px;
+}
+
+.toolbar_title {
+    margin: auto;
+    width: min-content;
+    font-size: 15px;
+}
+
+.toolbar_buttons {
+    margin: 5px;
+    float: left;
+}
+
+.place_tower_button {
+    height: 50px;
+}
+
+.toolbar_upgrades {
+    float: left;
+    width:max-content;
+    color: #51b065;
+    background:none;
+    display: flex;
+    background-color:#b52b83;
+    text-shadow:none;
+    border:none;
+    text-transform: uppercase;
+    border-radius:5px;
+    font-size:10px;
+    cursor:default;
+    margin-bottom: 20px;
+    font-weight:bold;
+}
+
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    padding:0;
+    text-align:center;
+    font-size:30px;
+    line-height: 1.3;
+    background-color: #51b065;
+    color:#b52b83;
+    border:none;
+    border-radius:5px;
+    margin:0px 5px;
+    cursor: pointer;
+    text-shadow:1px 1px #00ecff;
+
+}

@@ -1,5 +1,5 @@
 import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
-import { Tower, Bullet } from "./tower.js";
+import { Tower, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
 // GLOBAL VARIABLES
@@ -267,7 +267,6 @@ window.mousePressed = function (event) {
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
                 if (placeTower) {
-                    console.log("test");
                     placeTower = false;
                     if (towers.length > towerLimit) {
                         throw new Error("No more towers allowed!");
@@ -533,18 +532,7 @@ window.draw = function () {
     }
     if (gameMode == 1) {
         uiHandler.updateUIForGameMode(gameMode);
-
-        if (getSelectedTower()) {
-            uiHandler.upgradeTxt.show();
-            uiHandler.upgradeFireRateButton.show();
-            uiHandler.upgradeRangeButton.show();
-            uiHandler.upgradeFireSpeedButton.show();
-        } else {
-            uiHandler.upgradeTxt.hide();
-            uiHandler.upgradeFireRateButton.hide();
-            uiHandler.upgradeRangeButton.hide();
-            uiHandler.upgradeFireSpeedButton.hide();
-        }
+        uiHandler.updateToolbarState(totalCurrency, getSelectedTower(), towerCosts);
         
         // TODO
         // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
@@ -565,6 +553,7 @@ window.draw = function () {
             text('Level ' + lev + ' Complete', 600, 100);
             pop();
         }
+        
         if (placeTower) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
@@ -737,8 +726,6 @@ window.draw = function () {
                 bullets[i].draw();
             }
         }
-
-        toggleToolbarButtonLocks();
     }
 
     if (gameMode == -1 && gameOver == true) {
@@ -775,40 +762,6 @@ function spawnNextWave() {
         }
     } catch (e) {
         alert(e);
-    }
-}
-
-function toggleToolbarButtonLocks() {
-    if (totalCurrency < 400) {
-        uiHandler.placeTowerButton.style('color', color(181, 43, 131, 100));
-        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.placeTowerButton.style('color', color(181, 43, 131));
-        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101));
-    }
-    
-    if (totalCurrency < 200) {
-        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131, 100));        
-        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131));        
-        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101));
-    }
-
-    if (totalCurrency < 200) {
-        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131, 100));        
-        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131));        
-        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
-    }
-
-    if (totalCurrency < 200) {
-        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131, 100));        
-        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131));        
-        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101));
     }
 }
 
