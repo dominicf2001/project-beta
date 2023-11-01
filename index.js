@@ -13,7 +13,6 @@ const secondaryColor = "color(81, 176, 101)"; // green
 // 0 - main menu
 // 1 - start game
 var gameMode = 0;
-let f_Andale;
 
 let beginGame = false;
 let gameOver = false;
@@ -198,7 +197,7 @@ let playSound = false;
 let placeTower = false;
 
 // other relevant variables
-let totalCurrency = 1000;
+let totalCurrency = 800;
 let totalHealth = 50;
 
 // checks if wave is over
@@ -225,6 +224,8 @@ let deathSound;
 let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
+let healthSprite;
+let coinSprite;
 
 window.preload = function () {
     // Loads the Level Music
@@ -232,13 +233,15 @@ window.preload = function () {
     level2Music = loadSound('./assets/Project_Beta_Song2.mp3');
     level3Music = loadSound('./assets/Project_Beta_Boat_Song.mp3');
     deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3');
-    f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.png');
     summonerEnemy = loadImage('./assets/Summoner.png');
     summoneeEnemy = loadImage('./assets/Summonee.png');
+
+    healthSprite = loadImage('./assets/heart.png');
+    coinSprite = loadImage('./assets/coin.png');
 }
 
 // EVENT LISTENERS
@@ -424,7 +427,6 @@ window.setup = function () {
     game = createCanvas(windowWidth, windowHeight);
     
     uiHandler.initializeUI();
-
     
     uiHandler.saveButton.mousePressed(function() {
         // Save game state
@@ -479,11 +481,8 @@ window.setup = function () {
             playSound = true;
         }
     });
-
-
-    console.log("test");
+    
     uiHandler.startButton.mousePressed(function() {
-        console.log("test");
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -519,7 +518,6 @@ window.setup = function () {
     })
 
     //Poll for bullets every 100ms
-
     setInterval(fireBullets, 100);
     setInterval(dealDamage, 100);
 }
@@ -539,15 +537,15 @@ window.draw = function () {
         }
     }
     if (gameMode == 1) {
-
-
         uiHandler.updateUIForGameMode(gameMode);
 
         if (getSelectedTower()) {
+            uiHandler.upgradeTxt.show();
             uiHandler.upgradeFireRateButton.show();
             uiHandler.upgradeRangeButton.show();
             uiHandler.upgradeFireSpeedButton.show();
         } else {
+            uiHandler.upgradeTxt.hide();
             uiHandler.upgradeFireRateButton.hide();
             uiHandler.upgradeRangeButton.hide();
             uiHandler.upgradeFireSpeedButton.hide();
@@ -641,15 +639,17 @@ window.draw = function () {
 
         // draw currency holder
         push();
+        image(coinSprite, 90, 35, 20, 20);
         textSize(20);
         fill('white');
         stroke(0);
         strokeWeight(4);
-        text(totalCurrency, 100, 40);
+        text(totalCurrency, 105, 40);
         pop();
 
         // draw current health
         push();
+        image(healthSprite, 25, 35, 20, 20);
         textSize(20);
         fill('white');
         stroke(0);
@@ -754,6 +754,8 @@ window.draw = function () {
                 bullets[i].draw();
             }
         }
+
+        toggleToolbarButtonLocks();
     }
 
     if (gameMode == -1 && gameOver == true) {
@@ -790,6 +792,40 @@ function spawnNextWave() {
         }
     } catch (e) {
         alert(e);
+    }
+}
+
+function toggleToolbarButtonLocks() {
+    if (totalCurrency < 400) {
+        uiHandler.placeTowerButton.style('color', color(181, 43, 131, 100));
+        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101, 50));
+    } else {
+        uiHandler.placeTowerButton.style('color', color(181, 43, 131));
+        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101));
+    }
+    
+    if (totalCurrency < 200) {
+        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131, 100));        
+        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101, 50));
+    } else {
+        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131));        
+        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101));
+    }
+
+    if (totalCurrency < 200) {
+        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131, 100));        
+        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101, 50));
+    } else {
+        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131));        
+        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
+    }
+
+    if (totalCurrency < 200) {
+        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131, 100));        
+        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101, 50));
+    } else {
+        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131));        
+        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101));
     }
 }
 
