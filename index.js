@@ -1,5 +1,5 @@
 import { Wave } from "./enemy.js";
-import { Tower, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
+import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
 // GLOBAL VARIABLES
@@ -280,6 +280,7 @@ window.mousePressed = function (event) {
                     if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
+                        console.log(towerToPlace);
                         if (totalCurrency < towerToPlace.placeTowerCost) {
                             throw new Error("Not enough money!");
                         }
@@ -496,7 +497,7 @@ window.setup = function () {
         console.log(!towerToPlace);
         if (!towerToPlace && totalCurrency >= towerCosts["standard"].placeTowerCost) {
             e.stopPropagation();
-            towerToPlace = new Tower();
+            towerToPlace = new Standard();
         }
     });
 
