@@ -1,5 +1,4 @@
-import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
-
+import { Wave } from "./enemy.js";
 import { Tower, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
@@ -195,7 +194,7 @@ let towers = [];
 let bullets = [];
 // let dragTower = null;
 let playSound = false;
-let placeTower = false;
+let towerToPlace = null;
 
 // other relevant variables
 let totalCurrency = 800;
@@ -268,8 +267,7 @@ window.mousePressed = function (event) {
 
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
-                if (placeTower) {
-                    placeTower = false;
+                if (towerToPlace) {
                     if (towers.length > towerLimit) {
                         throw new Error("No more towers allowed!");
                     }
@@ -279,22 +277,20 @@ window.mousePressed = function (event) {
                         return;
                     }
 
-                    // Change tower type for testing
-                    let t = new Tower(mouseX, mouseY);
-                    //let t = new Freezer(mouseX, mouseY);
-                    //let t = new Poisoner(mouseX, mouseY);
-
                     if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
-                        if (totalCurrency < 400) {
+                        if (totalCurrency < towerToPlace.placeTowerCost) {
                             throw new Error("Not enough money!");
                         }
                         else {
-                            towers.push(t);
-                            totalCurrency -= 400;
+                            towerToPlace.x = mouseX;
+                            towerToPlace.y = mouseY;
+                            towers.push(towerToPlace);
+                            totalCurrency -= towerToPlace.placeTowerCost;
                         }
                     }
+                    towerToPlace = null;
                 }
             } catch (e) {
                 alert(e);
@@ -496,15 +492,31 @@ window.setup = function () {
     //     spawnNextWave();
     // });
 
-    uiHandler.placeTowerButton.mousePressed(function(e) {
-        if (!placeTower && totalCurrency >= towerCosts["standard"].placeTowerCost) {
+    uiHandler.placeStandardButton.mousePressed(function(e) {
+        console.log(!towerToPlace);
+        if (!towerToPlace && totalCurrency >= towerCosts["standard"].placeTowerCost) {
             e.stopPropagation();
-            placeTower = true;
+            towerToPlace = new Tower();
+        }
+    });
+
+    uiHandler.placeFreezerButton.mousePressed(function (e) {
+        if (!towerToPlace && totalCurrency >= towerCosts["freezer"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Freezer();
+        }
+    });
+
+    uiHandler.placePoisonerButton.mousePressed(function (e) {
+        if (!towerToPlace && totalCurrency >= towerCosts["poisoner"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Poisoner();
         }
     });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
+        totalCurrency -= selectedUpgradeTower.
         selectedUpgradeTower.upgradeFireRate();
     });
 
@@ -564,7 +576,7 @@ window.draw = function () {
             pop();
         }
         
-        if (placeTower) {
+        if (towerToPlace) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
                 tint(255, 0, 0, 200);

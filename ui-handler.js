@@ -18,7 +18,9 @@ export class UIHandler {
         //this.nextWaveButton;
         this.settingsButton;
         this.muteButton;
-        this.placeTowerButton;
+        this.placeStandardButton;
+        this.placeFreezerButton;
+        this.placePoisonorButton;
         this.upgradeContainer;
         this.upgradeRangeButton;
         this.upgradeFireRateButton;
@@ -102,12 +104,26 @@ export class UIHandler {
         toolBar.addClass('toolbar');
         toolBar.position(10, this.windowHeight - 65);
         
-        this.placeTowerButton = createButton();
         // const towerImg = createImg("./assets/RedMoonTower.png");
-        this.placeTowerButton.addClass('ui_buttons');
-        this.placeTowerButton.addClass('toolbar_buttons');
-        this.placeTowerButton.addClass('place_tower_button');
-        toolBar.child(this.placeTowerButton);
+        this.placeStandardButton = createButton();
+        this.placeStandardButton.addClass('ui_buttons');
+        this.placeStandardButton.addClass('toolbar_buttons');
+        this.placeStandardButton.addClass('place_tower_button');
+        toolBar.child(this.placeStandardButton);
+        
+        // const towerImg = createImg("./assets/RedMoonTower.png");
+        this.placePoisonerButton = createButton();
+        this.placePoisonerButton.addClass('ui_buttons');
+        this.placePoisonerButton.addClass('toolbar_buttons');
+        this.placePoisonerButton.addClass('place_tower_button');
+        toolBar.child(this.placePoisonerButton);
+        
+        // const towerImg = createImg("./assets/RedMoonTower.png");
+        this.placeFreezerButton = createButton();
+        this.placeFreezerButton.addClass('ui_buttons');
+        this.placeFreezerButton.addClass('toolbar_buttons');
+        this.placeFreezerButton.addClass('place_tower_button');
+        toolBar.child(this.placeFreezerButton);
 
         this.upgradeContainer = createDiv();
         this.upgradeContainer.addClass('toolbar_upgrades');
@@ -115,14 +131,14 @@ export class UIHandler {
 
         const upgradeText = createP('Upgrades');
         upgradeText.addClass('toolbar_title');
-        this.upgradeContainer.child(upgradeText);        
+        this.upgradeContainer.child(upgradeText);
         
         this.upgradeRangeButton = createButton('Range');
         this.upgradeRangeButton.addClass('ui_buttons');
         this.upgradeRangeButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeRangeButton);
-        
-        this.upgradeFireRateButton = createButton('Fire Rate');
+
+        this.upgradeFireRateButton = createButton('Fire Rate')        
         this.upgradeFireRateButton.addClass('ui_buttons');
         this.upgradeFireRateButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeFireRateButton);
@@ -208,7 +224,9 @@ export class UIHandler {
             this.upgradeFireRateButton.hide();
             this.upgradeFireSpeedButton.hide();
             this.loadButton.hide();
-            this.placeTowerButton.hide();
+            this.placeStandardButton.hide();
+            this.placeFreezerButton.hide();
+            this.placePoisonerButton.hide();
             this.saveButton.hide();
             // this.nextWaveButton.hide();
             this.settingsButton.hide();
@@ -221,7 +239,9 @@ export class UIHandler {
             this.upgradeFireRateButton.hide();
             this.upgradeFireSpeedButton.hide();
             this.loadButton.hide();
-            this.placeTowerButton.hide();
+            this.placeStandardButton.hide();
+            this.placeFreezerButton.hide();
+            this.placePoisonerButton.hide();
             this.saveButton.hide();
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
@@ -231,7 +251,9 @@ export class UIHandler {
             this.encyclopediaButton.hide();
         } else if (gameMode === 1) {
             this.upgradeContainer.show();
-            this.placeTowerButton.show();
+            this.placeStandardButton.show();
+            this.placeFreezerButton.show();
+            this.placePoisonerButton.show();
             this.upgradeRangeButton.show();
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
@@ -258,15 +280,35 @@ export class UIHandler {
             this.upgradeFireSpeedButton.hide();
         }
 
-        // TODO: do for all tower types
+        // PLACE STANDARD TOWER
         if (totalCurrency < towerCosts["standard"]["placeTowerCost"]) {
-            this.placeTowerButton.style('color', color(181, 43, 131, 100));
-            this.placeTowerButton.style('background-color', color(81, 176, 101, 50));
+            this.placeStandardButton.style('color', color(181, 43, 131, 100));
+            this.placeStandardButton.style('background-color', color(81, 176, 101, 50));
         } else {
-            this.placeTowerButton.style('color', color(181, 43, 131));
-            this.placeTowerButton.style('background-color', color(81, 176, 101));
+            this.placeStandardButton.style('color', color(181, 43, 131));
+            this.placeStandardButton.style('background-color', color(81, 176, 101));
         }
-        this.placeTowerButton.html(`Place tower (${towerCosts["standard"]["placeTowerCost"]})`);
+        this.placeStandardButton.html(`Place Standard (${towerCosts["standard"]["placeTowerCost"]})`);
+
+        // PLACE FREEZER TOWER
+        if (totalCurrency < towerCosts["freezer"]["placeTowerCost"]) {
+            this.placeFreezerButton.style('color', color(181, 43, 131, 100));
+            this.placeFreezerButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.placeFreezerButton.style('color', color(181, 43, 131));
+            this.placeFreezerButton.style('background-color', color(81, 176, 101));
+        }
+        this.placeFreezerButton.html(`Place Freezer (${towerCosts["freezer"]["placeTowerCost"]})`);
+
+        // PLACE POISON TOWER
+        if (totalCurrency < towerCosts["poisoner"]["placeTowerCost"]) {
+            this.placePoisonerButton.style('color', color(181, 43, 131, 100));
+            this.placePoisonerButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.placePoisonerButton.style('color', color(181, 43, 131));
+            this.placePoisonerButton.style('background-color', color(81, 176, 101));
+        }
+        this.placePoisonerButton.html(`Place Poisoner (${towerCosts["poisoner"]["placeTowerCost"]})`);
 
         if (totalCurrency < selectedTower?.fireRateCost) {
             this.upgradeFireRateButton.style('color', color(181, 43, 131, 100));
