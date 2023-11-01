@@ -91,10 +91,12 @@ body {
 .toolbar_buttons {
     margin: 5px;
     float: left;
+    user-select: none;
 }
 
 .place_tower_button {
     height: 50px;
+    user-select: none;
 }
 
 .toolbar_upgrades {
@@ -135,4 +137,5 @@ body {
 
 #settingsButton:hover {
     opacity: 80%;
+    user-select: none;
 }

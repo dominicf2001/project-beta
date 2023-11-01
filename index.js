@@ -490,8 +490,9 @@ window.setup = function () {
     //     spawnNextWave();
     // });
 
-    uiHandler.placeTowerButton.mousePressed(function() {
+    uiHandler.placeTowerButton.mousePressed(function(e) {
         if (!placeTower && totalCurrency >= towerCosts["standard"].placeTowerCost) {
+            e.stopPropagation();
             placeTower = true;
         }
     });
