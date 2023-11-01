@@ -116,7 +116,7 @@ export class Tower {
      */
     fire(enemy) {
         this.coolDown = 5;
-        return new Bullet(this, enemy); 
+        return new Bullet(this, enemy, false, false); 
     }
 
     /**
@@ -167,20 +167,50 @@ export class Tower {
     }
 };
 
+// Other tower types
+export class Freezer extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, true, false);
+    }
+}
+
+export class Poisoner extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, false, true);
+    }
+}
+
+// Bullet class
 export class Bullet {
 
     /**
      * Constructs a bullet with a tower and target
      * @param {Tower} tower - tower that fired the bullet
      * @param {Enemy} target - enemy that the bullet is targeting
+     * @param {boolean} freeze - whether this bullet inflicts slow
+     * @param {boolean} poison - whether this bullet inflicts damage over time
      */
-    constructor(tower, target) {
+    constructor(tower, target, freeze, poison) {
         this.x = tower.x;
         this.y = tower.y;
         this.range = tower.range;
         this.damage = tower.damage;
         this.fireSpeed = tower.fireSpeed;
         this.target = target;
+        this.freeze = freeze;
+        this.poison = poison;
         
         this.updateDirection();
     }

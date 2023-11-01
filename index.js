@@ -1,5 +1,6 @@
 import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
-import { Tower, Bullet, towerCosts } from "./tower.js";
+
+import { Tower, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
 // GLOBAL VARIABLES
@@ -147,18 +148,18 @@ let currentWave = 0;
 const levels = [
     { // Level 1 Data
         leveldata: [
-            [0, 3],
-            [0, 0, 6],
-            [2],
-            [0, 0, 0, 1],
-            [0, 0, 0, 0, 3]
+            [1]
+            // [0, 0, 6],
+            // [2],
+            // [0, 0, 0, 1],
+            // [0, 0, 0, 0, 3]
         ],
         spawnPriority: [
-            [1, 0],
-            [2, 1, 0],
-            [0],
-            [3, 2, 1, 0],
-            [4, 3, 2, 1, 0]
+            [0]
+            // [2, 1, 0],
+            // [0],
+            // [3, 2, 1, 0],
+            // [4, 3, 2, 1, 0]
         ]
     },
     { // Level 2 Data
@@ -202,7 +203,7 @@ let totalHealth = 50;
 
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
-let initNextWave = 20;
+let initNextWave = 5;
 let nextWaveCheck = { 
     amount: 0
 }
@@ -277,7 +278,12 @@ window.mousePressed = function (event) {
                         // throw new Error("Cannot place a tower on the path!");
                         return;
                     }
+
+                    // Change tower type for testing
                     let t = new Tower(mouseX, mouseY);
+                    //let t = new Freezer(mouseX, mouseY);
+                    //let t = new Poisoner(mouseX, mouseY);
+
                     if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
@@ -595,6 +601,7 @@ window.draw = function () {
         endShape();
         pop(); */
 
+        // Handle waves automatically
         if (nextWaveCheck.amount < 1) {
             if (currentWave == 0) {
                 push();
@@ -617,7 +624,7 @@ window.draw = function () {
             if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
             if (initNextWave == 0) {
                 if (currentWave < waveAmount) spawnNextWave();
-                initNextWave = 10;
+                initNextWave = 5;
             }
         }
         //console.log(initNextWave);
@@ -661,6 +668,7 @@ window.draw = function () {
         // draw or remove enemies
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
+            enemies[i].checkStatus();
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
                 nextWaveCheck.amount -= 1;
@@ -718,6 +726,7 @@ window.draw = function () {
         }
         // Draw bullets before towers
         for (const i in bullets) {
+            console.log(i.freeze);
             if (bullets[i].isOutOfRange()) {
                 bullets.splice(i, 1);
                 continue;
@@ -725,6 +734,15 @@ window.draw = function () {
 
             if (bullets[i].hasHitTarget()) {
                 bullets[i].target.health -= bullets[i].damage;
+                if (bullets[i].freeze) {
+                    bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
+                    if (bullets[i].target.unFreeze == -1) {
+                        bullets[i].target.speed /= 2;
+                    }                   
+                }
+                if (bullets[i].poison) {
+                    bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed; 
+                }
                 bullets.splice(i, 1);
             } else {
                 bullets[i].draw();
