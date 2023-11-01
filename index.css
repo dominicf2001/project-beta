@@ -73,6 +73,49 @@ body {
     width:140px;
     color: #51b065;
     background:none;
+    width: 200px;
+    text-shadow:1px 1px #00ecff;
+}
+
+.startButton {
+    cursor: pointer;
+}
+
+.startButton:hover {
+    opacity: 80%;
+}
+
+.ui_buttons:hover {
+    opacity: 80%;
+}
+
+.toolbar {
+    width:1000px;
+}
+
+.toolbar_title {
+    margin: auto;
+    width: min-content;
+    font-size: 15px;
+}
+
+.toolbar_buttons {
+    margin: 5px;
+    float: left;
+    user-select: none;
+}
+
+.place_tower_button {
+    height: 50px;
+    user-select: none;
+}
+
+.toolbar_upgrades {
+    float: left;
+    width:max-content;
+    color: #51b065;
+    background:none;
+    display: flex;
     background-color:#b52b83;
     text-shadow:none;
     border:none;
@@ -85,4 +128,32 @@ body {
     padding:0px 0px 40px 0px;
     margin:0;
     font-weight:bold;
+    font-size:10px;
+    cursor:default;
+    margin-bottom: 20px;
+    font-weight:bold;
+}
+
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    padding:0;
+    text-align:center;
+    font-size:30px;
+    line-height: 1.3;
+    background-color: #51b065;
+    color:#b52b83;
+    border:none;
+    border-radius:5px;
+    margin:0px 5px;
+    cursor: pointer;
+    text-shadow:1px 1px #00ecff;
+}
+
+#settingsButton:hover {
+    opacity: 80%;
+    user-select: none;
 }

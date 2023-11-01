@@ -1,5 +1,5 @@
-import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
-import { Tower, Freezer, Poisoner, Bullet } from "./tower.js";
+import { Wave } from "./enemy.js";
+import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
 // GLOBAL VARIABLES
@@ -186,7 +186,7 @@ let towers = [];
 let bullets = [];
 // let dragTower = null;
 let playSound = false;
-let placeTower = false;
+let towerToPlace = null;
 
 // other relevant variables
 let totalCurrency = 800;
@@ -245,6 +245,7 @@ window.mousePressed = function (event) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
                 if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
+                
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -258,9 +259,7 @@ window.mousePressed = function (event) {
 
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
-                if (placeTower) {
-                    console.log("test");
-                    placeTower = false;
+                if (towerToPlace) {
                     if (towers.length > towerLimit) {
                         throw new Error("No more towers allowed!");
                     }
@@ -270,22 +269,21 @@ window.mousePressed = function (event) {
                         return;
                     }
 
-                    // Change tower type for testing
-                    let t = new Tower(mouseX, mouseY);
-                    //let t = new Freezer(mouseX, mouseY);
-                    //let t = new Poisoner(mouseX, mouseY);
-
                     if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
-                        if (totalCurrency < 400) {
+                        console.log(towerToPlace);
+                        if (totalCurrency < towerToPlace.placeTowerCost) {
                             throw new Error("Not enough money!");
                         }
                         else {
-                            towers.push(t);
-                            totalCurrency -= 400;
+                            towerToPlace.x = mouseX;
+                            towerToPlace.y = mouseY;
+                            towers.push(towerToPlace);
+                            totalCurrency -= towerToPlace.placeTowerCost;
                         }
                     }
+                    towerToPlace = null;
                 }
             } catch (e) {
                 alert(e);
@@ -489,8 +487,26 @@ window.setup = function () {
     //     spawnNextWave();
     // });
 
-    uiHandler.placeTowerButton.mousePressed(function() {
-        placeTower = true;
+    uiHandler.placeStandardButton.mousePressed(function(e) {
+        console.log(!towerToPlace);
+        if (!towerToPlace && totalCurrency >= towerCosts["standard"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Standard();
+        }
+    });
+
+    uiHandler.placeFreezerButton.mousePressed(function (e) {
+        if (!towerToPlace && totalCurrency >= towerCosts["freezer"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Freezer();
+        }
+    });
+
+    uiHandler.placePoisonerButton.mousePressed(function (e) {
+        if (!towerToPlace && totalCurrency >= towerCosts["poisoner"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Poisoner();
+        }
     });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
@@ -541,18 +557,7 @@ window.draw = function () {
     }
     if (gameMode == 1) {
         uiHandler.updateUIForGameMode(gameMode);
-
-        if (getSelectedTower()) {
-            uiHandler.upgradeTxt.show();
-            uiHandler.upgradeFireRateButton.show();
-            uiHandler.upgradeRangeButton.show();
-            uiHandler.upgradeFireSpeedButton.show();
-        } else {
-            uiHandler.upgradeTxt.hide();
-            uiHandler.upgradeFireRateButton.hide();
-            uiHandler.upgradeRangeButton.hide();
-            uiHandler.upgradeFireSpeedButton.hide();
-        }
+        uiHandler.updateToolbarState(totalCurrency, getSelectedTower(), towerCosts);
         
         // TODO
         // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
@@ -575,7 +580,8 @@ window.draw = function () {
             pop();
             uiHandler.nextLevelButton.show(); 
         }
-        if (placeTower) {
+        
+        if (towerToPlace) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
                 tint(255, 0, 0, 200);
@@ -750,8 +756,6 @@ window.draw = function () {
                 bullets[i].draw();
             }
         }
-
-        toggleToolbarButtonLocks();
     }
 
     if (gameMode == -1 && gameOver == true) {
@@ -786,40 +790,6 @@ function spawnNextWave() {
         }
     } catch (e) {
         alert(e);
-    }
-}
-
-function toggleToolbarButtonLocks() {
-    if (totalCurrency < 400) {
-        uiHandler.placeTowerButton.style('color', color(181, 43, 131, 100));
-        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.placeTowerButton.style('color', color(181, 43, 131));
-        uiHandler.placeTowerButton.style('background-color', color(81, 176, 101));
-    }
-    
-    if (totalCurrency < 200) {
-        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131, 100));        
-        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.upgradeFireRateButton.style('color', color(181, 43, 131));        
-        uiHandler.upgradeFireRateButton.style('background-color', color(81, 176, 101));
-    }
-
-    if (totalCurrency < 200) {
-        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131, 100));        
-        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.upgradeFireSpeedButton.style('color', color(181, 43, 131));        
-        uiHandler.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
-    }
-
-    if (totalCurrency < 200) {
-        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131, 100));        
-        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101, 50));
-    } else {
-        uiHandler.upgradeRangeButton.style('color', color(181, 43, 131));        
-        uiHandler.upgradeRangeButton.style('background-color', color(81, 176, 101));
     }
 }
 
