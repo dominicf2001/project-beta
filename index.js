@@ -501,17 +501,26 @@ window.setup = function () {
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        selectedUpgradeTower.upgradeFireRate();
+        if(totalCurrency >= 200) {
+            selectedUpgradeTower.upgradeFireRate();
+            totalCurrency -= 200;
+        }
     });
 
     uiHandler.upgradeFireSpeedButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        selectedUpgradeTower.upgradeFireSpeed();
+        if(totalCurrency >= 200) {
+            selectedUpgradeTower.upgradeFireSpeed();
+            totalCurrency -= 200;
+        }
     });
     
     uiHandler.upgradeRangeButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        selectedUpgradeTower.upgradeRange();
+        if(totalCurrency >= 200) {
+            selectedUpgradeTower.upgradeRange();
+            totalCurrency -= 200;
+        }
     });
     uiHandler.nextLevelButton.mousePressed(function() {
         switchMap();
