@@ -253,6 +253,7 @@ window.mousePressed = function (event) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
                 if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
+                
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -490,7 +491,9 @@ window.setup = function () {
     // });
 
     uiHandler.placeTowerButton.mousePressed(function() {
-        placeTower = true;
+        if (!placeTower && totalCurrency >= towerCosts["standard"].placeTowerCost) {
+            placeTower = true;
+        }
     });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {

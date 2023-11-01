@@ -26,10 +26,12 @@ export class UIHandler {
         this.saveButton;
         this.loadButton;
         this.debugConsole;
-
+        
         this.encyclopediaMenu;
         this.encyclopediaButton;
         this.enemy1;
+
+        this.towerSprite;
     }
 
     preloadAssets() {
@@ -100,7 +102,8 @@ export class UIHandler {
         toolBar.addClass('toolbar');
         toolBar.position(10, this.windowHeight - 65);
         
-        this.placeTowerButton = createButton('Place Tower');
+        this.placeTowerButton = createButton();
+        // const towerImg = createImg("./assets/RedMoonTower.png");
         this.placeTowerButton.addClass('ui_buttons');
         this.placeTowerButton.addClass('toolbar_buttons');
         this.placeTowerButton.addClass('place_tower_button');

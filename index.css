@@ -66,6 +66,14 @@ body {
     text-shadow:1px 1px #00ecff;
 }
 
+.startButton {
+    cursor: pointer;
+}
+
+.startButton:hover {
+    opacity: 80%;
+}
+
 .ui_buttons:hover {
     opacity: 80%;
 }
@@ -123,5 +131,8 @@ body {
     margin:0px 5px;
     cursor: pointer;
     text-shadow:1px 1px #00ecff;
+}
 
+#settingsButton:hover {
+    opacity: 80%;
 }
