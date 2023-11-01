@@ -476,9 +476,11 @@ window.setup = function () {
         if (playSound) {
             currentLevelMusic.pause();
             playSound = false;
+            uiHandler.muteButton.html('volume_off');
         } else {
             currentLevelMusic.loop();
             playSound = true;
+            uiHandler.muteButton.html('volume_up');
         }
     });
     
