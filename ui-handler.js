@@ -36,12 +36,17 @@ export class UIHandler {
 
         this.encyclopediaMenu;
         this.encyclopediaButton;
-        this.enemy1;
+        // image variables
+        this.enemyStandard;
+        this.enemySummoner;
+        this.enemySummonee;
     }
 
     preloadAssets() {
         this.titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
-        this.enemy1 = loadImage('./assets/Basic_Enemy.png');
+        this.enemyStandard = loadImage('./assets/Basic_Enemy.png');
+        this.enemySummoner = loadImage('./assets/Summoner.png');
+        this.enemySummonee = loadImage('./assets/Summonee.png');
     }
 
     initializeUI() {
@@ -266,29 +271,65 @@ export class UIHandler {
         this.encyclopediaExit.position(this.windowWidth - 145, 60);
         this.encyclopediaMenu.textSize(15);
         
-        // enemy info #1
-        this.encyclopediaMenu.image(this.enemy1, 10, 20, 225, 275);
-        this.encyclopediaMenu.text("Enemy 1", 250, 50, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 250, 80, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 250, 210, 200, 250);
+        // STANDARD ENEMY CARD
+        this.encyclopediaMenu.image(this.enemyStandard, 35, 30, 200, 250);
+            // title
+        this.encyclopediaMenu.textSize(17);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Void Crawler", 250, 50, 200, 250);
+            //description
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(0);
+        this.encyclopediaMenu.strokeWeight(0);
+        this.encyclopediaMenu.text("This enemy is a creepy, rotting astronaut who's come back from the dead in the darkest corners of the universe, and it wants to nibble on your space snacks!", 250, 80, 200, 250);
+            // stats
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Damage: 3", 250, 210, 200, 250);
 
-        // enemy info #2
-        this.encyclopediaMenu.image(this.enemy1, 10, 300, 225, 275);
-        this.encyclopediaMenu.text("Enemy 2", 250, 320, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 250, 350, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 250, 470, 200, 250);
+        // SUMMONER ENEMY CARD
+        this.encyclopediaMenu.image(this.enemySummoner, 35, 310, 200, 250);
+            // title
+        this.encyclopediaMenu.textSize(17);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Cosmic Conjuror", 250, 320, 200, 250);
+            // description
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(0);
+        this.encyclopediaMenu.strokeWeight(0);
+        this.encyclopediaMenu.text("The alien summoner is a mysterious foe wielding otherworldly powers, conjuring strange and formidable creatures to do its bidding in intergalactic battles.", 250, 350, 200, 250);
+            // stats
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Damage: 1", 250, 500, 200, 250);
 
         // enemy info #3
-        this.encyclopediaMenu.image(this.enemy1, 500, 20, 225, 275);
-        this.encyclopediaMenu.text("Enemy 3", 750, 50, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 80, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 750, 210, 200, 250);
+        //this.encyclopediaMenu.image(this.enemySummoner, 525, 30, 200, 250);
+        //this.encyclopediaMenu.text("Tank", 750, 50, 200, 250);
+        //this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 80, 200, 250);
+        //this.encyclopediaMenu.text("Damage: 1", 750, 210, 200, 250);
 
-        // enemy info #4
-        this.encyclopediaMenu.image(this.enemy1, 500, 300, 225, 275);
-        this.encyclopediaMenu.text("Enemy 4", 750, 320, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 350, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 750, 470, 200, 250);
+        // SUMMONEE ENEMY CARD
+        this.encyclopediaMenu.image(this.enemySummonee, 525, 310, 200, 250);
+            // title
+        this.encyclopediaMenu.textSize(17);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Astrocephalopod", 750, 320, 200, 250);
+            // description
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(0);
+        this.encyclopediaMenu.strokeWeight(0);
+        this.encyclopediaMenu.text("A tentacled extraterrestrial monstrosity summoned from the depths of space, this enemy uses its otherworldly appendages to ensnare and confound its adversaries in intergalactic encounters.", 750, 350, 200, 250);
+            // stats
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Damage: 1", 750, 500, 200, 250);
 
 
         this.encyclopediaMenu.hide();
