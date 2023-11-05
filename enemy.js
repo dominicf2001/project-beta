@@ -37,8 +37,9 @@ class Enemy {
      * @param {number} damageDistance - how far away an enemy can damage a tower
      * @param {number=} x - the starting x coordinate (if undefined, defaults to start of path's x)
      * @param {number=} y - the starting y coordinate (if undefined, defaults to start of path's y)
+     * @param {string} deathSound - path to the enemy's death sound file
      */
-    constructor(appearance, speed, health, path, offset, currency, damage, damageDistance, x, y) {
+    constructor(appearance, speed, health, path, offset, currency, damage, damageDistance, x, y, deathSound) {
         this.appearance = appearance;
         this.speed = speed;
         this.health = health;
@@ -51,6 +52,8 @@ class Enemy {
         this.damage = damage;
         this.damageDistance = damageDistance ?? 0;
         this.coolDown = 0;
+        this.dead = false; 
+        this.deathSound = deathSound;
     }
 
     draw(sprite) {
@@ -139,6 +142,15 @@ class Enemy {
                 this.coolDown--;
             }
         }
+    }
+
+    isDead() {
+        return this.dead; 
+    }
+
+    kill() {
+        console.log("Enemy down!!");
+        this.dead = true; 
     }
 };
 // ------------------------------------------ //

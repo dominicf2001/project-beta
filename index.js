@@ -677,6 +677,12 @@ window.draw = function () {
             } else if (enemies[i].health <= 0) {
                 totalCurrency += enemies[i].currency;
                 // handle spawner type enemies
+
+                // Mark an enemy as dead if its health is below 0
+                if (enemies[i].isDead() == false) {
+                    enemies[i].kill();
+                }
+
                 if (enemies[i].spawn) {
                     enemies[i].spawn(enemies, nextWaveCheck);
                 }
