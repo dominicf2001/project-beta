@@ -225,6 +225,10 @@ let deathSound;
 let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
+let enemyDeathSound_default; 
+let enemyDeathSound_squid;
+let enemyDeathSound_summoner;
+let enemyDeathSound_zombie;
 
 window.preload = function () {
     // Loads the Level Music
@@ -232,6 +236,13 @@ window.preload = function () {
     level2Music = loadSound('./assets/Project_Beta_Song2.mp3');
     level3Music = loadSound('./assets/Project_Beta_Boat_Song.mp3');
     deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3');
+
+    // Enemy sounds
+    enemyDeathSound_default = loadSound('./assets/enemyDeathSound_default.mp3');
+    enemyDeathSound_squid = loadSound('./assets/enemyDeathSound_squid.mp3');
+    enemyDeathSound_summoner = loadSound('./assets/enemyDeathSound_summoner.mp3');
+    enemyDeathSound_zombie = loadSound('./assets/enemyDeathSound_zombie.mp3');
+
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     selectMap(mapID); // Loads the Map
@@ -681,6 +692,21 @@ window.draw = function () {
                 // Mark an enemy as dead if its health is below 0
                 if (enemies[i].isDead() == false) {
                     enemies[i].kill();
+
+                    switch(enemies[i].appearance) {
+                        case "standard":
+                            enemyDeathSound_zombie.play();
+                            break;
+                        case "spawner":
+                            enemyDeathSound_summoner.play();
+                            break;
+                        case "rapid":
+                            enemyDeathSound_squid.play();
+                            break;
+                        default:
+                            enemyDeathSound_default.play();
+                            break;
+                    }
                 }
 
                 if (enemies[i].spawn) {
