@@ -1,5 +1,5 @@
-import { Tank, Standard, Rapid, Wave, Stunner } from "./enemy.js";
-import { Tower, Bullet } from "./tower.js";
+import { Wave } from "./enemy.js";
+import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
 // GLOBAL VARIABLES
@@ -13,7 +13,6 @@ const secondaryColor = "color(81, 176, 101)"; // green
 // 0 - main menu
 // 1 - start game
 var gameMode = 0;
-let f_Andale;
 
 let beginGame = false;
 let gameOver = false;
@@ -34,14 +33,17 @@ function selectMap(mapID) {
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
             currentLevelMusic = level1Music;
+            currentLevelMusic.setVolume(0.1);
             break;
         case 1:
             mapImg = loadImage('Maps/Space Ship Map.png');
             currentLevelMusic = level2Music;
+            currentLevelMusic.setVolume(0.1);
             break;
         case 2:
             //mapImg = loadImage('Maps/Boss Map.png');
             currentLevelMusic = level3Music;
+            currentLevelMusic.setVolume(0.1);
             break;
         case 3: 
             //mapImg = loadImage('Maps/Bonus Level.png');
@@ -56,6 +58,8 @@ function selectMap(mapID) {
 function switchMap() {
     ++mapID;
     currentWave = 0;
+    waveAmount = levels[mapID].leveldata.length;
+    initNextWave = 20;
     levelComplete = false;
     currentLevelMusic.stop();
     enemies = []; // Reset Enemies
@@ -67,19 +71,6 @@ function switchMap() {
 }
 
 let uiHandler = new UIHandler(windowWidth, windowHeight);
-
-/*
-const path = [
-    { x: 0, y: 230 },
-    { x: 100, y: 270 },
-    { x: 250, y: 260 },
-    { x: 500, y: 235 },
-    { x: 900, y: 220 },
-    { x: 1000, y: 260 },
-    { x: 1100, y: 300 },
-    { x: 1150, y: 350 },
-    { x: 1190, y: 420 },
-]; */
 
 export let maps = [
 // First map
@@ -148,18 +139,18 @@ let currentWave = 0;
 const levels = [
     { // Level 1 Data
         leveldata: [
-            [0, 3],
-            [0, 0, 6],
-            [2],
-            [0, 0, 0, 1],
-            [0, 0, 0, 0, 3]
+            [1]
+            // [0, 0, 6],
+            // [2],
+            // [0, 0, 0, 1],
+            // [0, 0, 0, 0, 3]
         ],
         spawnPriority: [
-            [1, 0],
-            [2, 1, 0],
-            [0],
-            [3, 2, 1, 0],
-            [4, 3, 2, 1, 0]
+            [0]
+            // [2, 1, 0],
+            // [0],
+            // [3, 2, 1, 0],
+            // [4, 3, 2, 1, 0]
         ]
     },
     { // Level 2 Data
@@ -185,7 +176,7 @@ const levels = [
 ];
 
 // needs to be generalized for all levels
-const waveAmount = levels[mapID].leveldata.length;
+var waveAmount = levels[mapID].leveldata.length;
 
 let enemies = [];
 
@@ -195,15 +186,15 @@ let towers = [];
 let bullets = [];
 // let dragTower = null;
 let playSound = false;
-let placeTower = false;
+let towerToPlace = null;
 
 // other relevant variables
-let totalCurrency = 1000;
+let totalCurrency = 800;
 let totalHealth = 50;
 
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
-let initNextWave = 20;
+let initNextWave = 5;
 let nextWaveCheck = { 
     amount: 0
 }
@@ -225,6 +216,8 @@ let deathSound;
 let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
+let healthSprite;
+let coinSprite;
 
 window.preload = function () {
     // Loads the Level Music
@@ -232,13 +225,15 @@ window.preload = function () {
     level2Music = loadSound('./assets/Project_Beta_Song2.mp3');
     level3Music = loadSound('./assets/Project_Beta_Boat_Song.mp3');
     deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3');
-    f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.png');
     summonerEnemy = loadImage('./assets/Summoner.png');
     summoneeEnemy = loadImage('./assets/Summonee.png');
+
+    healthSprite = loadImage('./assets/heart.png');
+    coinSprite = loadImage('./assets/coin.png');
 }
 
 // EVENT LISTENERS
@@ -250,6 +245,7 @@ window.mousePressed = function (event) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
                 if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
+                
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -263,9 +259,7 @@ window.mousePressed = function (event) {
 
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
             try {
-                if (placeTower) {
-                    console.log("test");
-                    placeTower = false;
+                if (towerToPlace) {
                     if (towers.length > towerLimit) {
                         throw new Error("No more towers allowed!");
                     }
@@ -274,18 +268,22 @@ window.mousePressed = function (event) {
                         // throw new Error("Cannot place a tower on the path!");
                         return;
                     }
-                    let t = new Tower(mouseX, mouseY);
+
                     if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
-                        if (totalCurrency < 400) {
+                        console.log(towerToPlace);
+                        if (totalCurrency < towerToPlace.placeTowerCost) {
                             throw new Error("Not enough money!");
                         }
                         else {
-                            towers.push(t);
-                            totalCurrency -= 400;
+                            towerToPlace.x = mouseX;
+                            towerToPlace.y = mouseY;
+                            towers.push(towerToPlace);
+                            totalCurrency -= towerToPlace.placeTowerCost;
                         }
                     }
+                    towerToPlace = null;
                 }
             } catch (e) {
                 alert(e);
@@ -419,7 +417,6 @@ window.setup = function () {
     game = createCanvas(windowWidth, windowHeight);
     
     uiHandler.initializeUI();
-
     
     uiHandler.saveButton.mousePressed(function() {
         // Save game state
@@ -469,16 +466,15 @@ window.setup = function () {
         if (playSound) {
             currentLevelMusic.pause();
             playSound = false;
+            uiHandler.muteButton.html('volume_off');
         } else {
             currentLevelMusic.loop();
             playSound = true;
+            uiHandler.muteButton.html('volume_up');
         }
     });
-
-
-    console.log("test");
+    
     uiHandler.startButton.mousePressed(function() {
-        console.log("test");
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -491,30 +487,56 @@ window.setup = function () {
     //     spawnNextWave();
     // });
 
-    uiHandler.placeTowerButton.mousePressed(function() {
-        placeTower = true;
+    uiHandler.placeStandardButton.mousePressed(function(e) {
+        console.log(!towerToPlace);
+        if (!towerToPlace && totalCurrency >= towerCosts["standard"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Standard();
+        }
+    });
+
+    uiHandler.placeFreezerButton.mousePressed(function (e) {
+        if (!towerToPlace && totalCurrency >= towerCosts["freezer"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Freezer();
+        }
+    });
+
+    uiHandler.placePoisonerButton.mousePressed(function (e) {
+        if (!towerToPlace && totalCurrency >= towerCosts["poisoner"].placeTowerCost) {
+            e.stopPropagation();
+            towerToPlace = new Poisoner();
+        }
     });
 
     uiHandler.upgradeFireRateButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        selectedUpgradeTower.upgradeFireRate();
+        if(totalCurrency >= 200) {
+            selectedUpgradeTower.upgradeFireRate();
+            totalCurrency -= 200;
+        }
     });
 
     uiHandler.upgradeFireSpeedButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        selectedUpgradeTower.upgradeFireSpeed();
+        if(totalCurrency >= 200) {
+            selectedUpgradeTower.upgradeFireSpeed();
+            totalCurrency -= 200;
+        }
     });
     
     uiHandler.upgradeRangeButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        selectedUpgradeTower.upgradeRange();
+        if(totalCurrency >= 200) {
+            selectedUpgradeTower.upgradeRange();
+            totalCurrency -= 200;
+        }
     });
     uiHandler.nextLevelButton.mousePressed(function() {
         switchMap();
     })
 
     //Poll for bullets every 100ms
-
     setInterval(fireBullets, 100);
     setInterval(dealDamage, 100);
 }
@@ -534,19 +556,8 @@ window.draw = function () {
         }
     }
     if (gameMode == 1) {
-
-
         uiHandler.updateUIForGameMode(gameMode);
-
-        if (getSelectedTower()) {
-            uiHandler.upgradeFireRateButton.show();
-            uiHandler.upgradeRangeButton.show();
-            uiHandler.upgradeFireSpeedButton.show();
-        } else {
-            uiHandler.upgradeFireRateButton.hide();
-            uiHandler.upgradeRangeButton.hide();
-            uiHandler.upgradeFireSpeedButton.hide();
-        }
+        uiHandler.updateToolbarState(totalCurrency, getSelectedTower(), towerCosts);
         
         // TODO
         // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
@@ -555,7 +566,8 @@ window.draw = function () {
         background(200);
         image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
         
-        // Displays Level Complete Text when all waves are done
+        // Displays Level Complete Text and button when all waves are done
+        uiHandler.nextLevelButton.hide();
         if (levelComplete) {
             push();
             textAlign(CENTER);
@@ -566,8 +578,10 @@ window.draw = function () {
             strokeWeight(4);
             text('Level ' + lev + ' Complete', 600, 100);
             pop();
+            uiHandler.nextLevelButton.show(); 
         }
-        if (placeTower) {
+        
+        if (towerToPlace) {
             push();
             if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
                 tint(255, 0, 0, 200);
@@ -591,19 +605,8 @@ window.draw = function () {
             t.draw(towerSprite);
             if (t.isStunned()) t.drawStunned();
         }
-        // draw path
 
-        /* push();
-        strokeWeight(20);
-        stroke(255, 255, 255, 255);
-        noFill();
-        beginShape();
-        for (const point of path) {
-            vertex(point.x, point.y);
-        }
-        endShape();
-        pop(); */
-
+        // Handle waves automatically
         if (nextWaveCheck.amount < 1) {
             if (currentWave == 0) {
                 push();
@@ -623,10 +626,13 @@ window.draw = function () {
                 text("Next wave in: " + initNextWave, windowWidth - 185, windowHeight - 50);
                 pop();
             }
+            else {
+                levelComplete = true;
+            }
             if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
             if (initNextWave == 0) {
                 if (currentWave < waveAmount) spawnNextWave();
-                initNextWave = 10;
+                initNextWave = 5;
             }
         }
         //console.log(initNextWave);
@@ -635,15 +641,17 @@ window.draw = function () {
 
         // draw currency holder
         push();
+        image(coinSprite, 90, 35, 20, 20);
         textSize(20);
         fill('white');
         stroke(0);
         strokeWeight(4);
-        text(totalCurrency, 100, 40);
+        text(totalCurrency, 105, 40);
         pop();
 
         // draw current health
         push();
+        image(healthSprite, 25, 35, 20, 20);
         textSize(20);
         fill('white');
         stroke(0);
@@ -668,6 +676,7 @@ window.draw = function () {
         // draw or remove enemies
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
+            enemies[i].checkStatus();
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
                 nextWaveCheck.amount -= 1;
@@ -725,6 +734,7 @@ window.draw = function () {
         }
         // Draw bullets before towers
         for (const i in bullets) {
+            console.log(i.freeze);
             if (bullets[i].isOutOfRange()) {
                 bullets.splice(i, 1);
                 continue;
@@ -732,6 +742,15 @@ window.draw = function () {
 
             if (bullets[i].hasHitTarget()) {
                 bullets[i].target.health -= bullets[i].damage;
+                if (bullets[i].freeze) {
+                    bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
+                    if (bullets[i].target.unFreeze == -1) {
+                        bullets[i].target.speed /= 2;
+                    }                   
+                }
+                if (bullets[i].poison) {
+                    bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed; 
+                }
                 bullets.splice(i, 1);
             } else {
                 bullets[i].draw();
@@ -767,9 +786,7 @@ function spawnNextWave() {
 
             enemies = newWave.getEnemies();
         } else {
-            // Next Level Button and Level Complete text Appears after all the Waves are done.
-            uiHandler.nextLevelButton.show(); 
-            levelComplete = true;
+
         }
     } catch (e) {
         alert(e);

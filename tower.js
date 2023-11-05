@@ -4,6 +4,28 @@
 var spriteSheet;
 var towerAnimation;
 
+// export values for visual display
+export const towerCosts = Object.freeze({
+    standard: {
+        placeTowerCost: 400,
+        fireRateCost: 200,
+        fireSpeedCost: 100,
+        rangeCost: 200
+    },
+    freezer: {
+        placeTowerCost: 50,
+        fireRateCost: 60,
+        fireSpeedCost: 50,
+        rangeCost: 50
+    },
+    poisoner: {
+        placeTowerCost: 10,
+        fireRateCost: 20,
+        fireSpeedCost: 30,
+        rangeCost: 40
+    }
+});
+
 export class Tower {
     static TOWER_SIZE = 90;
     
@@ -12,17 +34,14 @@ export class Tower {
      * @param {number} x - x coordinate of tower
      * @param {number} y - y coordinate of tower
      */
-    constructor(x, y) {
+    constructor(x, y, towerCosts) {
         this.x = x;
         this.y = y;
-        this.range = 100;
-        this.damage = 1;
-        this.health = 30;
-        this.fireRate = 1;
-        this.coolDown = 5;
-        this.fireSpeed = 1;
         this.hover = false;
         this.stunAmmount = 0;
+        // merge the tower cost properties
+        console.log(towerCosts);
+         Object.assign(this, towerCosts);
     }
     
     /**
@@ -104,7 +123,7 @@ export class Tower {
      */
     fire(enemy) {
         this.coolDown = 5;
-        return new Bullet(this, enemy); 
+        return new Bullet(this, enemy, false, false); 
     }
 
     /**
@@ -155,20 +174,93 @@ export class Tower {
     }
 };
 
+// Other tower types
+export class Standard extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, false, false);
+    }
+
+    constructor(x, y) {
+        super(x, y, towerCosts["standard"]);
+        this.range = 100;
+        this.damage = 1;
+        this.health = 30;
+        this.fireRate = 1;
+        this.coolDown = 5;
+        this.fireSpeed = 1;
+    }
+}
+
+// Other tower types
+export class Freezer extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, true, false);
+    }
+
+    constructor(x, y) {
+        super(x, y, towerCosts["freezer"]);
+        this.range = 100;
+        this.damage = 1;
+        this.health = 30;
+        this.fireRate = 1;
+        this.coolDown = 5;
+        this.fireSpeed = 1;
+    }
+}
+
+export class Poisoner extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, false, true);
+    }
+
+    constructor(x, y) {
+        super(x, y, towerCosts["poisoner"]);
+        this.range = 100;
+        this.damage = 1;
+        this.health = 30;
+        this.fireRate = 1;
+        this.coolDown = 5;
+        this.fireSpeed = 1;
+    }
+}
+
+// Bullet class
 export class Bullet {
 
     /**
      * Constructs a bullet with a tower and target
      * @param {Tower} tower - tower that fired the bullet
      * @param {Enemy} target - enemy that the bullet is targeting
+     * @param {boolean} freeze - whether this bullet inflicts slow
+     * @param {boolean} poison - whether this bullet inflicts damage over time
      */
-    constructor(tower, target) {
+    constructor(tower, target, freeze, poison) {
         this.x = tower.x;
         this.y = tower.y;
         this.range = tower.range;
         this.damage = tower.damage;
         this.fireSpeed = tower.fireSpeed;
         this.target = target;
+        this.freeze = freeze;
+        this.poison = poison;
         
         this.updateDirection();
     }

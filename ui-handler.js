@@ -9,16 +9,8 @@ export class UIHandler {
         this.settingsOpen = false;
         this.encyclopediaOpen = false;
         this.ignoreNextClick = false;
-        /**
-         * 0 - place tower (default)
-         * 1 - upgrade range
-         * 2 - upgrade fire rate
-         * 3 - upgrade fire speed
-        */
-        this.towerTool = 0;
         this.placeTowerButtonSelected = false;
-
-
+        
         // UI IMAGE VARIABLES
         this.titleImg;
         this.gameOverScreen;
@@ -26,22 +18,31 @@ export class UIHandler {
         //this.nextWaveButton;
         this.settingsButton;
         this.muteButton;
-        this.placeTowerButton;
+        this.placeStandardButton;
+        this.placeFreezerButton;
+        this.placePoisonorButton;
+        this.upgradeContainer;
         this.upgradeRangeButton;
         this.upgradeFireRateButton;
         this.upgradeFireSpeedButton;
         this.saveButton;
         this.loadButton;
         this.debugConsole;
-
+        
         this.encyclopediaMenu;
         this.encyclopediaButton;
-        this.enemy1;
+        // image variables
+        this.enemyStandard;
+        this.enemySummoner;
+        this.enemySummonee;
+
     }
 
     preloadAssets() {
         this.titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
-        this.enemy1 = loadImage('./assets/Basic_Enemy.png');
+        this.enemyStandard = loadImage('./assets/Basic_Enemy.png');
+        this.enemySummoner = loadImage('./assets/Summoner.png');
+        this.enemySummonee = loadImage('./assets/Summonee.png');
     }
 
     initializeUI() {
@@ -49,11 +50,11 @@ export class UIHandler {
         
         image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2) - 100, 650, 375);
 
-        this.#drawToolbar();
+        this.#initializeToolbar();
 
-        this.#drawLoadAndSave();
+        this.#initializeLoadAndSave();
 
-        this.#drawEncyclopedia();
+        this.#initializeEncyclopedia();
 
         this.#initializeDebugConsole();
 
@@ -70,28 +71,28 @@ export class UIHandler {
         // this.nextWaveButton.mousePressed(() =>
         //     this.onNextWaveClick()
         // );
-
         // draw Next Level Button
         this.nextLevelButton = createButton('Next Level');
         this.nextLevelButton.id('nextLevelButton');
         this.nextLevelButton.position(this.windowWidth - 100, this.windowHeight + 45);
 
-        this.settingsButton = createImg('./assets/settingsbutton.png');
+        this.settingsButton = createSpan('settings');
         this.settingsButton.id('settingsButton');
-        this.settingsButton.addClass('settingsMenu');
+        this.settingsButton.addClass('material-symbols-outlined');
         this.settingsButton.position(this.windowWidth - 50, 10);
         this.settingsButton.size(40, 40);
         this.settingsButton.mousePressed(() =>
             this.#toggleSettings()
         );
         
-        this.muteButton = createImg('./assets/audiobutton.png');
-        this.muteButton.addClass('settingsMenu');
+        this.muteButton = createSpan('volume_up');
         this.muteButton.id('audioButton');
+        this.muteButton.addClass('material-symbols-outlined');
         this.muteButton.position(this.windowWidth - 50, 60);
         this.muteButton.size(40, 40);
 
-        this.encyclopediaButton = createImg('./assets/encyclopediaButton.png');
+        this.encyclopediaButton = createButton('Encyclopedia');
+        this.encyclopediaButton.addClass('ui_buttons');
         this.encyclopediaButton.position(this.windowWidth - 279, 10);
         this.encyclopediaButton.size(219, 40);
         this.encyclopediaButton.mousePressed(() =>
@@ -100,6 +101,281 @@ export class UIHandler {
         this.encyclopediaExit.mousePressed(() =>
             this.#hideEncyclopedia()
         );
+    }
+
+    #initializeToolbar() {
+        const toolBar = createDiv();
+        toolBar.addClass('toolbar');
+        toolBar.position(10, this.windowHeight - 65);
+        
+        // const towerImg = createImg("./assets/RedMoonTower.png");
+        this.placeStandardButton = createButton();
+        this.placeStandardButton.addClass('ui_buttons');
+        this.placeStandardButton.addClass('toolbar_buttons');
+        this.placeStandardButton.addClass('place_tower_button');
+        toolBar.child(this.placeStandardButton);
+        
+        // const towerImg = createImg("./assets/RedMoonTower.png");
+        this.placePoisonerButton = createButton();
+        this.placePoisonerButton.addClass('ui_buttons');
+        this.placePoisonerButton.addClass('toolbar_buttons');
+        this.placePoisonerButton.addClass('place_tower_button');
+        toolBar.child(this.placePoisonerButton);
+        
+        // const towerImg = createImg("./assets/RedMoonTower.png");
+        this.placeFreezerButton = createButton();
+        this.placeFreezerButton.addClass('ui_buttons');
+        this.placeFreezerButton.addClass('toolbar_buttons');
+        this.placeFreezerButton.addClass('place_tower_button');
+        toolBar.child(this.placeFreezerButton);
+
+        this.upgradeContainer = createDiv();
+        this.upgradeContainer.addClass('toolbar_upgrades');
+        toolBar.child(this.upgradeContainer);
+
+        const upgradeText = createP('Upgrades');
+        upgradeText.addClass('toolbar_title');
+        this.upgradeContainer.child(upgradeText);
+        
+        this.upgradeRangeButton = createButton('Range');
+        this.upgradeRangeButton.addClass('ui_buttons');
+        this.upgradeRangeButton.addClass('toolbar_buttons');
+        this.upgradeContainer.child(this.upgradeRangeButton);
+
+        this.upgradeFireRateButton = createButton('Fire Rate')        
+        this.upgradeFireRateButton.addClass('ui_buttons');
+        this.upgradeFireRateButton.addClass('toolbar_buttons');
+        this.upgradeContainer.child(this.upgradeFireRateButton);
+        
+        this.upgradeFireSpeedButton = createButton('Bullet Speed');
+        this.upgradeFireSpeedButton.addClass('ui_buttons');
+        this.upgradeFireSpeedButton.addClass('toolbar_buttons');
+        this.upgradeContainer.child(this.upgradeFireSpeedButton);
+        
+        push();
+        const toolbarColor = color(51, 51, 51);
+        toolbarColor.setAlpha(200);
+        
+        fill(toolbarColor);
+        noStroke();
+        rect(0, this.windowHeight, this.windowWidth, 50);
+        pop();
+    }
+
+    #initializeLoadAndSave() {
+        this.saveButton = createButton('Save');
+        this.saveButton.id('saveButton');
+        this.saveButton.addClass('ui_buttons');
+        this.saveButton.size(100, 40);
+        this.saveButton.position(this.windowWidth - 500, 10);
+
+        this.loadButton = createButton('Load');
+        this.loadButton.id('loadButton')
+        this.loadButton.addClass('ui_buttons');
+        this.loadButton.size(100, 40);
+        this.loadButton.position(this.windowWidth - 390, 10);
+    }
+
+    /* Possible idea:
+    Have rectangles over enemy info. If enemy appears on screen then remove rectangle 
+    to reveal info.
+    */
+    #initializeEncyclopedia() {
+        // container
+        this.encyclopediaMenu = createGraphics(this.windowWidth - 200, this.windowHeight - 100);
+        this.encyclopediaMenu.addClass("encyclopedia");
+        this.encyclopediaMenu.style("display:block;");
+
+        // exit button
+        this.encyclopediaExit = createButton('X');
+        this.encyclopediaExit.addClass('encyclopedia-exit');
+        this.encyclopediaExit.position(this.windowWidth - 145, 60);
+        this.encyclopediaMenu.textSize(15);
+        
+        // STANDARD ENEMY CARD
+        this.encyclopediaMenu.image(this.enemyStandard, 35, 30, 200, 250);
+            // title
+        this.encyclopediaMenu.textSize(17);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Void Crawler", 250, 50, 200, 250);
+            //description
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(0);
+        this.encyclopediaMenu.strokeWeight(0);
+        this.encyclopediaMenu.text("This enemy is a creepy, rotting astronaut who's come back from the dead in the darkest corners of the universe, and it wants to nibble on your space snacks!", 250, 80, 200, 250);
+            // stats
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Damage: 3", 250, 210, 200, 250);
+
+        // SUMMONER ENEMY CARD
+        this.encyclopediaMenu.image(this.enemySummoner, 35, 310, 200, 250);
+            // title
+        this.encyclopediaMenu.textSize(17);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Cosmic Conjuror", 250, 320, 200, 250);
+            // description
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(0);
+        this.encyclopediaMenu.strokeWeight(0);
+        this.encyclopediaMenu.text("The alien summoner is a mysterious foe wielding otherworldly powers, conjuring strange and formidable creatures to do its bidding in intergalactic battles.", 250, 350, 200, 250);
+            // stats
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Damage: 1", 250, 500, 200, 250);
+
+        // enemy info #3
+        //this.encyclopediaMenu.image(this.enemySummoner, 525, 30, 200, 250);
+        //this.encyclopediaMenu.text("Tank", 750, 50, 200, 250);
+        //this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 80, 200, 250);
+        //this.encyclopediaMenu.text("Damage: 1", 750, 210, 200, 250);
+
+        // SUMMONEE ENEMY CARD
+        this.encyclopediaMenu.image(this.enemySummonee, 525, 310, 200, 250);
+            // title
+        this.encyclopediaMenu.textSize(17);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Astrocephalopod", 750, 320, 200, 250);
+            // description
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(0);
+        this.encyclopediaMenu.strokeWeight(0);
+        this.encyclopediaMenu.text("A tentacled extraterrestrial monstrosity summoned from the depths of space, this enemy uses its otherworldly appendages to ensnare and confound its adversaries in intergalactic encounters.", 750, 350, 200, 250);
+            // stats
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Damage: 1", 750, 500, 200, 250);
+
+
+        this.encyclopediaMenu.hide();
+        this.encyclopediaExit.hide();
+    }
+
+    updateUIForGameMode(gameMode) {
+        if (gameMode === -1) {
+            this.upgradeRangeButton.hide();
+            this.upgradeContainer.hide();
+            this.upgradeFireRateButton.hide();
+            this.upgradeFireSpeedButton.hide();
+            this.loadButton.hide();
+            this.placeStandardButton.hide();
+            this.placeFreezerButton.hide();
+            this.placePoisonerButton.hide();
+            this.saveButton.hide();
+            // this.nextWaveButton.hide();
+            this.settingsButton.hide();
+            this.muteButton.hide();
+            this.gameOverScreen.show();
+            this.nextLevelButton.hide();
+        } else if (gameMode === 0) {
+            this.upgradeContainer.hide();
+            this.upgradeRangeButton.hide();
+            this.upgradeFireRateButton.hide();
+            this.upgradeFireSpeedButton.hide();
+            this.loadButton.hide();
+            this.placeStandardButton.hide();
+            this.placeFreezerButton.hide();
+            this.placePoisonerButton.hide();
+            this.saveButton.hide();
+            // this.nextWaveButton.hide();
+            this.gameOverScreen.hide();
+            this.settingsButton.hide();
+            this.nextLevelButton.hide();
+            this.muteButton.hide();
+            this.encyclopediaButton.hide();
+        } else if (gameMode === 1) {
+            this.upgradeContainer.show();
+            this.placeStandardButton.show();
+            this.placeFreezerButton.show();
+            this.placePoisonerButton.show();
+            this.upgradeRangeButton.show();
+            this.upgradeFireRateButton.show();
+            this.upgradeFireSpeedButton.show();
+            this.startButton.hide();
+            // this.nextWaveButton.show();
+
+            this.nextLevelButton.show();
+            this.gameOverScreen.hide();
+            this.encyclopediaButton.show();
+            this.settingsButton.show();
+        }
+    }
+
+    updateToolbarState(totalCurrency, selectedTower, towerCosts) {
+        if (selectedTower) {
+            this.upgradeContainer.show();
+            this.upgradeFireRateButton.show();
+            this.upgradeRangeButton.show();
+            this.upgradeFireSpeedButton.show();
+        } else {
+            this.upgradeContainer.hide();
+            this.upgradeFireRateButton.hide();
+            this.upgradeRangeButton.hide();
+            this.upgradeFireSpeedButton.hide();
+        }
+
+        // PLACE STANDARD TOWER
+        if (totalCurrency < towerCosts["standard"]["placeTowerCost"]) {
+            this.placeStandardButton.style('color', color(181, 43, 131, 100));
+            this.placeStandardButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.placeStandardButton.style('color', color(181, 43, 131));
+            this.placeStandardButton.style('background-color', color(81, 176, 101));
+        }
+        this.placeStandardButton.html(`Place Standard (${towerCosts["standard"]["placeTowerCost"]})`);
+
+        // PLACE FREEZER TOWER
+        if (totalCurrency < towerCosts["freezer"]["placeTowerCost"]) {
+            this.placeFreezerButton.style('color', color(181, 43, 131, 100));
+            this.placeFreezerButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.placeFreezerButton.style('color', color(181, 43, 131));
+            this.placeFreezerButton.style('background-color', color(81, 176, 101));
+        }
+        this.placeFreezerButton.html(`Place Freezer (${towerCosts["freezer"]["placeTowerCost"]})`);
+
+        // PLACE POISON TOWER
+        if (totalCurrency < towerCosts["poisoner"]["placeTowerCost"]) {
+            this.placePoisonerButton.style('color', color(181, 43, 131, 100));
+            this.placePoisonerButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.placePoisonerButton.style('color', color(181, 43, 131));
+            this.placePoisonerButton.style('background-color', color(81, 176, 101));
+        }
+        this.placePoisonerButton.html(`Place Poisoner (${towerCosts["poisoner"]["placeTowerCost"]})`);
+
+        if (totalCurrency < selectedTower?.fireRateCost) {
+            this.upgradeFireRateButton.style('color', color(181, 43, 131, 100));
+            this.upgradeFireRateButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.upgradeFireRateButton.style('color', color(181, 43, 131));
+            this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
+        }
+        this.upgradeFireRateButton.html(`Fire rate (${selectedTower?.fireRateCost})`);
+
+        if (totalCurrency < selectedTower?.fireSpeedCost) {
+            this.upgradeFireSpeedButton.style('color', color(181, 43, 131, 100));
+            this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
+            this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
+        }
+        this.upgradeFireSpeedButton.html(`Bullet speed (${selectedTower?.fireSpeedCost})`);
+
+        if (totalCurrency < selectedTower?.rangeCost) {
+            this.upgradeRangeButton.style('color', color(181, 43, 131, 100));
+            this.upgradeRangeButton.style('background-color', color(81, 176, 101, 50));
+        } else {
+            this.upgradeRangeButton.style('color', color(181, 43, 131));
+            this.upgradeRangeButton.style('background-color', color(81, 176, 101));
+        }
+        this.upgradeRangeButton.html(`Range (${selectedTower?.rangeCost})`);
     }
 
     /*
@@ -113,48 +389,7 @@ export class UIHandler {
         }
     }
     */
-
-    updateUIForGameMode(gameMode){
-        if (gameMode === -1) {
-            this.upgradeRangeButton.hide();
-            this.upgradeFireRateButton.hide();
-            this.upgradeFireSpeedButton.hide();
-            this.loadButton.hide();
-            this.placeTowerButton.hide();
-            this.saveButton.hide();
-            // this.nextWaveButton.hide();
-            this.settingsButton.hide();
-            this.muteButton.hide();
-            this.gameOverScreen.show();
-            this.nextLevelButton.hide();
-        } else if (gameMode === 0) {
-            this.upgradeRangeButton.hide();
-            this.upgradeFireRateButton.hide();
-            this.upgradeFireSpeedButton.hide();
-            this.loadButton.hide();
-            this.placeTowerButton.hide();
-            this.saveButton.hide();
-            // this.nextWaveButton.hide();
-            this.gameOverScreen.hide();
-            this.settingsButton.hide();
-            this.nextLevelButton.hide();
-            this.muteButton.hide();
-            this.encyclopediaButton.hide();
-        } else if (gameMode === 1) {
-            this.upgradeRangeButton.show();
-            this.upgradeFireRateButton.show();
-            this.upgradeFireSpeedButton.show();
-            this.startButton.hide();
-            // this.nextWaveButton.show();
-            this.nextLevelButton.show();
-            this.gameOverScreen.hide();
-            this.encyclopediaButton.show();
-            this.settingsButton.show();
-
-            this.#drawTowerUpgradeMenu();
-        }
-    }
-
+    
     #toggleSettings() {
         if (!this.settingsOpen) {
             this.muteButton.show();
@@ -167,125 +402,6 @@ export class UIHandler {
             this.saveButton.hide();
             this.settingsOpen = false;
         }   
-    }
-
-    #drawToolbar() {
-        this.placeTowerButton = createButton('Place Tower');
-        this.placeTowerButton.id('placeTowerButton');
-        this.placeTowerButton.style('font-family', 'Andale Mono');
-        this.placeTowerButton.style('font-size', '18px');
-        this.placeTowerButton.style('color', color(181, 43, 131));
-        this.placeTowerButton.style('background-color', color(81, 176, 101));
-        this.placeTowerButton.style('border', 'none');
-        this.placeTowerButton.style('border-radius', '5px');
-        this.placeTowerButton.style('padding', '5px 10px');
-        this.placeTowerButton.style('font-weight', 'bold');
-        this.placeTowerButton.position(10, this.windowHeight - 40);
-
-        this.upgradeRangeButton = createButton('Upgrade Range');
-        this.upgradeRangeButton.id('upgradeRangeButton');
-        this.upgradeRangeButton.style('font-family', 'Andale Mono');
-        this.upgradeRangeButton.style('font-size', '18px');
-        this.upgradeRangeButton.style('color', color(181, 43, 131));
-        this.upgradeRangeButton.style('background-color', color(81, 176, 101));
-        this.upgradeRangeButton.style('border', 'none');
-        this.upgradeRangeButton.style('border-radius', '5px');
-        this.upgradeRangeButton.style('padding', '5px 10px');
-        this.upgradeRangeButton.style('font-weight', 'bold');
-        this.upgradeRangeButton.position(160, this.windowHeight - 40);
-        this.upgradeRangeButton.mousePressed(() => {
-            this.towerTool = 1;
-        });
-        this.upgradeFireRateButton = createButton('Upgrade Fire Rate');
-        this.upgradeFireRateButton.id('upgradeFireRateButton');
-        this.upgradeFireRateButton.style('font-family', 'Andale Mono');
-        this.upgradeFireRateButton.style('font-size', '18px');
-        this.upgradeFireRateButton.style('color', color(181, 43, 131));
-        this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
-        this.upgradeFireRateButton.style('border', 'none');
-        this.upgradeFireRateButton.style('border-radius', '5px');
-        this.upgradeFireRateButton.style('padding', '5px 10px');
-        this.upgradeFireRateButton.style('font-weight', 'bold');
-        this.upgradeFireRateButton.position(335, this.windowHeight - 40);
-        this.upgradeFireRateButton.mousePressed(() => {
-            this.towerTool = 2;
-        }); 
-
-        this.upgradeFireSpeedButton = createButton('Upgrade Bullet Speed');
-        this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
-        this.upgradeFireSpeedButton.style('font-family', 'Andale Mono');
-        this.upgradeFireSpeedButton.style('font-size', '18px');
-        this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
-        this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
-        this.upgradeFireSpeedButton.style('border', 'none');
-        this.upgradeFireSpeedButton.style('border-radius', '5px');
-        this.upgradeFireSpeedButton.style('padding', '5px 10px');
-        this.upgradeFireSpeedButton.style('font-weight', 'bold');
-        this.upgradeFireSpeedButton.position(565, this.windowHeight - 40);
-        this.upgradeFireSpeedButton.mousePressed(() => {
-            this.towerTool = 3;
-        });
-        
-        
-    }
-
-    #drawLoadAndSave() {
-        this.saveButton = createImg('./assets/saveButton.png');
-        this.saveButton.id('saveButton');
-        this.saveButton.addClass('settingsMenu');
-        this.saveButton.size(100, 40);
-        this.saveButton.position(this.windowWidth - 500, 10);
-
-        this.loadButton = createImg('./assets/loadButton.png');
-        this.loadButton.addClass('settingsMenu');
-        this.loadButton.id('loadButton')
-        this.loadButton.size(100, 40);
-        this.loadButton.position(this.windowWidth - 390, 10);
-    }
-
-    /* Possible idea:
-    Have rectangles over enemy info. If enemy appears on screen then remove rectangle 
-    to reveal info.
-    */
-    #drawEncyclopedia() {
-        // container
-        this.encyclopediaMenu = createGraphics(this.windowWidth - 200, this.windowHeight - 100); 
-        this.encyclopediaMenu.addClass("encyclopedia");
-        this.encyclopediaMenu.style("display:block;");
-
-        // exit button
-        this.encyclopediaExit = createButton('X');
-        this.encyclopediaExit.addClass('encyclopedia-exit');
-        this.encyclopediaExit.position(this.windowWidth - 145, 60);
-        this.encyclopediaMenu.textSize(15);
-        
-        // enemy info #1
-        this.encyclopediaMenu.image(this.enemy1, 10, 20, 225, 275);
-        this.encyclopediaMenu.text("Enemy 1", 250, 50, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 250, 80, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 250, 210, 200, 250);
-
-        // enemy info #2
-        this.encyclopediaMenu.image(this.enemy1, 10, 300, 225, 275);
-        this.encyclopediaMenu.text("Enemy 2", 250, 320, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 250, 350, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 250, 470, 200, 250);
-
-        // enemy info #3
-        this.encyclopediaMenu.image(this.enemy1, 500, 20, 225, 275);
-        this.encyclopediaMenu.text("Enemy 3", 750, 50, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 80, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 750, 210, 200, 250);
-
-        // enemy info #4
-        this.encyclopediaMenu.image(this.enemy1, 500, 300, 225, 275);
-        this.encyclopediaMenu.text("Enemy 4", 750, 320, 200, 250);
-        this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 350, 200, 250);
-        this.encyclopediaMenu.text("Damage: 1", 750, 470, 200, 250);
-
-
-        this.encyclopediaMenu.hide();
-        this.encyclopediaExit.hide();
     }
 
     #showEncyclopedia() {
@@ -321,65 +437,5 @@ export class UIHandler {
     showDebugConsole(gameData) {
         this.debugConsole.style('display', 'block');
         this.debugConsole.html(gameData);
-    }
-
-    #drawTowerUpgradeMenu() {
-        const toolbarColor = color(51, 51, 51);
-        toolbarColor.setAlpha(200);
-
-        this.placeTowerButton.show();
-        this.upgradeRangeButton.show();
-        this.upgradeFireRateButton.show();
-        this.upgradeFireSpeedButton.show();
-
-        // Update button colors
-        switch (this.towerTool) {
-            case 0:
-                this.placeTowerButton.style('background-color', color(181, 43, 131));
-                this.placeTowerButton.style('color', color(81, 176, 101));
-                this.upgradeRangeButton.style('background-color', color(81, 176, 101));
-                this.upgradeRangeButton.style('color', color(181, 43, 131));
-                this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
-                this.upgradeFireRateButton.style('color', color(181, 43, 131));
-                this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
-                this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
-                break;
-            case 1:
-                this.placeTowerButton.style('background-color', color(81, 176, 101));
-                this.placeTowerButton.style('color', color(181, 43, 131));
-                this.upgradeRangeButton.style('background-color', color(181, 43, 131));
-                this.upgradeRangeButton.style('color', color(81, 176, 101));
-                this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
-                this.upgradeFireRateButton.style('color', color(181, 43, 131));
-                this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
-                this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
-                break;
-            case 2:
-                this.placeTowerButton.style('background-color', color(81, 176, 101));
-                this.placeTowerButton.style('color', color(181, 43, 131));
-                this.upgradeRangeButton.style('background-color', color(81, 176, 101));
-                this.upgradeRangeButton.style('color', color(181, 43, 131));
-                this.upgradeFireRateButton.style('background-color', color(181, 43, 131));
-                this.upgradeFireRateButton.style('color', color(81, 176, 101));
-                this.upgradeFireSpeedButton.style('background-color', color(81, 176, 101));
-                this.upgradeFireSpeedButton.style('color', color(181, 43, 131));
-                break;
-            case 3:
-                this.placeTowerButton.style('background-color', color(81, 176, 101));
-                this.placeTowerButton.style('color', color(181, 43, 131));
-                this.upgradeRangeButton.style('background-color', color(81, 176, 101));
-                this.upgradeRangeButton.style('color', color(181, 43, 131));
-                this.upgradeFireRateButton.style('background-color', color(81, 176, 101));
-                this.upgradeFireRateButton.style('color', color(181, 43, 131));
-                this.upgradeFireSpeedButton.style('background-color', color(181, 43, 131));
-                this.upgradeFireSpeedButton.style('color', color(81, 176, 101));
-                break;
-        }
-
-        push();
-        fill(toolbarColor);
-        noStroke();
-        rect(0, this.windowHeight, this.windowWidth, 50);
-        pop();
     }
 }
