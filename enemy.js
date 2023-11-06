@@ -325,4 +325,4 @@ class Wave {
 };
 
 // ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
-export { Enemy, Tank, Standard, Rapid, Wave, Stunner }
+export { Enemy, Tank, Standard, Rapid, Wave, Stunner, Spawner }

@@ -1,4 +1,4 @@
-import { Wave } from "./enemy.js";
+import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
@@ -419,47 +419,7 @@ window.setup = function () {
     uiHandler.initializeUI();
     
     uiHandler.saveButton.mousePressed(function() {
-        // Save game state
-        let saveState = {
-            towers: towers,
-            bullets: bullets,
-            enemies: enemies
-        };
-        localStorage.setItem("saveState", JSON.stringify(saveState));
-    });
-    
-    uiHandler.loadButton.mousePressed(function() {
-        // Load game state
-        let saveState = JSON.parse(localStorage.getItem("saveState"));
-        if (saveState) {
-            // Load Tower data
-            let towerData = JSON.parse(localStorage.getItem("saveState")).towers;
-            for (let i = 0; i < towerData.length; i++) {
-                let t = new Tower(towerData[i].x, towerData[i].y);
-                t.range = towerData[i].range;
-                t.damage = towerData[i].damage;
-                t.fireRate = towerData[i].fireRate;
-                t.coolDown = towerData[i].coolDown;
-
-                towers.push(t);
-            }
-
-            // Load Bullet data
-            let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
-            for (let i = 0; i < bulletData.length; i++) {
-                let b = new Bullet(bulletData[i].tower, bulletData[i].target)
-                b.x = bulletData[i].x
-                b.y = bulletData[i].y
-                b.range = bulletData[i].range
-                b.damage = bulletData[i].damage
-                b.target = bulletData[i].target
-                b.angle = bulletData[i].angle
-                b.xMove = bulletData[i].xMove
-                b.yMove = bulletData[i].yMove
-
-                bullets.push(b);
-            }
-        }
+        saveGame();
     });
 
     uiHandler.muteButton.mousePressed(function() {
@@ -481,6 +441,16 @@ window.setup = function () {
             playSound = true;
         }
         beginGame = true;
+    });
+
+    uiHandler.loadButton.mousePressed(function() {
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
+        loadGame();
     });
 
     // uiHandler.nextWaveButton.mousePressed(function() {
@@ -534,6 +504,7 @@ window.setup = function () {
     });
     uiHandler.nextLevelButton.mousePressed(function() {
         switchMap();
+        saveGame();
     })
 
     //Poll for bullets every 100ms
@@ -550,12 +521,17 @@ window.draw = function () {
         uiHandler.updateUIForGameMode(gameMode);
         uiHandler.nextLevelButton.hide();
 
+        if(!localStorage.getItem("saveState")) {
+            uiHandler.loadButton.hide();
+        }
+
         // Switch to game mode
         if (beginGame) {
             gameMode = 1;
         }
     }
     if (gameMode == 1) {
+
         uiHandler.updateUIForGameMode(gameMode);
         uiHandler.updateToolbarState(totalCurrency, getSelectedTower(), towerCosts);
         
@@ -578,6 +554,7 @@ window.draw = function () {
             strokeWeight(4);
             text('Level ' + lev + ' Complete', 600, 100);
             pop();
+            saveGame();
             uiHandler.nextLevelButton.show(); 
         }
         
@@ -772,7 +749,7 @@ window.draw = function () {
 }
 
 // Spawns the next wave.
-function spawnNextWave() {
+function spawnNextWave() { 
     try {
         if (currentWave < levels[mapID].leveldata.length) {
             currentWave = currentWave + 1;
@@ -802,4 +779,113 @@ function spawnWave(waveData, spawnPriority, currentLevel) {
     const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], maps[mapID].middlePath, 4);
 
     return currentWave;
+}
+
+function saveGame() {
+    // Save game state
+    let saveState = {
+        mapID: mapID,
+        nextWaveCheck: nextWaveCheck.amount,
+        levelComplete: levelComplete,
+        totalCurrency: totalCurrency,
+        totalHealth: totalHealth,
+        waveAmount: waveAmount,
+        currentWave: currentWave,
+        towers: towers,
+        bullets: bullets,
+        enemies: enemies
+    };
+    localStorage.setItem("saveState", JSON.stringify(saveState));
+}
+
+function loadGame() {
+    let saveState = JSON.parse(localStorage.getItem("saveState"));
+
+    mapID = saveState.mapID;
+    nextWaveCheck.amount = saveState.nextWaveCheck;
+    levelComplete = saveState.levelComplete;
+    totalCurrency = saveState.totalCurrency;
+    totalHealth = saveState.totalHealth;
+    waveAmount = saveState.waveAmount;
+    currentWave = saveState.currentWave;
+
+    if (saveState) {
+
+        // Load Towers
+        let towerData = JSON.parse(localStorage.getItem("saveState")).towers;
+        for (let i = 0; i < towerData.length; i++) {
+            let t;
+            switch(towerData[i].type) {
+                case "standard":
+                    t = new Standard(towerData[i].x, towerData[i].y);
+                    break;
+                case "freezer":
+                    t = new Freezer(towerData[i].x, towerData[i].y);
+                    break;
+                case "poisoner":
+                    t = new Poisoner(towerData[i].x, towerData[i].y);
+                    break;
+                default:
+                    t = new Tower(towerData[i].x, towerData[i].y);
+                    break;
+            }
+            t.range = towerData[i].range;
+            t.damage = towerData[i].damage;
+            t.health = towerData[i].health;
+            t.fireRate = towerData[i].fireRate;
+            t.coolDown = towerData[i].coolDown;
+            t.fireSpeed = towerData[i].fireSpeed;
+
+            towers.push(t);
+        }
+        
+        // Load Bullets
+        let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
+        for (let i = 0; i < bulletData.length; i++) {
+            let b = new Bullet(bulletData[i].tower, bulletData[i].target, bulletData[i].freeze, bulletData[i].poison)
+            b.x = bulletData[i].x
+            b.y = bulletData[i].y
+            b.range = bulletData[i].range
+            b.damage = bulletData[i].damage
+            b.fireSpeed = bulletData[i].fireSpeed
+            b.target = bulletData[i].target
+            b.freeze = bulletData[i].freeze
+            b.poison = bulletData[i].poison
+            bullets.push(b);
+        }
+
+        // Load Enemies
+        let enemyData = JSON.parse(localStorage.getItem("saveState")).enemies;
+        for (let i = 0; i < enemyData.length; i++) {
+            let e;
+            switch(enemyData[i].appearance) {
+                case "standard":
+                    e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "rapid":
+                    e = new Rapid(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "tank":
+                    e = new Tank(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "spawner":
+                    e = new Spawner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "stunner":
+                    e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+            }
+            e.health = enemyData[i].health;
+            e.speed = enemyData[i].speed;
+            e.currency = enemyData[i].currency;
+            e.damage = enemyData[i].damage;
+
+            enemies.push(e);
+        }
+
+        currentLevelMusic.stop();
+        selectMap(mapID);
+        currentLevelMusic.loop();
+        redraw();
+    }
 }

@@ -15,8 +15,10 @@ export class UIHandler {
         this.titleImg;
         this.gameOverScreen;
         this.startButton;
+        this.loadButton;
         //this.nextWaveButton;
         this.settingsButton;
+        this.saveButton;
         this.muteButton;
         this.placeStandardButton;
         this.placeFreezerButton;
@@ -25,8 +27,6 @@ export class UIHandler {
         this.upgradeRangeButton;
         this.upgradeFireRateButton;
         this.upgradeFireSpeedButton;
-        this.saveButton;
-        this.loadButton;
         this.debugConsole;
         
         this.encyclopediaMenu;
@@ -64,6 +64,12 @@ export class UIHandler {
         this.startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
         this.startButton.addClass('startButton');
         this.startButton.size(200, 100);
+
+        this.loadButton = createButton('Load Save');
+        this.loadButton.addClass('ui_buttons');
+        this.loadButton.size(200, 40);
+        this.loadButton.position(this.windowWidth / 2 - 100, this.windowHeight - 125);
+
 
         // draw "next wave" button
         // this.nextWaveButton = createButton('Next Wave')
@@ -167,13 +173,7 @@ export class UIHandler {
         this.saveButton.id('saveButton');
         this.saveButton.addClass('ui_buttons');
         this.saveButton.size(100, 40);
-        this.saveButton.position(this.windowWidth - 500, 10);
-
-        this.loadButton = createButton('Load');
-        this.loadButton.id('loadButton')
-        this.loadButton.addClass('ui_buttons');
-        this.loadButton.size(100, 40);
-        this.loadButton.position(this.windowWidth - 390, 10);
+        this.saveButton.position(this.windowWidth - 390, 10);
     }
 
     /* Possible idea:
@@ -263,7 +263,6 @@ export class UIHandler {
             this.upgradeContainer.hide();
             this.upgradeFireRateButton.hide();
             this.upgradeFireSpeedButton.hide();
-            this.loadButton.hide();
             this.placeStandardButton.hide();
             this.placeFreezerButton.hide();
             this.placePoisonerButton.hide();
@@ -278,7 +277,6 @@ export class UIHandler {
             this.upgradeRangeButton.hide();
             this.upgradeFireRateButton.hide();
             this.upgradeFireSpeedButton.hide();
-            this.loadButton.hide();
             this.placeStandardButton.hide();
             this.placeFreezerButton.hide();
             this.placePoisonerButton.hide();
@@ -298,6 +296,7 @@ export class UIHandler {
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
+            this.loadButton.hide();
             // this.nextWaveButton.show();
 
             this.nextLevelButton.show();
@@ -393,12 +392,10 @@ export class UIHandler {
     #toggleSettings() {
         if (!this.settingsOpen) {
             this.muteButton.show();
-            this.loadButton.show();
             this.saveButton.show();
             this.settingsOpen = true;
         } else {
             this.muteButton.hide();
-            this.loadButton.hide();
             this.saveButton.hide();
             this.settingsOpen = false;
         }   
