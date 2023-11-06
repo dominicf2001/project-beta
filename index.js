@@ -427,10 +427,12 @@ window.setup = function () {
             currentLevelMusic.pause();
             playSound = false;
             uiHandler.muteButton.html('volume_off');
+            localStorage.setItem("mute", true);
         } else {
             currentLevelMusic.loop();
             playSound = true;
             uiHandler.muteButton.html('volume_up');
+            localStorage.setItem("mute", false);
         }
     });
     
@@ -528,6 +530,13 @@ window.draw = function () {
         // Switch to game mode
         if (beginGame) {
             gameMode = 1;
+            if(localStorage.getItem("mute")) {
+                if(localStorage.getItem("mute") == "true") {
+                    currentLevelMusic.pause();
+                    playSound = false;
+                    uiHandler.muteButton.html('volume_off');
+                }
+            }
         }
     }
     if (gameMode == 1) {
