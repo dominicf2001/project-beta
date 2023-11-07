@@ -636,7 +636,8 @@ window.draw = function () {
         
         if (towerToPlace) {
             push();
-            if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
+            if (maps[0].isColliding(mouseX, 30))
+            {
                 tint(255, 0, 0, 200);
             } else {
                 tint(255, 200);
