@@ -150,7 +150,7 @@ class Enemy {
             this.unFreeze = -1;
         }
         if (this.unPoison != -1) {
-            if (this.x < this.unPoison) this.health = this.health - 0.03;
+            if (this.x < this.unPoison) this.health = this.health - 0.05;
             else this.unPoison = -1;
         }
     }

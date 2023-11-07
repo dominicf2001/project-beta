@@ -139,18 +139,18 @@ let currentWave = 0;
 const levels = [
     { // Level 1 Data
         leveldata: [
-            [1]
-            // [0, 0, 6],
-            // [2],
-            // [0, 0, 0, 1],
-            // [0, 0, 0, 0, 3]
+            [1],
+            [0, 0, 6],
+            [2],
+            [0, 0, 0, 1],
+            [0, 0, 0, 0, 3]
         ],
         spawnPriority: [
-            [0]
-            // [2, 1, 0],
-            // [0],
-            // [3, 2, 1, 0],
-            // [4, 3, 2, 1, 0]
+            [0],
+            [2, 1, 0],
+            [0],
+            [3, 2, 1, 0],
+            [4, 3, 2, 1, 0]
         ]
     },
     { // Level 2 Data
@@ -509,29 +509,84 @@ window.setup = function () {
         }
     });
 
+    uiHandler.upgradeRangeButton.mousePressed(function() {
+        let selectedUpgradeTower = getSelectedTower();
+        switch (selectedUpgradeTower.constructor.name) {
+            case "Standard":
+                if (totalCurrency >= towerCosts["standard"].rangeCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["standard"].rangeCost;
+                }
+                break;
+
+            case "Poisoner":
+                if (totalCurrency >= towerCosts["poisoner"].rangeCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["poisoner"].rangeCost;
+                }
+                break;
+
+            case "Freezer":
+                if (totalCurrency >= towerCosts["freezer"].rangeCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["freezer"].rangeCost;
+                }
+                break;
+        }
+    });
+
     uiHandler.upgradeFireRateButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        if(totalCurrency >= 200) {
-            selectedUpgradeTower.upgradeFireRate();
-            totalCurrency -= 200;
+        switch (selectedUpgradeTower.constructor.name) {
+            case "Standard":
+                if (totalCurrency >= towerCosts["standard"].fireRateCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["standard"].fireRateCost;
+                }
+                break;
+
+            case "Poisoner":
+                if (totalCurrency >= towerCosts["poisoner"].fireRateCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["poisoner"].fireRateCost;
+                }
+                break;
+
+            case "Freezer":
+                if (totalCurrency >= towerCosts["freezer"].fireRateCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["freezer"].fireRateCost;
+                }
+                break;
         }
     });
 
     uiHandler.upgradeFireSpeedButton.mousePressed(function() {
         let selectedUpgradeTower = getSelectedTower();
-        if(totalCurrency >= 200) {
-            selectedUpgradeTower.upgradeFireSpeed();
-            totalCurrency -= 200;
+        switch (selectedUpgradeTower.constructor.name) {
+            case "Standard":
+                if (totalCurrency >= towerCosts["standard"].fireSpeedCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["standard"].fireSpeedCost;
+                }
+                break;
+
+            case "Poisoner":
+                if (totalCurrency >= towerCosts["poisoner"].fireSpeedCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["poisoner"].fireSpeedCost;
+                }
+                break;
+
+            case "Freezer":
+                if (totalCurrency >= towerCosts["freezer"].fireSpeedCost) {
+                    selectedUpgradeTower.upgradeRange();
+                    totalCurrency -= towerCosts["freezer"].fireSpeedCost;
+                }
+                break;
         }
     });
     
-    uiHandler.upgradeRangeButton.mousePressed(function() {
-        let selectedUpgradeTower = getSelectedTower();
-        if(totalCurrency >= 200) {
-            selectedUpgradeTower.upgradeRange();
-            totalCurrency -= 200;
-        }
-    });
     uiHandler.nextLevelButton.mousePressed(function() {
         switchMap();
     })
@@ -540,8 +595,6 @@ window.setup = function () {
     setInterval(fireBullets, 100);
     setInterval(dealDamage, 100);
 }
-
-
 
 window.draw = function () {
     fill(0);
