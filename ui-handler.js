@@ -71,10 +71,13 @@ export class UIHandler {
         // this.nextWaveButton.mousePressed(() =>
         //     this.onNextWaveClick()
         // );
+
         // draw Next Level Button
         this.nextLevelButton = createButton('Next Level');
         this.nextLevelButton.id('nextLevelButton');
-        this.nextLevelButton.position(this.windowWidth - 100, this.windowHeight + 45);
+        this.nextLevelButton.addClass('ui_buttons');
+        this.nextLevelButton.position(this.windowWidth - 130, this.windowHeight - 100);
+        this.nextLevelButton.size(120, 40);
 
         this.settingsButton = createSpan('settings');
         this.settingsButton.id('settingsButton');
