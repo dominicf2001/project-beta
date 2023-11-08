@@ -14,7 +14,7 @@ const canvasWidth = window.innerWidth;
 const canvasHeight = window.innerHeight;
 
 // STATE VARIABLES -----------
-// 0 - main menuo
+// 0 - main menu
 // 1 - start game
 var gameMode = 0;
 let beginGame = false;
@@ -25,11 +25,8 @@ let currentWave = 0;
 
 // ENTITIES -----------
 let enemies = [];
-const towerLimit = TOWER_LIMIT;
 let towers = [];
 let bullets = [];
-// let dragTower = null;
-let towerToPlace = null;
 
 // PLAYER RESOURCES -----------
 let totalCurrency = DEFAULT_CURRENCY;
@@ -37,19 +34,20 @@ let totalHealth = DEFAULT_HEALTH;
 
 // MISC VARIABLES -----------
 
+// let dragTower = null;
+let towerToPlace = null;
+const towerLimit = TOWER_LIMIT;
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
 let initNextWave = 5;
 let nextWaveCheck = { 
     amount: 0
 }
-
 // checks for stunned towers
 let stunCooldown = {
     amount: 0,
     trigger: 400
 }
-
 let uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 let debug
 let game;
