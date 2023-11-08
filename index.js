@@ -1,16 +1,17 @@
 import { Wave } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
+import { WINDOW_WIDTH, WINDOW_HEIGHT,
+         TOWER_LIMIT, DEFAULT_CURRENCY,
+         DEFAULT_HEALTH, LEVELS} from './config.json';
+
 
 // GLOBAL VARIABLES
 
 const canvasWidth = window.innerWidth;
 const canvasHeight = window.innerHeight;
 
-const primaryColor = "color(237, 112, 192)"; // pink
-const secondaryColor = "color(81, 176, 101)"; // green
-
-// 0 - main menu
+// 0 - main menuo
 // 1 - start game
 var gameMode = 0;
 
@@ -20,10 +21,6 @@ let gameOver = false;
 let debugConsole;
 
 let game;
-
-// map width & height
-let windowWidth = 1200;
-let windowHeight = 700;
 
 var mapID = 0;
 var levelComplete = false;
@@ -58,7 +55,7 @@ function selectMap(mapID) {
 function switchMap() {
     ++mapID;
     currentWave = 0;
-    waveAmount = levels[mapID].leveldata.length;
+    waveAmount = LEVELS[mapID].LEVEL_DATA.length;
     initNextWave = 20;
     levelComplete = false;
     currentLevelMusic.stop();
@@ -70,7 +67,7 @@ function switchMap() {
     redraw();
 }
 
-let uiHandler = new UIHandler(windowWidth, windowHeight);
+let uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 export let maps = [
 // First map
@@ -135,53 +132,13 @@ export let maps = [
 // CONSTRUCT LEVEL
 let currentWave = 0;
 
-// The Level Data
-const levels = [
-    { // Level 1 Data
-        leveldata: [
-            [1]
-            // [0, 0, 6],
-            // [2],
-            // [0, 0, 0, 1],
-            // [0, 0, 0, 0, 3]
-        ],
-        spawnPriority: [
-            [0]
-            // [2, 1, 0],
-            // [0],
-            // [3, 2, 1, 0],
-            // [4, 3, 2, 1, 0]
-        ]
-    },
-    { // Level 2 Data
-        leveldata: [
-            [0, 3],
-            [0, 1, 6],
-            [5],
-            [1, 1, 1, 4]
-        ],
-        spawnPriority: [
-            [1, 0],
-            [2, 1, 0],
-            [0],
-            [3, 2, 1, 0]
-        ]
-    },
-    { // Level 3 Data
-
-    },
-    { // Bonus Level Data
-
-    }
-];
-
 // needs to be generalized for all levels
-var waveAmount = levels[mapID].leveldata.length;
+var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
 
 let enemies = [];
 
 // tower variables
-const towerLimit = 5;
+const towerLimit = TOWER_LIMIT;
 let towers = [];
 let bullets = [];
 // let dragTower = null;
@@ -189,8 +146,8 @@ let playSound = false;
 let towerToPlace = null;
 
 // other relevant variables
-let totalCurrency = 800;
-let totalHealth = 50;
+let totalCurrency = DEFAULT_CURRENCY;
+let totalHealth = DEFAULT_HEALTH;
 
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
@@ -257,7 +214,7 @@ window.mousePressed = function (event) {
         //Ignore touch events, only handle left mouse button
         // Check if mouse is inside canvas
 
-        if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > windowWidth - 50 || mouseY < 0 || mouseY + 50 > windowHeight))) {
+        if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > WINDOW_WIDTH - 50 || mouseY < 0 || mouseY + 50 > WINDOW_HEIGHT))) {
             try {
                 if (towerToPlace) {
                     if (towers.length > towerLimit) {
@@ -269,7 +226,7 @@ window.mousePressed = function (event) {
                         return;
                     }
 
-                    if (mouseX >= windowWidth - 15 && mouseY > 30 || mouseY < 70) {
+                    if (mouseX >= WINDOW_WIDTH - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
                         console.log(towerToPlace);
@@ -414,7 +371,7 @@ window.keyPressed = function (e) {
 }
 
 window.setup = function () {
-    game = createCanvas(windowWidth, windowHeight);
+    game = createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
     
     uiHandler.initializeUI();
     
@@ -564,7 +521,7 @@ window.draw = function () {
         // else uiHandler.nextWaveButton.hide();
 
         background(200);
-        image(mapImg, windowWidth / 2, windowHeight / 2, windowWidth, windowHeight);
+        image(mapImg, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT);
         
         // Displays Level Complete Text and button when all waves are done
         uiHandler.nextLevelButton.hide();
@@ -614,7 +571,7 @@ window.draw = function () {
                 fill('white');
                 stroke(0);
                 strokeWeight(4);
-                text("Game starts in: " + initNextWave, windowWidth - 200, windowHeight - 50);
+                text("Game starts in: " + initNextWave, WINDOW_WIDTH - 200, WINDOW_HEIGHT - 50);
                 pop();
             }
             else if (currentWave < waveAmount) {
@@ -623,7 +580,7 @@ window.draw = function () {
                 fill('white');
                 stroke(0);
                 strokeWeight(4);
-                text("Next wave in: " + initNextWave, windowWidth - 185, windowHeight - 50);
+                text("Next wave in: " + initNextWave, WINDOW_WIDTH - 185, WINDOW_HEIGHT - 50);
                 pop();
             }
             else {
@@ -670,7 +627,7 @@ window.draw = function () {
         fill('white');
         stroke(0);
         strokeWeight(4);
-        text('Wave: ' + currentWave + '/' + levels[mapID].leveldata.length, windowWidth - 120, windowHeight - 25);
+        text('Wave: ' + currentWave + '/' + LEVELS[mapID].LEVEL_DATA.length, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 25);
         pop();
 
         // draw or remove enemies
@@ -774,12 +731,12 @@ window.draw = function () {
 // Spawns the next wave.
 function spawnNextWave() {
     try {
-        if (currentWave < levels[mapID].leveldata.length) {
+        if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
             currentWave = currentWave + 1;
 
-            let newWave = spawnWave(levels[mapID].leveldata, levels[mapID].spawnPriority, currentWave);
-            for (let t = 0; t < levels[mapID].leveldata[currentWave - 1].length; ++t)
-                nextWaveCheck.amount += levels[mapID].leveldata[currentWave - 1][t];
+            let newWave = spawnWave(LEVELS[mapID].LEVEL_DATA, LEVELS[mapID].PRIORITY_DATA, currentWave);
+            for (let t = 0; t < LEVELS[mapID].LEVEL_DATA[currentWave - 1].length; ++t)
+                nextWaveCheck.amount += LEVELS[mapID].LEVEL_DATA[currentWave - 1][t];
             newWave.debugPrintWave();
             newWave.spawn();
             console.log(newWave);
@@ -795,11 +752,11 @@ function spawnNextWave() {
 
 /** Spawn a Wave
 * @param {array} waveData - how many of each enemy type to spawn where array index = enemy type id 
-* @param {array} spawnPriority - order to spawn enemy types in
+* @param {array} PRIORITY_DATA - order to spawn enemy types in
 * @param {number} currentLevel - the wave that the game is currently in. From 1 to waveAmount
 */
-function spawnWave(waveData, spawnPriority, currentLevel) {
-    const currentWave = new Wave(waveData[currentLevel - 1], spawnPriority[currentLevel - 1], maps[mapID].middlePath, 4);
+function spawnWave(waveData, PRIORITY_DATA, currentLevel) {
+    const currentWave = new Wave(waveData[currentLevel - 1], PRIORITY_DATA[currentLevel - 1], maps[mapID].middlePath, 4);
 
     return currentWave;
 }
