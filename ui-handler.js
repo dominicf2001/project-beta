@@ -39,7 +39,8 @@ export class UIHandler {
     }
 
     preloadAssets() {
-        this.titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+        //this.titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
+        this.titleImg = loadImage('./assets/Title Screen 2-1.png');
         this.enemyStandard = loadImage('./assets/Basic_Enemy.png');
         this.enemySummoner = loadImage('./assets/Summoner.png');
         this.enemySummonee = loadImage('./assets/Summonee.png');
@@ -48,7 +49,8 @@ export class UIHandler {
     initializeUI() {
         imageMode(CENTER);
         
-        image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2) - 100, 650, 375);
+        //image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2) - 100, 650, 375);
+        image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2), this.windowWidth, this.windowHeight);
 
         this.#initializeToolbar();
 
@@ -63,6 +65,7 @@ export class UIHandler {
 
         this.startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
         this.startButton.addClass('startButton');
+        this.startButton.position(this.windowWidth - 325, this.windowHeight - 250);
         this.startButton.size(200, 100);
 
         // draw "next wave" button
