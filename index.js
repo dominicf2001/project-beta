@@ -2,7 +2,7 @@ import { Wave } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 import { WINDOW_WIDTH, WINDOW_HEIGHT,
-         TOWER_LIMIT, DEFAULT_CURRENCY,
+         TOWER_LIMIT, DEFAULT_CURRENCY, DEFAULT_WAVE_INIT_TIME,
          DEFAULT_HEALTH, LEVELS, MAPS } from './config.js';
 
 
@@ -39,7 +39,7 @@ let towerToPlace = null;
 const towerLimit = TOWER_LIMIT;
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
-let initNextWave = 5;
+let initNextWave = DEFAULT_WAVE_INIT_TIME;
 let nextWaveCheck = { 
     amount: 0
 }
@@ -48,7 +48,7 @@ let stunCooldown = {
     amount: 0,
     trigger: 400
 }
-let uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
+const uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 let debug
 let game;
 var mapID = 0;

@@ -15,16 +15,17 @@ export const WINDOW_HEIGHT = 700;
 export const TOWER_LIMIT = 5;
 export const DEFAULT_CURRENCY = 800;
 export const DEFAULT_HEALTH = 50;
+export const DEFAULT_WAVE_INIT_TIME = 2;
 
 // LEVELS
 export const LEVELS = [
     // level 1
     {
         LEVEL_DATA: [
-            [1]
+            [0, 3, 1, 0, 0]
         ],
         PRIORITY_DATA: [
-            [e.tank]
+            [e.standard, e.rapid]
         ]
     },
     // level 2
@@ -53,7 +54,7 @@ export const ENEMIES = [
     // enemy 1: STANDARD
     {
         APPEARANCE: "standard",
-        SPEED: 0.2,
+        SPEED: 1,
         HEALTH: 5,
         CURRENCY: 10,
         DAMAGE: 2,
