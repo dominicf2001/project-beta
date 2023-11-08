@@ -71,7 +71,7 @@ export class UIHandler {
         this.loadButton = createButton('Load Save');
         this.loadButton.addClass('ui_buttons');
         this.loadButton.size(200, 40);
-        this.loadButton.position(this.windowWidth / 2 - 100, this.windowHeight - 125);
+        this.loadButton.position(this.windowWidth - 325, this.windowHeight - 125);
 
 
         // draw "next wave" button
