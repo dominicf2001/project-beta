@@ -55,6 +55,7 @@ class Enemy {
         this.coolDown = 0;
         this.unFreeze = -1;
         this.unPoison = -1;
+        this.dead = false; 
     }
 
     draw(sprite) {
@@ -153,6 +154,14 @@ class Enemy {
             if (this.x < this.unPoison) this.health = this.health - 0.03;
             else this.unPoison = -1;
         }
+    }
+    isDead() {
+        return this.dead; 
+    }
+
+    kill() {
+        console.log("Enemy down!!");
+        this.dead = true; 
     }
 };
 // ------------------------------------------ //
