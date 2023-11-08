@@ -2,11 +2,11 @@
 const canvasWidth = 1200;
 const canvasHeight = 700;
 
-import { maps } from "./index.js";
+import { ENEMIES, MAPS } from "./config.js";
 
 // Generate offset within the bounds of the path
 function getOffset() {
-    let width = Math.floor(maps[0].bottomPath(0) - maps[0].topPath(0));
+    let width = Math.floor(MAPS[0].bottomPath(0) - MAPS[0].topPath(0));
     return Math.floor(Math.random() * width / 3) - Math.floor(width / 6);
 }
 
@@ -171,7 +171,9 @@ class Enemy {
 /** The Tank */
 class Tank extends Enemy {
     constructor(path, offset, x, y) {
-        super("tank", 0.2, 25, path, offset, 300, 6, x, y);
+        const e = ENEMIES[0];
+        // TODO: take in the entire object instead?
+        super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
     drawAppearance() {
         fill(10);
@@ -183,7 +185,8 @@ class Tank extends Enemy {
 /** The Standard */
 class Standard extends Enemy {
     constructor(path, offset, x, y) {
-        super("standard", 0.5, 10, path, offset, 140, 3, 50, x, y);
+        const e = ENEMIES[1];
+        super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
     drawAppearance() {
         fill(100);
@@ -195,7 +198,8 @@ class Standard extends Enemy {
 /** The Rapid */
 class Rapid extends Enemy {
     constructor(path, offset, x, y) {
-        super("rapid", 1, 5, path, offset, 80, 1, 30, x, y);
+        const e = ENEMIES[2];
+        super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
     drawAppearance() {
         fill(50);
@@ -207,7 +211,8 @@ class Rapid extends Enemy {
 /** The Spawner */
 class Spawner extends Enemy {    
     constructor(path, offset, x, y) {
-        super("spawner", 0.4, 5, path, offset, 80, 1, 40, x, y);
+        const e = ENEMIES[3];
+        super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
         
         this.spawnCount = 3;
         /**
@@ -252,7 +257,8 @@ class Spawner extends Enemy {
 /** The Stunner */
 class Stunner extends Enemy {
     constructor(path, offset, x, y) {
-        super("stunner", 0.6, 15, path, offset, 280, 3, x, y);
+        const e = ENEMIES[4];
+        super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
     drawAppearance() {
         fill(75);
