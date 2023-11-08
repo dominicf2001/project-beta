@@ -6,7 +6,9 @@ import { WINDOW_WIDTH, WINDOW_HEIGHT,
          DEFAULT_HEALTH, LEVELS, MAPS } from './config.js';
 
 
+// ---------------------------------------------------------------------
 // GLOBAL VARIABLES
+// ---------------------------------------------------------------------
 
 const canvasWidth = window.innerWidth;
 const canvasHeight = window.innerHeight;
@@ -24,6 +26,93 @@ let game;
 
 var mapID = 0;
 var levelComplete = false;
+
+let uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+let currentWave = 0;
+
+// needs to be generalized for all levels
+var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+
+let enemies = [];
+
+// tower variables
+const towerLimit = TOWER_LIMIT;
+let towers = [];
+let bullets = [];
+// let dragTower = null;
+let playSound = false;
+let towerToPlace = null;
+
+// other relevant variables
+let totalCurrency = DEFAULT_CURRENCY;
+let totalHealth = DEFAULT_HEALTH;
+
+// checks if wave is over
+// can cause error if new ways that enemies disapear arise so keep in mind
+let initNextWave = 5;
+let nextWaveCheck = { 
+    amount: 0
+}
+
+// checks for stunned towers
+let stunCooldown = {
+    amount: 0,
+    trigger: 400
+}
+
+// ---------------------------------------------------------------------
+// HELPER FUNCTIONS
+// ---------------------------------------------------------------------
+
+function getSelectedTower() {
+    for (let t of towers) {
+        if (t.selected) {
+            return t;
+        }
+    }
+}
+
+function fireBullets() {
+    // Generate bullets for each tower
+    for (let t of towers) {
+
+        // Skip if tower can't fire
+        if (!t.canFire()) {
+            continue;
+        }
+
+        let shortestDistance = Infinity;
+        let closestEnemy = null;
+
+        for (let e of enemies) {
+            let xDist = e.x - t.x;
+            let yDist = e.y - t.y;
+            let distance = sqrt(xDist * xDist + yDist * yDist);
+
+            if (distance < t.range && distance < shortestDistance) {
+                shortestDistance = distance;
+                closestEnemy = e;
+            }
+        }
+
+        if (closestEnemy !== null) {
+            bullets.push(t.fire(closestEnemy));
+        }
+    }
+}
+    
+function dealDamage() {
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].damageTowers(towers);
+    }
+    for (let i = 0; i < towers.length; i++) {
+        if (towers[i].health <= 0) {
+            towers.splice(i, 1);
+        }
+    }
+}
+
 // Select Map Function
 function selectMap(mapID) {
     switch (mapID) {
@@ -67,41 +156,42 @@ function switchMap() {
     redraw();
 }
 
-let uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
+// Spawns the next wave.
+function spawnNextWave() {
+    try {
+        if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
+            currentWave = currentWave + 1;
 
-//////////////////////////////
-// CONSTRUCT LEVEL
-let currentWave = 0;
+            let newWave = spawnWave(LEVELS[mapID].LEVEL_DATA, LEVELS[mapID].PRIORITY_DATA, currentWave);
+            for (let t = 0; t < LEVELS[mapID].LEVEL_DATA[currentWave - 1].length; ++t)
+                nextWaveCheck.amount += LEVELS[mapID].LEVEL_DATA[currentWave - 1][t];
+            newWave.debugPrintWave();
+            newWave.spawn();
+            console.log(newWave);
 
-// needs to be generalized for all levels
-var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+            enemies = newWave.getEnemies();
+        } else {
 
-let enemies = [];
-
-// tower variables
-const towerLimit = TOWER_LIMIT;
-let towers = [];
-let bullets = [];
-// let dragTower = null;
-let playSound = false;
-let towerToPlace = null;
-
-// other relevant variables
-let totalCurrency = DEFAULT_CURRENCY;
-let totalHealth = DEFAULT_HEALTH;
-
-// checks if wave is over
-// can cause error if new ways that enemies disapear arise so keep in mind
-let initNextWave = 5;
-let nextWaveCheck = { 
-    amount: 0
+        }
+    } catch (e) {
+        alert(e);
+    }
 }
 
-// checks for stunned towers
-let stunCooldown = {
-    amount: 0,
-    trigger: 400
+/** Spawn a Wave
+* @param {array} waveData - how many of each enemy type to spawn where array index = enemy type id 
+* @param {array} PRIORITY_DATA - order to spawn enemy types in
+* @param {number} currentLevel - the wave that the game is currently in. From 1 to waveAmount
+*/
+function spawnWave(waveData, PRIORITY_DATA, currentLevel) {
+    const currentWave = new Wave(waveData[currentLevel - 1], PRIORITY_DATA[currentLevel - 1], MAPS[mapID].middlePath, 4);
+
+    return currentWave;
 }
+
+// ---------------------------------------------------------------------
+// EVENT LISTENERS
+// ---------------------------------------------------------------------
 
 // Assets
 let mapImg;
@@ -133,8 +223,6 @@ window.preload = function () {
     healthSprite = loadImage('./assets/heart.png');
     coinSprite = loadImage('./assets/coin.png');
 }
-
-// EVENT LISTENERS
 
 window.mousePressed = function (event) {
     if (gameMode == 1 && uiHandler.ignoreNextClick == false && !uiHandler.encyclopediaOpen) {
@@ -230,55 +318,6 @@ window.mouseMoved = function () {
     cursor();
 }
 
-// HELPERS
-
-function getSelectedTower() {
-    for (let t of towers) {
-        if (t.selected) {
-            return t;
-        }
-    }
-}
-
-function fireBullets() {
-    // Generate bullets for each tower
-    for (let t of towers) {
-
-        // Skip if tower can't fire
-        if (!t.canFire()) {
-            continue;
-        }
-
-        let shortestDistance = Infinity;
-        let closestEnemy = null;
-
-        for (let e of enemies) {
-            let xDist = e.x - t.x;
-            let yDist = e.y - t.y;
-            let distance = sqrt(xDist * xDist + yDist * yDist);
-
-            if (distance < t.range && distance < shortestDistance) {
-                shortestDistance = distance;
-                closestEnemy = e;
-            }
-        }
-
-        if (closestEnemy !== null) {
-            bullets.push(t.fire(closestEnemy));
-        }
-    }
-}
-    
-function dealDamage() {
-    for (let i = 0; i < enemies.length; i++) {
-        enemies[i].damageTowers(towers);
-    }
-    for (let i = 0; i < towers.length; i++) {
-        if (towers[i].health <= 0) {
-            towers.splice(i, 1);
-        }
-    }
-}
 
 window.keyPressed = function (e) {
     if (keyCode === ESCAPE) { // use escape to open/close settings
@@ -310,6 +349,8 @@ window.keyPressed = function (e) {
     }
 
 }
+
+
 
 window.setup = function () {
     game = createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -439,7 +480,9 @@ window.setup = function () {
     setInterval(dealDamage, 100);
 }
 
-
+// ---------------------------------------------------------------------
+// GAME LOOP
+// ---------------------------------------------------------------------
 
 window.draw = function () {
     fill(0);
@@ -667,37 +710,4 @@ window.draw = function () {
             deathSound.play();
         }
     }
-}
-
-// Spawns the next wave.
-function spawnNextWave() {
-    try {
-        if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
-            currentWave = currentWave + 1;
-
-            let newWave = spawnWave(LEVELS[mapID].LEVEL_DATA, LEVELS[mapID].PRIORITY_DATA, currentWave);
-            for (let t = 0; t < LEVELS[mapID].LEVEL_DATA[currentWave - 1].length; ++t)
-                nextWaveCheck.amount += LEVELS[mapID].LEVEL_DATA[currentWave - 1][t];
-            newWave.debugPrintWave();
-            newWave.spawn();
-            console.log(newWave);
-
-            enemies = newWave.getEnemies();
-        } else {
-
-        }
-    } catch (e) {
-        alert(e);
-    }
-}
-
-/** Spawn a Wave
-* @param {array} waveData - how many of each enemy type to spawn where array index = enemy type id 
-* @param {array} PRIORITY_DATA - order to spawn enemy types in
-* @param {number} currentLevel - the wave that the game is currently in. From 1 to waveAmount
-*/
-function spawnWave(waveData, PRIORITY_DATA, currentLevel) {
-    const currentWave = new Wave(waveData[currentLevel - 1], PRIORITY_DATA[currentLevel - 1], MAPS[mapID].middlePath, 4);
-
-    return currentWave;
 }
