@@ -3,6 +3,7 @@ const canvasWidth = 1200;
 const canvasHeight = 700;
 
 import { maps } from "./index.js";
+import { ENEMIES } from "./config.js";
 
 // Generate offset within the bounds of the path
 function getOffset() {
@@ -162,7 +163,9 @@ class Enemy {
 /** The Tank */
 class Tank extends Enemy {
     constructor(path, offset, x, y) {
-        super("tank", 0.2, 25, path, offset, 300, 6, x, y);
+        const tank = ENEMIES[0];
+        // TODO: take in the entire object instead?
+        super(tank.APPEARANCE, tank.SPEED, tank.HEALTH, path, offset, tank.CURRENCY, tank.DAMAGE, tank.DAMAGE_DISTANCE, x, y);
     }
     drawAppearance() {
         fill(10);
