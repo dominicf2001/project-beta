@@ -13,40 +13,29 @@ import { WINDOW_WIDTH, WINDOW_HEIGHT,
 const canvasWidth = window.innerWidth;
 const canvasHeight = window.innerHeight;
 
+// STATE VARIABLES -----------
 // 0 - main menuo
 // 1 - start game
 var gameMode = 0;
-
 let beginGame = false;
 let gameOver = false;
-
-let debugConsole;
-
-let game;
-
-var mapID = 0;
 var levelComplete = false;
-
-let uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
-
+let playSound = false;
 let currentWave = 0;
 
-// needs to be generalized for all levels
-var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
-
+// ENTITIES -----------
 let enemies = [];
-
-// tower variables
 const towerLimit = TOWER_LIMIT;
 let towers = [];
 let bullets = [];
 // let dragTower = null;
-let playSound = false;
 let towerToPlace = null;
 
-// other relevant variables
+// PLAYER RESOURCES -----------
 let totalCurrency = DEFAULT_CURRENCY;
 let totalHealth = DEFAULT_HEALTH;
+
+// MISC VARIABLES -----------
 
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
@@ -60,6 +49,13 @@ let stunCooldown = {
     amount: 0,
     trigger: 400
 }
+
+let uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
+let debug
+let game;
+var mapID = 0;
+// needs to be generalized for all levels
+var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
 
 // ---------------------------------------------------------------------
 // HELPER FUNCTIONS
@@ -185,7 +181,6 @@ function spawnNextWave() {
 */
 function spawnWave(waveData, PRIORITY_DATA, currentLevel) {
     const currentWave = new Wave(waveData[currentLevel - 1], PRIORITY_DATA[currentLevel - 1], MAPS[mapID].middlePath, 4);
-
     return currentWave;
 }
 
