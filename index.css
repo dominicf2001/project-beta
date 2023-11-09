@@ -37,6 +37,31 @@ body {
     padding:0;
     margin:0;
 }
+.mapMenu {
+    background:#afc2ea;
+    opacity: 0.9;
+    stroke:#000 5px solid;
+    border-radius:10px;
+    position:absolute;
+    padding:0;
+    margin:0;
+}
+.mapMenuButton {
+    font-family: 'Anton', sans-serif;
+    opacity: 0.9;
+    background-color: #51b065;
+    color:#b52b83;
+    font-size:22px;
+    text-transform: uppercase;
+    border:none;
+    border-radius:5px;
+    cursor: pointer;
+    text-shadow:1px 1px #00ecff;
+}
+
+.mapMenuButton:hover {
+    opacity: 0.6;
+}
 
 .encyclopedia-card {
     color: #261c3f;
