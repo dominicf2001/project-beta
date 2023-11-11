@@ -35,7 +35,6 @@ export class UIHandler {
         this.enemyStandard;
         this.enemySummoner;
         this.enemySummonee;
-        this.standardTowerImg;
     }
 
     preloadAssets() {
@@ -44,7 +43,6 @@ export class UIHandler {
         this.enemyStandard = loadImage('./assets/Basic_Enemy.png');
         this.enemySummoner = loadImage('./assets/Summoner.png');
         this.enemySummonee = loadImage('./assets/Summonee.png');
-        this.standardTowerImg = loadImage('./assets/RedMoonTower.png');
     }
 
     initializeUI() {
