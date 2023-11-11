@@ -108,6 +108,10 @@ body {
 .place_tower_button {
     height: 50px;
     user-select: none;
+    background-image: url(./assets/RedMoonTower.png);
+    background-size: 100px;
+    background-repeat: no-repeat;
+    background-position: left;
 }
 
 .toolbar_upgrades {
