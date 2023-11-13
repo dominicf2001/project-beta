@@ -3,7 +3,7 @@ import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.
 import { UIHandler } from "./ui-handler.js";
 import { WINDOW_WIDTH, WINDOW_HEIGHT,
          TOWER_LIMIT, DEFAULT_CURRENCY, DEFAULT_WAVE_INIT_TIME,
-         DEFAULT_HEALTH, LEVELS, MAPS } from './config.js';
+         DEFAULT_HEALTH, LEVELS, MAPS, ENEMIES } from './config.js';
 
 
 // ---------------------------------------------------------------------
@@ -153,12 +153,15 @@ function switchMap() {
 // Spawns the next wave.
 function spawnNextWave() {
     try {
+        console.log(LEVELS[mapID].LEVEL_DATA.length);
         if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
             currentWave = currentWave + 1;
 
             let newWave = spawnWave(LEVELS[mapID].LEVEL_DATA, LEVELS[mapID].PRIORITY_DATA, currentWave);
-            for (let t = 0; t < LEVELS[mapID].LEVEL_DATA[currentWave - 1].length; ++t)
-                nextWaveCheck.amount += LEVELS[mapID].LEVEL_DATA[currentWave - 1][t];
+            for (let i = 0; i < ENEMIES.length; ++i) 
+                for (let j = 0; j < LEVELS[mapID].LEVEL_DATA[currentWave - 1][i].length; ++j)
+                    nextWaveCheck.amount += LEVELS[mapID].LEVEL_DATA[currentWave - 1][i][j];
+                
             newWave.debugPrintWave();
             newWave.spawn();
             console.log(newWave);
