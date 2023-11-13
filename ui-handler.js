@@ -143,7 +143,7 @@ export class UIHandler {
 
         this.upgradeContainer = createDiv();
         this.upgradeContainer.addClass('toolbar_upgrades');
-        toolBar.child(this.upgradeContainer);
+        //toolBar.child(this.upgradeContainer);
 
         const upgradeText = createP('Upgrades');
         upgradeText.addClass('toolbar_title');
@@ -315,6 +315,12 @@ export class UIHandler {
     updateToolbarState(totalCurrency, selectedTower, towerCosts) {
         if (selectedTower) {
             this.upgradeContainer.show();
+
+            if(selectedTower.y > this.windowHeight - 200) {
+                this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y - 160);
+            } else {
+                this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y + 80);
+            }
             this.upgradeFireRateButton.show();
             this.upgradeRangeButton.show();
             this.upgradeFireSpeedButton.show();
