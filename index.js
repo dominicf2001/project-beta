@@ -1,3 +1,4 @@
+
 import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
@@ -349,11 +350,42 @@ window.keyPressed = function (e) {
         console.log(gameData);
         uiHandler.showDebugConsole(JSON.stringify(gameData));
     }
-    if(e.keyCode == 67 && e.altKey) {
-        console.log("Adding 1000 currency");
-        totalCurrency += 1000;
+
+    console.log(e);
+    
+    if (e.altKey) {
+        if (e.key == 'z') {
+            console.log("Adding 10 currency");
+            totalCurrency += 10;
+        }
+
+        if (e.key == 'x') {
+            console.log("Adding 100 currency");
+            totalCurrency += 100;
+        }
+        
+        if (e.key == 'c') {
+            console.log("Adding 1000 currency");
+            totalCurrency += 1000;
+        }
     }
 
+    if (e.ctrlKey) {
+        if (e.key == 'z') {
+            console.log("Adding 10 health ");
+            totalHealth += 10;
+        }
+
+        if (e.key == 'x') {
+            console.log("Adding 100 health");
+            totalHealth += 100;
+        }
+
+        if (e.key == 'c') {
+            console.log("Adding 1000 health");
+            totalHealth += 1000;
+        }
+    }
 }
 
 
