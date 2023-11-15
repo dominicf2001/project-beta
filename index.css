@@ -100,6 +100,10 @@ body {
 .place_tower_button {
     height: 50px;
     user-select: none;
+    background-image: url(./assets/TransparentRedMoonTower.gif);
+    background-size: 150px, 150px;
+    background-repeat: no-repeat;
+    background-position: -25px -40px;
 }
 
 .toolbar_upgrades {

@@ -35,7 +35,6 @@ export class UIHandler {
         this.enemyStandard;
         this.enemySummoner;
         this.enemySummonee;
-
     }
 
     preloadAssets() {
