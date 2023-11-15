@@ -1,7 +1,7 @@
 /** @module ui-handler */
 
 export class UIHandler {
-    constructor(windowWidth, windowHeight){
+    constructor(windowWidth, windowHeight) {
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
 
@@ -10,7 +10,7 @@ export class UIHandler {
         this.encyclopediaOpen = false;
         this.ignoreNextClick = false;
         this.placeTowerButtonSelected = false;
-        
+
         // UI IMAGE VARIABLES
         this.titleImg;
         this.gameOverScreen;
@@ -28,7 +28,7 @@ export class UIHandler {
         this.upgradeFireRateButton;
         this.upgradeFireSpeedButton;
         this.debugConsole;
-        
+
         this.encyclopediaMenu;
         this.encyclopediaButton;
         // image variables
@@ -48,7 +48,7 @@ export class UIHandler {
 
     initializeUI() {
         imageMode(CENTER);
-        
+
         //image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2) - 100, 650, 375);
         image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2), this.windowWidth, this.windowHeight);
 
@@ -96,7 +96,26 @@ export class UIHandler {
         this.settingsButton.mousePressed(() =>
             this.#toggleSettings()
         );
-        
+
+        this.toggleCoinsIncrease = createButton("Increase Currency");
+        this.toggleCoinsIncrease.id("toggleCoinsIncrease");
+        this.toggleCoinsIncrease.position(this.windowWidth - 250, this.windowHeight + 45);
+
+
+        this.toggleCoinsDecrease = createButton("Decrease Currency");
+        this.toggleCoinsDecrease.id("toggleCoinsDecrease");
+        this.toggleCoinsDecrease.position(this.windowWidth - 400, this.windowHeight + 45);
+
+
+        this.toggleHealthIncrease = createButton("Increase Health");
+        this.toggleHealthIncrease.id("toggleHealthIncrease");
+        this.toggleHealthIncrease.position(this.windowWidth - 550, this.windowHeight + 45);
+
+
+        this.toggleHealthDecrease = createButton("Decrease Health");
+        this.toggleHealthDecrease.id("toggleHealthDecrease");
+        this.toggleHealthDecrease.position(this.windowWidth - 700, this.windowHeight + 45);
+
         this.muteButton = createSpan('volume_up');
         this.muteButton.id('audioButton');
         this.muteButton.addClass('material-symbols-outlined');
@@ -119,21 +138,21 @@ export class UIHandler {
         const toolBar = createDiv();
         toolBar.addClass('toolbar');
         toolBar.position(10, this.windowHeight - 65);
-        
+
         // const towerImg = createImg("./assets/RedMoonTower.png");
         this.placeStandardButton = createButton();
         this.placeStandardButton.addClass('ui_buttons');
         this.placeStandardButton.addClass('toolbar_buttons');
         this.placeStandardButton.addClass('place_tower_button');
         toolBar.child(this.placeStandardButton);
-        
+
         // const towerImg = createImg("./assets/RedMoonTower.png");
         this.placePoisonerButton = createButton();
         this.placePoisonerButton.addClass('ui_buttons');
         this.placePoisonerButton.addClass('toolbar_buttons');
         this.placePoisonerButton.addClass('place_tower_button');
         toolBar.child(this.placePoisonerButton);
-        
+
         // const towerImg = createImg("./assets/RedMoonTower.png");
         this.placeFreezerButton = createButton();
         this.placeFreezerButton.addClass('ui_buttons');
@@ -148,26 +167,26 @@ export class UIHandler {
         const upgradeText = createP('Upgrades');
         upgradeText.addClass('toolbar_title');
         this.upgradeContainer.child(upgradeText);
-        
+
         this.upgradeRangeButton = createButton('Range');
         this.upgradeRangeButton.addClass('ui_buttons');
         this.upgradeRangeButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeRangeButton);
 
-        this.upgradeFireRateButton = createButton('Fire Rate')        
+        this.upgradeFireRateButton = createButton('Fire Rate')
         this.upgradeFireRateButton.addClass('ui_buttons');
         this.upgradeFireRateButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeFireRateButton);
-        
+
         this.upgradeFireSpeedButton = createButton('Bullet Speed');
         this.upgradeFireSpeedButton.addClass('ui_buttons');
         this.upgradeFireSpeedButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeFireSpeedButton);
-        
+
         push();
         const toolbarColor = color(51, 51, 51);
         toolbarColor.setAlpha(200);
-        
+
         fill(toolbarColor);
         noStroke();
         rect(0, this.windowHeight, this.windowWidth, 50);
@@ -197,20 +216,20 @@ export class UIHandler {
         this.encyclopediaExit.addClass('encyclopedia-exit');
         this.encyclopediaExit.position(this.windowWidth - 145, 60);
         this.encyclopediaMenu.textSize(15);
-        
+
         // STANDARD ENEMY CARD
         this.encyclopediaMenu.image(this.enemyStandard, 35, 30, 200, 250);
-            // title
+        // title
         this.encyclopediaMenu.textSize(17);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
         this.encyclopediaMenu.text("Void Crawler", 250, 50, 200, 250);
-            //description
+        //description
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(0);
         this.encyclopediaMenu.strokeWeight(0);
         this.encyclopediaMenu.text("This enemy is a creepy, rotting astronaut who's come back from the dead in the darkest corners of the universe, and it wants to nibble on your space snacks!", 250, 80, 200, 250);
-            // stats
+        // stats
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
@@ -218,17 +237,17 @@ export class UIHandler {
 
         // SUMMONER ENEMY CARD
         this.encyclopediaMenu.image(this.enemySummoner, 35, 310, 200, 250);
-            // title
+        // title
         this.encyclopediaMenu.textSize(17);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
         this.encyclopediaMenu.text("Cosmic Conjuror", 250, 320, 200, 250);
-            // description
+        // description
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(0);
         this.encyclopediaMenu.strokeWeight(0);
         this.encyclopediaMenu.text("The alien summoner is a mysterious foe wielding otherworldly powers, conjuring strange and formidable creatures to do its bidding in intergalactic battles.", 250, 350, 200, 250);
-            // stats
+        // stats
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
@@ -242,17 +261,17 @@ export class UIHandler {
 
         // SUMMONEE ENEMY CARD
         this.encyclopediaMenu.image(this.enemySummonee, 525, 310, 200, 250);
-            // title
+        // title
         this.encyclopediaMenu.textSize(17);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
         this.encyclopediaMenu.text("Astrocephalopod", 750, 320, 200, 250);
-            // description
+        // description
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(0);
         this.encyclopediaMenu.strokeWeight(0);
         this.encyclopediaMenu.text("A tentacled extraterrestrial monstrosity summoned from the depths of space, this enemy uses its otherworldly appendages to ensnare and confound its adversaries in intergalactic encounters.", 750, 350, 200, 250);
-            // stats
+        // stats
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
@@ -278,6 +297,11 @@ export class UIHandler {
             this.muteButton.hide();
             this.gameOverScreen.show();
             this.nextLevelButton.hide();
+            this.toggleCoinsIncrease.hide();
+            this.toggleCoinsDecrease.hide();
+            this.toggleHealthIncrease.hide();
+            this.toggleHealthDecrease.hide();
+
         } else if (gameMode === 0) {
             this.upgradeContainer.hide();
             this.upgradeRangeButton.hide();
@@ -291,6 +315,10 @@ export class UIHandler {
             this.gameOverScreen.hide();
             this.settingsButton.hide();
             this.nextLevelButton.hide();
+            this.toggleCoinsIncrease.hide();
+            this.toggleCoinsDecrease.hide();
+            this.toggleHealthIncrease.hide();
+            this.toggleHealthDecrease.hide();
             this.muteButton.hide();
             this.encyclopediaButton.hide();
         } else if (gameMode === 1) {
@@ -301,6 +329,10 @@ export class UIHandler {
             this.upgradeRangeButton.show();
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
+            this.toggleCoinsIncrease.show();
+            this.toggleCoinsDecrease.show();
+            this.toggleHealthIncrease.show();
+            this.toggleHealthDecrease.show();
             this.startButton.hide();
             this.loadButton.hide();
             // this.nextWaveButton.show();
@@ -316,7 +348,7 @@ export class UIHandler {
         if (selectedTower) {
             this.upgradeContainer.show();
 
-            if(selectedTower.y > this.windowHeight - 200) {
+            if (selectedTower.y > this.windowHeight - 200) {
                 this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y - 160);
             } else {
                 this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y + 80);
@@ -400,7 +432,7 @@ export class UIHandler {
         }
     }
     */
-    
+
     #toggleSettings() {
         if (!this.settingsOpen) {
             this.muteButton.show();
@@ -410,7 +442,7 @@ export class UIHandler {
             this.muteButton.hide();
             this.saveButton.hide();
             this.settingsOpen = false;
-        }   
+        }
     }
 
     #showEncyclopedia() {
@@ -438,7 +470,7 @@ export class UIHandler {
         this.debugConsole.style('font-family', 'Andale Mono');
         this.debugConsole.style('font-size', '18px');
         this.debugConsole.style('color', color(255, 255, 255));
-        this.debugConsole.style('background-color', color(81,176,101, 60));
+        this.debugConsole.style('background-color', color(81, 176, 101, 60));
         this.debugConsole.style('display', 'none');
         this.debugConsole.position(0, 0);
     }

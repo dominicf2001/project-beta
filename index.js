@@ -1,9 +1,11 @@
 import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
-import { WINDOW_WIDTH, WINDOW_HEIGHT,
-         TOWER_LIMIT, DEFAULT_CURRENCY, DEFAULT_WAVE_INIT_TIME,
-         DEFAULT_HEALTH, LEVELS, MAPS } from './config.js';
+import {
+    WINDOW_WIDTH, WINDOW_HEIGHT,
+    TOWER_LIMIT, DEFAULT_CURRENCY, DEFAULT_WAVE_INIT_TIME,
+    DEFAULT_HEALTH, LEVELS, MAPS
+} from './config.js';
 
 
 // ---------------------------------------------------------------------
@@ -40,7 +42,7 @@ const towerLimit = TOWER_LIMIT;
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
 let initNextWave = DEFAULT_WAVE_INIT_TIME;
-let nextWaveCheck = { 
+let nextWaveCheck = {
     amount: 0
 }
 // checks for stunned towers
@@ -95,7 +97,7 @@ function fireBullets() {
         }
     }
 }
-    
+
 function dealDamage() {
     for (let i = 0; i < enemies.length; i++) {
         enemies[i].damageTowers(towers);
@@ -125,7 +127,7 @@ function selectMap(mapID) {
             currentLevelMusic = level3Music;
             currentLevelMusic.setVolume(0.1);
             break;
-        case 3: 
+        case 3:
             //mapImg = loadImage('Maps/Bonus Level.png');
             break;
         default:
@@ -199,7 +201,7 @@ let summonerEnemy;
 let summoneeEnemy;
 let healthSprite;
 let coinSprite;
-let enemyDeathSound_default; 
+let enemyDeathSound_default;
 let enemyDeathSound_squid;
 let enemyDeathSound_summoner;
 let enemyDeathSound_zombie;
@@ -237,7 +239,7 @@ window.mousePressed = function (event) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
                 if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
-                
+
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -335,7 +337,7 @@ window.keyPressed = function (e) {
             encyclopiaOpen = false;
         }
     }
-    if(e.key === 'd') { // use d to open/close debug console
+    if (e.key === 'd') { // use d to open/close debug console
         let gameData = {
             gameMode: gameMode,
             totalCurrency: totalCurrency,
@@ -349,7 +351,7 @@ window.keyPressed = function (e) {
         console.log(gameData);
         uiHandler.showDebugConsole(JSON.stringify(gameData));
     }
-    if(e.keyCode == 67 && e.altKey) {
+    if (e.keyCode == 67 && e.altKey) {
         console.log("Adding 1000 currency");
         totalCurrency += 1000;
     }
@@ -360,14 +362,14 @@ window.keyPressed = function (e) {
 
 window.setup = function () {
     game = createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
-    
+
     uiHandler.initializeUI();
-    
-    uiHandler.saveButton.mousePressed(function() {
+
+    uiHandler.saveButton.mousePressed(function () {
         saveGame();
     });
 
-    uiHandler.muteButton.mousePressed(function() {
+    uiHandler.muteButton.mousePressed(function () {
         if (playSound) {
             currentLevelMusic.pause();
             playSound = false;
@@ -380,8 +382,8 @@ window.setup = function () {
             localStorage.setItem("mute", false);
         }
     });
-    
-    uiHandler.startButton.mousePressed(function() {
+
+    uiHandler.startButton.mousePressed(function () {
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -390,7 +392,20 @@ window.setup = function () {
         beginGame = true;
     });
 
-    uiHandler.loadButton.mousePressed(function() {
+    uiHandler.toggleCoinsIncrease.mousePressed(function () {
+        totalCurrency += 100;
+    });
+    uiHandler.toggleCoinsDecrease.mousePressed(function () {
+        totalCurrency -= 100;
+    });
+    uiHandler.toggleHealthIncrease.mousePressed(function () {
+        totalHealth += 5;
+    });
+    uiHandler.toggleHealthDecrease.mousePressed(function () {
+        totalHealth -= 5;
+    });
+
+    uiHandler.loadButton.mousePressed(function () {
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -404,7 +419,7 @@ window.setup = function () {
     //     spawnNextWave();
     // });
 
-    uiHandler.placeStandardButton.mousePressed(function(e) {
+    uiHandler.placeStandardButton.mousePressed(function (e) {
         console.log(!towerToPlace);
         if (!towerToPlace && totalCurrency >= towerCosts["standard"].placeTowerCost) {
             e.stopPropagation();
@@ -426,7 +441,7 @@ window.setup = function () {
         }
     });
 
-    uiHandler.upgradeRangeButton.mousePressed(function() {
+    uiHandler.upgradeRangeButton.mousePressed(function () {
         let selectedUpgradeTower = getSelectedTower();
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
@@ -452,7 +467,7 @@ window.setup = function () {
         }
     });
 
-    uiHandler.upgradeFireRateButton.mousePressed(function() {
+    uiHandler.upgradeFireRateButton.mousePressed(function () {
         let selectedUpgradeTower = getSelectedTower();
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
@@ -478,7 +493,7 @@ window.setup = function () {
         }
     });
 
-    uiHandler.upgradeFireSpeedButton.mousePressed(function() {
+    uiHandler.upgradeFireSpeedButton.mousePressed(function () {
         let selectedUpgradeTower = getSelectedTower();
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
@@ -503,8 +518,8 @@ window.setup = function () {
                 break;
         }
     });
-    
-    uiHandler.nextLevelButton.mousePressed(function() {
+
+    uiHandler.nextLevelButton.mousePressed(function () {
         switchMap();
         saveGame();
     })
@@ -525,15 +540,15 @@ window.draw = function () {
         uiHandler.updateUIForGameMode(gameMode);
         uiHandler.nextLevelButton.hide();
 
-        if(!localStorage.getItem("saveState")) {
+        if (!localStorage.getItem("saveState")) {
             uiHandler.loadButton.hide();
         }
 
         // Switch to game mode
         if (beginGame) {
             gameMode = 1;
-            if(localStorage.getItem("mute")) {
-                if(localStorage.getItem("mute") == "true") {
+            if (localStorage.getItem("mute")) {
+                if (localStorage.getItem("mute") == "true") {
                     currentLevelMusic.pause();
                     playSound = false;
                     uiHandler.muteButton.html('volume_off');
@@ -545,14 +560,14 @@ window.draw = function () {
 
         uiHandler.updateUIForGameMode(gameMode);
         uiHandler.updateToolbarState(totalCurrency, getSelectedTower(), towerCosts);
-        
+
         // TODO
         // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
         // else uiHandler.nextWaveButton.hide();
 
         background(200);
         image(mapImg, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT);
-        
+
         // Displays Level Complete Text and button when all waves are done
         uiHandler.nextLevelButton.hide();
         if (levelComplete) {
@@ -566,9 +581,9 @@ window.draw = function () {
             text('Level ' + lev + ' Complete', 600, 100);
             pop();
             saveGame();
-            uiHandler.nextLevelButton.show(); 
+            uiHandler.nextLevelButton.show();
         }
-        
+
         if (towerToPlace) {
             push();
             if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
@@ -652,7 +667,7 @@ window.draw = function () {
             gameOver = true;
         }
 
-         // draw Wave information
+        // draw Wave information
         push();
         textSize(20);
         fill('white');
@@ -679,7 +694,7 @@ window.draw = function () {
                 if (enemies[i].isDead() == false) {
                     enemies[i].kill();
 
-                    switch(enemies[i].appearance) {
+                    switch (enemies[i].appearance) {
                         case "standard":
                             enemyDeathSound_zombie.play();
                             break;
@@ -701,7 +716,7 @@ window.draw = function () {
                 nextWaveCheck.amount -= 1;
                 enemies.splice(i, 1);
             } else {
-                switch(enemies[i].appearance) {
+                switch (enemies[i].appearance) {
                     case "standard":
                         enemies[i].draw(basicEnemy);
                         break;
@@ -718,8 +733,8 @@ window.draw = function () {
                     default:
                         enemies[i].drawBasic();
                         break;
-                }    
-                
+                }
+
                 // handle stunner type enemies
                 if (enemies[i].stunTower) {
                     if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
@@ -728,7 +743,7 @@ window.draw = function () {
                         let stunIndex = enemies[i].stunTower(n);
                         if (stunIndex != -1) {
                             while (stunIndex < n && towers[stunIndex].isStunned()) {
-                                stunIndex ++
+                                stunIndex++
                             }
                             if (stunIndex < n) towers[stunIndex].stun();
                         }
@@ -755,10 +770,10 @@ window.draw = function () {
                     bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
                     if (bullets[i].target.unFreeze == -1) {
                         bullets[i].target.speed /= 2;
-                    }                   
+                    }
                 }
                 if (bullets[i].poison) {
-                    bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed; 
+                    bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed;
                 }
                 bullets.splice(i, 1);
             } else {
@@ -770,9 +785,9 @@ window.draw = function () {
     if (gameMode == -1 && gameOver == true) {
 
         uiHandler.updateUIForGameMode(gameMode);
-        
+
         game.hide();
-        
+
         if (currentLevelMusic.isPlaying()) {
             currentLevelMusic.pause();
             deathSound.play();
@@ -820,7 +835,7 @@ function loadGame() {
         let towerData = JSON.parse(localStorage.getItem("saveState")).towers;
         for (let i = 0; i < towerData.length; i++) {
             let t;
-            switch(towerData[i].type) {
+            switch (towerData[i].type) {
                 case "standard":
                     t = new Standard(towerData[i].x, towerData[i].y);
                     break;
@@ -843,7 +858,7 @@ function loadGame() {
 
             towers.push(t);
         }
-        
+
         // Load Bullets
         let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
         for (let i = 0; i < bulletData.length; i++) {
@@ -863,7 +878,7 @@ function loadGame() {
         let enemyData = JSON.parse(localStorage.getItem("saveState")).enemies;
         for (let i = 0; i < enemyData.length; i++) {
             let e;
-            switch(enemyData[i].appearance) {
+            switch (enemyData[i].appearance) {
                 case "standard":
                     e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
                     break;
