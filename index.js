@@ -140,7 +140,6 @@ function switchMap() {
     ++mapID;
     currentWave = 0;
     waveAmount = LEVELS[mapID].LEVEL_DATA.length;
-    initNextWave = 20;
     levelComplete = false;
     currentLevelMusic.stop();
     enemies = []; // Reset Enemies
@@ -433,6 +432,36 @@ window.setup = function () {
         }
         beginGame = true;
         loadGame();
+    });
+    uiHandler.level1Button.mousePressed(function() {
+        mapID = 0;
+        selectMap(mapID);
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
+    });
+    uiHandler.level2Button.mousePressed(function() {
+        mapID = 1;
+        selectMap(mapID);
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
+    });
+    uiHandler.level3Button.mousePressed(function() {
+        mapID = 2;
+        selectMap(mapID);
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
     });
 
     // uiHandler.nextWaveButton.mousePressed(function() {
