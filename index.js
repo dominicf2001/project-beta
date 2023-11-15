@@ -225,7 +225,7 @@ window.preload = function () {
     towerSprite = loadImage('./assets/RedMoonTower.png');
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
-    basicEnemy = loadImage('./assets/Basic_Enemy.png');
+    basicEnemy = loadImage('./assets/Basic_Enemy.gif');
     summonerEnemy = loadImage('./assets/Summoner.png');
     summoneeEnemy = loadImage('./assets/Summonee.png');
 
