@@ -294,6 +294,7 @@ class Wave {
         this.path = path;
         this.delay = delay; 
         this.enemies = []; 
+        this.waveAmount = [0, 0, 0, 0, 0]; // Counts how many times which enemy types are called.
     }
 
     /** Prints wave spawnData and spawnPriority
@@ -321,8 +322,10 @@ class Wave {
         for (let i = 0; i < this.spawnPriority.length; i++)
         {
             let k = this.spawnPriority[i];
-            let max = this.spawnData[k];
+            let max = this.spawnData[k][this.waveAmount[k]];
+            console.log(max);
             if (max > 0) {
+                this.waveAmount[k]++;
                 for (let j = 0; j < max; j++) {
                     {
                         this.spawnLoopHelper(i, j, k); 

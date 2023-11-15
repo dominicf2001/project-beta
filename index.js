@@ -1,9 +1,10 @@
+
 import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 import { WINDOW_WIDTH, WINDOW_HEIGHT,
          TOWER_LIMIT, DEFAULT_CURRENCY, DEFAULT_WAVE_INIT_TIME,
-         DEFAULT_HEALTH, LEVELS, MAPS } from './config.js';
+         DEFAULT_HEALTH, LEVELS, MAPS, ENEMIES } from './config.js';
 
 
 // ---------------------------------------------------------------------
@@ -139,7 +140,6 @@ function switchMap() {
     ++mapID;
     currentWave = 0;
     waveAmount = LEVELS[mapID].LEVEL_DATA.length;
-    initNextWave = 20;
     levelComplete = false;
     currentLevelMusic.stop();
     enemies = []; // Reset Enemies
@@ -153,12 +153,15 @@ function switchMap() {
 // Spawns the next wave.
 function spawnNextWave() {
     try {
+        console.log(LEVELS[mapID].LEVEL_DATA.length);
         if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
             currentWave = currentWave + 1;
 
             let newWave = spawnWave(LEVELS[mapID].LEVEL_DATA, LEVELS[mapID].PRIORITY_DATA, currentWave);
-            for (let t = 0; t < LEVELS[mapID].LEVEL_DATA[currentWave - 1].length; ++t)
-                nextWaveCheck.amount += LEVELS[mapID].LEVEL_DATA[currentWave - 1][t];
+            for (let i = 0; i < ENEMIES.length; ++i) 
+                for (let j = 0; j < LEVELS[mapID].LEVEL_DATA[currentWave - 1][i].length; ++j)
+                    nextWaveCheck.amount += LEVELS[mapID].LEVEL_DATA[currentWave - 1][i][j];
+                
             newWave.debugPrintWave();
             newWave.spawn();
             console.log(newWave);
@@ -222,7 +225,7 @@ window.preload = function () {
     towerSprite = loadImage('./assets/RedMoonTower.png');
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
-    basicEnemy = loadImage('./assets/Basic_Enemy.png');
+    basicEnemy = loadImage('./assets/Basic_Enemy.gif');
     summonerEnemy = loadImage('./assets/Summoner.png');
     summoneeEnemy = loadImage('./assets/Summonee.png');
 
@@ -349,11 +352,42 @@ window.keyPressed = function (e) {
         console.log(gameData);
         uiHandler.showDebugConsole(JSON.stringify(gameData));
     }
-    if(e.keyCode == 67 && e.altKey) {
-        console.log("Adding 1000 currency");
-        totalCurrency += 1000;
+
+    console.log(e);
+    
+    if (e.altKey) {
+        if (e.key == 'z') {
+            console.log("Adding 10 currency");
+            totalCurrency += 10;
+        }
+
+        if (e.key == 'x') {
+            console.log("Adding 100 currency");
+            totalCurrency += 100;
+        }
+        
+        if (e.key == 'c') {
+            console.log("Adding 1000 currency");
+            totalCurrency += 1000;
+        }
     }
 
+    if (e.ctrlKey) {
+        if (e.key == 'z') {
+            console.log("Adding 10 health ");
+            totalHealth += 10;
+        }
+
+        if (e.key == 'x') {
+            console.log("Adding 100 health");
+            totalHealth += 100;
+        }
+
+        if (e.key == 'c') {
+            console.log("Adding 1000 health");
+            totalHealth += 1000;
+        }
+    }
 }
 
 
@@ -398,6 +432,36 @@ window.setup = function () {
         }
         beginGame = true;
         loadGame();
+    });
+    uiHandler.level1Button.mousePressed(function() {
+        mapID = 0;
+        selectMap(mapID);
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
+    });
+    uiHandler.level2Button.mousePressed(function() {
+        mapID = 1;
+        selectMap(mapID);
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
+    });
+    uiHandler.level3Button.mousePressed(function() {
+        mapID = 2;
+        selectMap(mapID);
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
     });
 
     // uiHandler.nextWaveButton.mousePressed(function() {
