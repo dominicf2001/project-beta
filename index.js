@@ -424,6 +424,14 @@ window.setup = function () {
         beginGame = true;
     });
 
+    uiHandler.settingsButton.mousePressed(function() {
+        uiHandler.toggleSettings();
+    })
+
+    uiHandler.gameExit.mousePressed(function() {
+        window.location.reload();
+    });
+
     uiHandler.toggleCoinsIncrease.mousePressed(function () {
         totalCurrency += 100;
     });
@@ -597,6 +605,8 @@ window.setup = function () {
 
 window.draw = function () {
     fill(0);
+
+    currentLevelMusic.setVolume(uiHandler.audioSlider.value());
 
     if (gameMode == 0) {
         uiHandler.updateUIForGameMode(gameMode);
@@ -874,6 +884,7 @@ function saveGame() {
         enemies: enemies
     };
     localStorage.setItem("saveState", JSON.stringify(saveState));
+
 }
 
 // ---------------------------------------------------------------------

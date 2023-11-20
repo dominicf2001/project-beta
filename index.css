@@ -37,6 +37,17 @@ body {
     padding:0;
     margin:0;
 }
+
+.settings {
+    background:#eee9b3;
+    stroke:#000 5px solid;
+    border-radius:10px;
+    position:absolute;
+    padding:0;
+    margin:0;
+
+}
+
 .mapMenu {
     background:#afc2ea;
     opacity: 0.9;
@@ -153,6 +164,15 @@ body {
     width: 92%;
 }
 
+#audioButton {
+    line-height: 1.7;
+    margin:0px;
+}
+
+.audioSlider {
+    background-color: black;
+}
+
 .material-symbols-outlined {
     font-variation-settings:
         'FILL' 0,
@@ -162,12 +182,12 @@ body {
     padding:0;
     text-align:center;
     font-size:30px;
-    line-height: 1.3;
+    line-height: 2;
     background-color: #51b065;
     color:#b52b83;
     border:none;
     border-radius:5px;
-    margin:0px 5px;
+    margin:0px;
     cursor: pointer;
     text-shadow:1px 1px #00ecff;
 }

@@ -11,6 +11,8 @@ export class UIHandler {
         this.ignoreNextClick = false;
         this.placeTowerButtonSelected = false;
         this.mapMenuOpen = false;
+
+        this.audioLevel;
         
         // UI IMAGE VARIABLES
         this.titleImg;
@@ -18,8 +20,6 @@ export class UIHandler {
         this.startButton;
         this.loadButton;
         //this.nextWaveButton;
-        this.settingsButton;
-        this.saveButton;
         this.muteButton;
         this.placeStandardButton;
         this.placeFreezerButton;
@@ -29,6 +29,16 @@ export class UIHandler {
         this.upgradeFireRateButton;
         this.upgradeFireSpeedButton;
         this.debugConsole;
+
+        // SETTINGS
+        this.settingsButton;
+        this.settingsWindow;
+        this.returnToGame;
+        this.saveButton;
+        this.gameExit;
+        this.muteButton;
+        this.audioSlider;
+        this.saveText;
 
         this.encyclopediaMenu;
         this.encyclopediaButton;
@@ -66,11 +76,13 @@ export class UIHandler {
 
         this.#initializeToolbar();
 
-        this.#initializeLoadAndSave();
+        /*this.#initializeLoadAndSave();*/
 
         this.#initializeMapMenu();
 
         this.#initializeEncyclopedia();
+
+        this.#initializeSettings();
 
         this.#initializeDebugConsole();
 
@@ -123,9 +135,6 @@ export class UIHandler {
         this.settingsButton.addClass('material-symbols-outlined');
         this.settingsButton.position(this.windowWidth - 50, 10);
         this.settingsButton.size(40, 40);
-        this.settingsButton.mousePressed(() =>
-            this.#toggleSettings()
-        );
 
         this.toggleCoinsIncrease = createButton("Increase Currency");
         this.toggleCoinsIncrease.id("toggleCoinsIncrease");
@@ -145,12 +154,6 @@ export class UIHandler {
         this.toggleHealthDecrease = createButton("Decrease Health");
         this.toggleHealthDecrease.id("toggleHealthDecrease");
         this.toggleHealthDecrease.position(this.windowWidth - 700, this.windowHeight + 45);
-
-        this.muteButton = createSpan('volume_up');
-        this.muteButton.id('audioButton');
-        this.muteButton.addClass('material-symbols-outlined');
-        this.muteButton.position(this.windowWidth - 50, 60);
-        this.muteButton.size(40, 40);
 
         this.encyclopediaButton = createButton('Encyclopedia');
         this.encyclopediaButton.addClass('ui_buttons');
@@ -223,13 +226,14 @@ export class UIHandler {
         pop();
     }
 
+    /*
     #initializeLoadAndSave() {
         this.saveButton = createButton('Save');
         this.saveButton.id('saveButton');
         this.saveButton.addClass('ui_buttons');
         this.saveButton.size(100, 40);
         this.saveButton.position(this.windowWidth - 390, 10);
-    }
+    }*/
 
     /* Possible idea:
     Have rectangles over enemy info. If enemy appears on screen then remove rectangle 
@@ -376,6 +380,45 @@ export class UIHandler {
         }
     }
 
+    #initializeSettings() {
+        this.settingsWindow = createGraphics(350, 375);
+        this.settingsWindow.addClass("settings");
+        this.settingsWindow.style("display:block;");
+
+        this.returnToGame = createButton('Return To Game');
+        this.returnToGame.id('returnToGame');
+        this.returnToGame.addClass('ui_buttons');
+        this.returnToGame.size(200, 70);
+        this.returnToGame.position(this.windowWidth / 2 - 100, 200);
+        this.returnToGame.mousePressed(() =>
+            this.toggleSettings()
+        );
+
+        this.saveButton = createButton('Save');
+        this.saveButton.id('saveButton');
+        this.saveButton.addClass('ui_buttons');
+        this.saveButton.size(200, 70);
+        this.saveButton.position(this.windowWidth / 2 - 100, 280);
+
+        this.gameExit = createButton('Main Menu');
+        this.gameExit.addClass('ui_buttons');
+        this.gameExit.size(200, 70);
+        this.gameExit.position(this.windowWidth / 2 - 100, 360);
+
+        this.muteButton = createSpan('volume_up');
+        this.muteButton.id('audioButton');
+        this.muteButton.addClass('material-symbols-outlined');
+        this.muteButton.size(75, 50);
+        this.muteButton.position(this.windowWidth / 2 - 100, 450);
+
+        this.audioSlider = createGraphics(this.windowWidth - 200, this.windowHeight - 100);
+        this.audioSlider = createSlider(0, 1, 1, 0);
+        this.audioSlider.addClass('audioSlider');
+        this.audioSlider.position(this.windowWidth / 2, 465);
+        this.audioSlider.style('width', '100px');
+
+    }
+
     updateUIForGameMode(gameMode) {
         if (gameMode === -1) {
             this.upgradeRangeButton.hide();
@@ -405,8 +448,9 @@ export class UIHandler {
             this.placeStandardButton.hide();
             this.placeFreezerButton.hide();
             this.placePoisonerButton.hide();
-            this.saveButton.hide();
             this.mapSelectButton.show();
+            this.loadButton.show();
+            this.startButton.show();
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
@@ -415,8 +459,16 @@ export class UIHandler {
             this.toggleCoinsDecrease.hide();
             this.toggleHealthIncrease.hide();
             this.toggleHealthDecrease.hide();
-            this.muteButton.hide();
             this.encyclopediaButton.hide();
+
+            // SETTINGS
+            this.settingsWindow.hide();
+            this.returnToGame.hide();
+            this.saveButton.hide();
+            this.gameExit.hide();
+            this.muteButton.hide();
+            this.audioSlider.hide();
+
         } else if (gameMode === 1) {
             this.upgradeContainer.show();
             this.placeStandardButton.show();
@@ -535,14 +587,22 @@ export class UIHandler {
     }
     */
 
-    #toggleSettings() {
+    toggleSettings() {
         if (!this.settingsOpen) {
-            this.muteButton.show();
+            this.settingsWindow.show();
+            this.returnToGame.show();
             this.saveButton.show();
+            this.gameExit.show();
+            this.muteButton.show();
+            this.audioSlider.show();
             this.settingsOpen = true;
         } else {
-            this.muteButton.hide();
+            this.settingsWindow.hide();
+            this.returnToGame.hide();
             this.saveButton.hide();
+            this.gameExit.hide();
+            this.muteButton.hide();
+            this.audioSlider.hide();
             this.settingsOpen = false;
         }
     }
