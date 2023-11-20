@@ -429,6 +429,7 @@ window.setup = function () {
     })
 
     uiHandler.gameExit.mousePressed(function() {
+        saveGame();
         window.location.reload();
     });
 
