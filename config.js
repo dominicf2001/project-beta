@@ -14,7 +14,7 @@ export const WINDOW_WIDTH = 1200;
 export const WINDOW_HEIGHT = 700;
 export const TOWER_LIMIT = Infinity;
 export const DEFAULT_CURRENCY = 1200;
-export const DEFAULT_HEALTH = 50;
+export const DEFAULT_HEALTH = 25;
 export const DEFAULT_WAVE_INIT_TIME = 2;
 
 // LEVELS
@@ -53,7 +53,7 @@ export const ENEMIES = [
         APPEARANCE: "tank",
         SPEED: .7,
         HEALTH: 18,
-        CURRENCY: 300,
+        CURRENCY: 250,
         DAMAGE: 2,
         DAMAGE_DISTANCE: 1
     },
@@ -62,7 +62,7 @@ export const ENEMIES = [
         APPEARANCE: "standard",
         SPEED: 1.4,
         HEALTH: 8,
-        CURRENCY: 150,
+        CURRENCY: 125,
         DAMAGE: 4,
         DAMAGE_DISTANCE: 10
     },
@@ -70,8 +70,8 @@ export const ENEMIES = [
     {
         APPEARANCE: "rapid",
         SPEED: 2.2,
-        HEALTH: 5,
-        CURRENCY: 100,
+        HEALTH: 6,
+        CURRENCY: 80,
         DAMAGE: 1,
         DAMAGE_DISTANCE: 1
     },

@@ -13,10 +13,10 @@ export const towerCosts = Object.freeze({
         rangeCost: 200
     },
     freezer: {
-        placeTowerCost: 50,
-        fireRateCost: 60,
-        fireSpeedCost: 50,
-        rangeCost: 50
+        placeTowerCost: 1000,
+        fireRateCost: 200,
+        fireSpeedCost: 100,
+        rangeCost: 200
     },
     poisoner: {
         placeTowerCost: 800,
