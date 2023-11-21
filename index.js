@@ -330,13 +330,7 @@ window.mouseMoved = function () {
 
 window.keyPressed = function (e) {
     if (keyCode === ESCAPE) { // use escape to open/close settings
-        if (beginGame && !encyclopiaOpen)
-            openSettings();
-        if (encyclopiaOpen) {
-            encyclopedia.hide();
-            encyclopediaExit.hide();
-            encyclopiaOpen = false;
-        }
+        towerToPlace = null;
     }
     if(e.key === 'd') { // use d to open/close debug console
         let gameData = {
@@ -352,8 +346,6 @@ window.keyPressed = function (e) {
         console.log(gameData);
         uiHandler.showDebugConsole(JSON.stringify(gameData));
     }
-
-    console.log(e);
     
     if (e.altKey) {
         if (e.key == 'z') {

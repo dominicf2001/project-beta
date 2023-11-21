@@ -19,10 +19,10 @@ export const towerCosts = Object.freeze({
         rangeCost: 50
     },
     poisoner: {
-        placeTowerCost: 10,
-        fireRateCost: 20,
-        fireSpeedCost: 30,
-        rangeCost: 40
+        placeTowerCost: 800,
+        fireRateCost: 200,
+        fireSpeedCost: 100,
+        rangeCost: 200
     }
 });
 
@@ -40,7 +40,6 @@ export class Tower {
         this.hover = false;
         this.stunAmmount = 0;
         // merge the tower cost properties
-        console.log(towerCosts);
         Object.assign(this, towerCosts);
         this.type = type;
     }
@@ -140,7 +139,7 @@ export class Tower {
      * @returns {void} upgrades the tower's firing rate
      */
     upgradeFireRate() {
-        this.fireRate += 1;
+        this.fireRate += 2;
     }
 
     upgradeFireSpeed() {
