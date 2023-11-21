@@ -122,7 +122,7 @@ function selectMap(mapID) {
             currentLevelMusic.setVolume(0.1);
             break;
         case 2:
-            //mapImg = loadImage('Maps/Boss Map.png');
+            mapImg = loadImage('Maps/Boss Map.png');
             currentLevelMusic = level3Music;
             currentLevelMusic.setVolume(0.1);
             break;
@@ -627,7 +627,12 @@ window.draw = function () {
             var lev = mapID + 1
             stroke(0);
             strokeWeight(4);
-            text('Level ' + lev + ' Complete', 600, 100);
+            if (lev == 3) {
+                text('Capt. DeLozier Defeated!', 600, 100);
+            }
+            else {
+                text('Level ' + lev + ' Complete', 600, 100);
+            }
             pop();
             saveGame();
             uiHandler.nextLevelButton.show(); 

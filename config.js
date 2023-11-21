@@ -36,6 +36,15 @@ export const LEVELS = [
         PRIORITY_DATA: [
             []
         ]
+    },
+    // level 3
+    {
+        LEVEL_DATA: [
+            []
+        ],
+        PRIORITY_DATA: [
+            []
+        ]
     }
 ];
 
