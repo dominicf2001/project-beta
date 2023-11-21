@@ -1013,11 +1013,17 @@ function tutorialHandler() {
     switch(tutorialTask) {
         case 0:
             uiHandler.tutorialNextButton.show();
+            uiHandler.placeStandardButton.hide();
+            uiHandler.placeFreezerButton.hide();
+            uiHandler.placePoisonerButton.hide();
             uiHandler.updateTutorial('<h1>Welcome to the Galatic Guardians Tutorial!</h1><p>The objective of the game is to place towers along the path to defeat all of the enemies.</p>', 400, 250, 135);
             // Advancement handled in mousePressed
             break;
         case 1:
             uiHandler.updateTutorial('<h1>Let\'s start by placing a tower.</h1><p>Click on the Standard Tower button to place a tower.</p>', 400, 250, 135);
+            uiHandler.placeStandardButton.show();
+            uiHandler.placeFreezerButton.show();
+            uiHandler.placePoisonerButton.show();
             if(towerToPlace) { tutorialTask++; }
             break;
         case 2:
