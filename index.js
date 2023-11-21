@@ -36,8 +36,9 @@ let totalHealth = DEFAULT_HEALTH;
 // MISC VARIABLES -----------
 
 // Tutorial States
-let placeTowerClick = false;
-let upgradeTowerClick = false;
+let tutorialTask = 0;
+let task3Currency = 1000000;
+let waitBeforeNextTask = 0;
 
 // let dragTower = null;
 let towerToPlace = null;
@@ -421,6 +422,14 @@ window.setup = function () {
         saveGame();
     });
 
+    uiHandler.tutorialNextButton.mousePressed(function() {
+        if(tutorialTask == 6) {
+            switchMap();
+        }
+        tutorialTask++;
+        uiHandler.tutorialNextButton.hide();
+    });
+
     uiHandler.muteButton.mousePressed(function() {
         if (playSound) {
             currentLevelMusic.pause();
@@ -442,6 +451,7 @@ window.setup = function () {
             playSound = true;
         }
         beginGame = true;
+        mapID = 0;
     });
 
     uiHandler.loadButton.mousePressed(function() {
@@ -453,6 +463,17 @@ window.setup = function () {
         beginGame = true;
         loadGame();
     });
+
+    uiHandler.launchTutorialButton.mousePressed(function() {
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
+        mapID = 3;
+    });
+
     uiHandler.level1Button.mousePressed(function() {
         mapID = 0;
         selectMap(mapID);
@@ -638,7 +659,7 @@ window.draw = function () {
         image(mapImg, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT);
         
         // Displays Level Complete Text and button when all waves are done
-        if(mapID != 3) {uiHandler.nextLevelButton.hide();}
+        uiHandler.nextLevelButton.hide();
         if (levelComplete) {
             push();
             textAlign(CENTER);
@@ -988,34 +1009,39 @@ function loadGame() {
     }
 }
 
-
-let tutorialTask = 0;
-let task3Currency = 1000000;
 function tutorialHandler() {
     switch(tutorialTask) {
         case 0:
-            uiHandler.updateTutorial('<h1>Welcome to the Galatic Guardians Tutorial!</h1><p>The objective of the game is to place towers along the path the defeat all the enemies.</p>', 400, 250, 135);
-            if(true) { tutorialTask++; }
+            uiHandler.tutorialNextButton.show();
+            uiHandler.updateTutorial('<h1>Welcome to the Galatic Guardians Tutorial!</h1><p>The objective of the game is to place towers along the path to defeat all of the enemies.</p>', 400, 250, 135);
+            // Advancement handled in mousePressed
             break;
         case 1:
             uiHandler.updateTutorial('<h1>Let\'s start by placing a tower.</h1><p>Click on the Standard Tower button to place a tower.</p>', 400, 250, 135);
-            if(towerToPlace) { tutorialTask++;}
+            if(towerToPlace) { tutorialTask++; }
             break;
         case 2:
-            uiHandler.updateTutorial('<h1>Now place the tower on the map.</h1><p>Click on the map to place the tower.</p>', 400, 250, 135);
+            uiHandler.updateTutorial('<h1>Now place the tower on the map.</h1><p>Click on the map to place the tower. <br>Try to place your towers close to the path.</p>', 400, 250, 135);
             if(towers.length > 0) { tutorialTask++; }
             break;
         case 3:
-            uiHandler.updateTutorial('<h1>Great! Now let\'s upgrade the tower.</h1><p>Click on the tower to upgrade it.</p>', 400, 250, 135);
+            uiHandler.updateTutorial('<h1>Great! Now let\'s upgrade the tower.</h1><p>Click on the tower to upgrade it.<br>When playing make sure to watch your currency in the top left.</p>', 400, 250, 135);
             task3Currency = totalCurrency;
             if(getSelectedTower()) { tutorialTask++; }
             break;
         case 4:
-            uiHandler.updateTutorial('<h1>Now upgrade the tower\'s fire rate.</h1><p>Click on the range upgrade button.</p>', 400, 250, 135);
+            uiHandler.updateTutorial('<h1>Now upgrade the tower\'s fire rate.</h1><p>Click on the range fire rate button.</p><br>Upgrades allow you to increase the power of your tower.', 400, 250, 135);
             if(totalCurrency < task3Currency) { tutorialTask++; }
             break;
         case 5:
-            uiHandler.updateTutorial('<h1>Looks like an enemy is coming!</h1><p>Lets see how you did.</p>', 400, 250, 135);
+            uiHandler.updateTutorial('<h1>Looks like some enemies are coming!</h1><p>Lets see how you did.</p>', 400, 250, 135);
+            spawnNextWave();
+            waitBeforeNextTask++;
+            if(enemies.length == 0 && waitBeforeNextTask >= 500) { tutorialTask++; }
+            break;
+        case 6:
+            uiHandler.tutorialNextButton.show();
+            uiHandler.updateTutorial('<h1>Great job!</h1><p>Now you are ready to play the game! Click next level in the bottom left to begin.</p>', 400, 250, 135);
             break;
 
     }

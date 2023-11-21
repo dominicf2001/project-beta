@@ -17,6 +17,7 @@ export class UIHandler {
         this.gameOverScreen;
         this.startButton;
         this.loadButton;
+        this.launchTutorialButton;
         //this.nextWaveButton;
         this.settingsButton;
         this.saveButton;
@@ -103,7 +104,14 @@ export class UIHandler {
         );
         this.mapExit.mousePressed(() =>
             this.#hideMaps()
-        );/*
+        );
+        
+        this.launchTutorialButton = createButton('Launch Tutorial');
+        this.launchTutorialButton.addClass('ui_buttons');
+        this.launchTutorialButton.size(200, 40);
+        this.launchTutorialButton.position(this.windowWidth - 325, this.windowHeight - 65);
+        
+        /*
         this.level1Button.mousePressed(() =>
             this.#loadLevel1()
         );
@@ -229,7 +237,8 @@ export class UIHandler {
         this.tutorialNextButton = createButton('Next');
         this.tutorialNextButton.addClass('ui_buttons');
         this.tutorialNextButton.size(100, 40);
-        this.tutorialNextButton.position(this.windowWidth - 390, 10);
+        this.tutorialNextButton.position(420, 350);
+        this.tutorialNextButton.hide();
 
     }
 
@@ -420,6 +429,7 @@ export class UIHandler {
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
             this.loadButton.hide();
+            this.launchTutorialButton.hide();
             this.mapSelectButton.hide();
             this.mapMenu.hide();
             this.mapExit.hide();
