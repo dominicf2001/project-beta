@@ -152,8 +152,5 @@ export const MAPS = [
     },
     { // Third Map
 
-    },
-    { // Bonus Map
-
     }
 ];

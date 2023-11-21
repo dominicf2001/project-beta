@@ -126,9 +126,6 @@ function selectMap(mapID) {
             currentLevelMusic = level3Music;
             currentLevelMusic.setVolume(0.1);
             break;
-        case 3: 
-            //mapImg = loadImage('Maps/Bonus Level.png');
-            break;
         default:
             break;
     }
@@ -634,8 +631,13 @@ window.draw = function () {
                 text('Level ' + lev + ' Complete', 600, 100);
             }
             pop();
-            saveGame();
-            uiHandler.nextLevelButton.show(); 
+            if (lev < 3) {
+                saveGame();
+                uiHandler.nextLevelButton.show(); 
+            }
+            else {
+                // Return to main Menu button
+            }
         }
         
         if (towerToPlace) {
