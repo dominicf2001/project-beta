@@ -22,10 +22,10 @@ export const LEVELS = [
     // level 1
     {
         LEVEL_DATA: [
-            [0, 3, 1, 0, 0]
+            [[], [1, 3], [2, 2], [], []]
         ],
         PRIORITY_DATA: [
-            [e.standard, e.rapid]
+            [e.standard, e.rapid, e.rapid, e.standard]
         ]
     },
     // level 2

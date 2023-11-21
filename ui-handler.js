@@ -10,6 +10,7 @@ export class UIHandler {
         this.encyclopediaOpen = false;
         this.ignoreNextClick = false;
         this.placeTowerButtonSelected = false;
+        this.mapMenuOpen = false;
         
         // UI IMAGE VARIABLES
         this.titleImg;
@@ -35,26 +36,39 @@ export class UIHandler {
         this.enemyStandard;
         this.enemySummoner;
         this.enemySummonee;
+        this.spaceWalkMap;
+        this.spaceshipMap;
+        this.bossMap;
 
+        // Map Menu
+        this.mapSelectButton;
+        this.mapMenu;
+        this.mapExit;
+        this.level1Button;
+        this.level2Button;
+        this.level3Button;
     }
 
     preloadAssets() {
-        //this.titleImg = loadImage('./assets/GalacticGuardiansLogo2.png');
         this.titleImg = loadImage('./assets/Title Screen 2-1.png');
         this.enemyStandard = loadImage('./assets/Basic_Enemy.png');
         this.enemySummoner = loadImage('./assets/Summoner.png');
         this.enemySummonee = loadImage('./assets/Summonee.png');
+        this.spaceWalkMap = loadImage('./Maps/Space Map 1.png');
+        this.spaceshipMap = loadImage('./Maps/Space Ship Map.png');
+        this.bossMap = loadImage('./assets/RainbowRoad Question Mark.png');
     }
 
     initializeUI() {
         imageMode(CENTER);
         
-        //image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2) - 100, 650, 375);
         image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2), this.windowWidth, this.windowHeight);
 
         this.#initializeToolbar();
 
         this.#initializeLoadAndSave();
+
+        this.#initializeMapMenu();
 
         this.#initializeEncyclopedia();
 
@@ -66,13 +80,29 @@ export class UIHandler {
         this.startButton = createImg('./assets/GalacticGuardiansStartBtn.png');
         this.startButton.addClass('startButton');
         this.startButton.position(this.windowWidth - 325, this.windowHeight - 250);
-        this.startButton.size(200, 100);
+        this.startButton.size(200, 80);
 
         this.loadButton = createButton('Load Save');
         this.loadButton.addClass('ui_buttons');
         this.loadButton.size(200, 40);
-        this.loadButton.position(this.windowWidth - 325, this.windowHeight - 125);
+        this.loadButton.position(this.windowWidth - 325, this.windowHeight - 115);
 
+        this.mapSelectButton = createButton('Select Map');
+        this.mapSelectButton.addClass('ui_buttons');
+        this.mapSelectButton.size(200, 40);
+        this.mapSelectButton.position(this.windowWidth - 325, this.windowHeight - 165);
+        this.mapSelectButton.mousePressed(() =>
+            this.#showMaps()
+        );
+        this.mapExit.mousePressed(() =>
+            this.#hideMaps()
+        );/*
+        this.level1Button.mousePressed(() =>
+            this.#loadLevel1()
+        );
+        this.level2Button.mousePressed(() =>
+            this.#loadLevel2()
+        );*/
 
         // draw "next wave" button
         // this.nextWaveButton = createButton('Next Wave')
@@ -143,7 +173,7 @@ export class UIHandler {
 
         this.upgradeContainer = createDiv();
         this.upgradeContainer.addClass('toolbar_upgrades');
-        toolBar.child(this.upgradeContainer);
+        //toolBar.child(this.upgradeContainer);
 
         const upgradeText = createP('Upgrades');
         upgradeText.addClass('toolbar_title');
@@ -262,6 +292,70 @@ export class UIHandler {
         this.encyclopediaMenu.hide();
         this.encyclopediaExit.hide();
     }
+    #initializeMapMenu() {
+        // container
+        this.mapMenu = createGraphics(this.windowWidth - 600, this.windowHeight - 100);
+        this.mapMenu.addClass("mapMenu");
+        this.mapMenu.style("display:block;");
+
+        // exit button
+        this.mapExit = createButton('X');
+        this.mapExit.addClass('encyclopedia-exit');
+        this.mapExit.position(this.windowWidth - 350, 60);
+        this.mapMenu.textSize(15);
+
+        // Level 1 Button
+        this.mapMenu.image(this.spaceWalkMap, 35, 60, 200, 150);
+        this.level1Button = createButton('Space Walk Map');
+        this.level1Button.addClass('mapMenuButton');
+        this.level1Button.position(this.windowWidth - 650, 160);
+        this.level1Button.size(219, 40);
+        // Level 2 Button
+        this.mapMenu.image(this.spaceshipMap, 35, 230, 200, 150);
+        this.level2Button = createButton('Space Ship Map');
+        this.level2Button.addClass('mapMenuButton');
+        this.level2Button.position(this.windowWidth - 650, 345);
+        this.level2Button.size(219, 40);
+        // Level 3 Button
+        this.mapMenu.image(this.bossMap, 35, 400, 200, 150);
+        this.level3Button = createButton('Boss Map');
+        this.level3Button.addClass('mapMenuButton');
+        this.level3Button.position(this.windowWidth - 650, 500);
+        this.level3Button.size(219, 40);
+
+        this.mapMenu.textSize(30);
+        this.mapMenu.fill('blue');
+        this.mapMenu.stroke(1);
+        this.mapMenu.strokeWeight(1);
+        this.mapMenu.text("<-- Select a Map -->", 180, 20, 300, 250);
+
+        this.mapMenu.hide();
+        this.mapExit.hide();
+        this.level1Button.hide();
+        this.level2Button.hide();
+        this.level3Button.hide();
+    }
+    #showMaps() {
+        if (!this.mapMenuOpen) {
+            this.mapMenu.show();
+            this.mapExit.show();
+            this.level1Button.show();
+            this.level2Button.show();
+            this.level3Button.show();
+            this.mapMenuOpen = true;
+        }
+    }
+    #hideMaps() {
+        if (this.mapMenuOpen) {
+            this.ignoreNextClick = true;
+            this.mapMenu.hide();
+            this.mapExit.hide();
+            this.level1Button.hide();
+            this.level2Button.hide();
+            this.level3Button.hide();
+            this.mapMenuOpen = false;
+        }
+    }
 
     updateUIForGameMode(gameMode) {
         if (gameMode === -1) {
@@ -273,6 +367,7 @@ export class UIHandler {
             this.placeFreezerButton.hide();
             this.placePoisonerButton.hide();
             this.saveButton.hide();
+            //this.mapSelectButton.hide();
             // this.nextWaveButton.hide();
             this.settingsButton.hide();
             this.muteButton.hide();
@@ -287,6 +382,7 @@ export class UIHandler {
             this.placeFreezerButton.hide();
             this.placePoisonerButton.hide();
             this.saveButton.hide();
+            this.mapSelectButton.show();
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
@@ -303,6 +399,12 @@ export class UIHandler {
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
             this.loadButton.hide();
+            this.mapSelectButton.hide();
+            this.mapMenu.hide();
+            this.mapExit.hide();
+            this.level1Button.hide();
+            this.level2Button.hide();
+            this.level3Button.hide();
             // this.nextWaveButton.show();
 
             this.nextLevelButton.show();
@@ -315,6 +417,12 @@ export class UIHandler {
     updateToolbarState(totalCurrency, selectedTower, towerCosts) {
         if (selectedTower) {
             this.upgradeContainer.show();
+
+            if(selectedTower.y > this.windowHeight - 200) {
+                this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y - 160);
+            } else {
+                this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y + 80);
+            }
             this.upgradeFireRateButton.show();
             this.upgradeRangeButton.show();
             this.upgradeFireSpeedButton.show();
