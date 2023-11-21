@@ -132,6 +132,10 @@ class Enemy {
         return this.x >= canvasWidth;
     }
     
+    /**
+     * Method to damage towers
+     * @param {Array} towers - the array of towers to damage
+     */
     damageTowers(towers) {
         for(let i = 0; i < towers.length; i++) {
             let tower = towers[i];
@@ -145,6 +149,10 @@ class Enemy {
         }
     }
 
+    /**
+     * Method to update the enemy's status
+     * @returns {void} updates the enemy's status
+     */
     checkStatus() {
         if (this.unFreeze != -1 && this.x >= this.unFreeze) {
             this.speed *= 2;
@@ -155,10 +163,19 @@ class Enemy {
             else this.unPoison = -1;
         }
     }
+
+    /**
+     * Method to check if enemy is dead
+     * @returns {boolean} boolean that if true, indicates the enemy is dead
+     */
     isDead() {
         return this.dead; 
     }
 
+    /**
+     * Method to kill the enemy
+     * @returns {void} kills the enemy
+     */
     kill() {
         console.log("Enemy down!!");
         this.dead = true; 
@@ -316,7 +333,8 @@ class Wave {
         }, this.delay * 600 * (i + j)); 
     }
 
-    /** Spawns all of the enemies in the wave 
+    /** Spawns enemies based on spawnData and spawnPriority
+     * @returns {void} spawns enemies
      */
     spawn() {
         for (let i = 0; i < this.spawnPriority.length; i++)
@@ -335,12 +353,13 @@ class Wave {
         }
     }
 
-    /** Returns a stored list of enemies; used by towers for targeting
+    /** Returns the array of enemies
+     * @returns {array} array of enemies
      */
     getEnemies() {
         return this.enemies;
     }
 };
 
-// ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
+// ADD TO EXPORT LIST WHEN CREATING A NEW ENEMY TYPE.
 export { Enemy, Tank, Standard, Rapid, Wave, Stunner, Spawner }

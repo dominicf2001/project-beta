@@ -34,16 +34,16 @@ let totalCurrency = DEFAULT_CURRENCY;
 let totalHealth = DEFAULT_HEALTH;
 
 // MISC VARIABLES -----------
-
-// let dragTower = null;
 let towerToPlace = null;
 const towerLimit = TOWER_LIMIT;
+
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
 let initNextWave = DEFAULT_WAVE_INIT_TIME;
 let nextWaveCheck = { 
     amount: 0
 }
+
 // checks for stunned towers
 let stunCooldown = {
     amount: 0,
@@ -289,35 +289,12 @@ window.mousePressed = function (event) {
     }
 }
 
-// window.mouseDragged = function () {
-//     // Move tower if it's being dragged
-//     if (dragTower != null) {
-//         dragTower.x = mouseX;
-//         dragTower.y = mouseY;
-//     }
-// }
-
-// window.mouseReleased = function () {
-//     // Stop dragging tower
-//     if (dragTower != null) {
-//         dragTower.x = mouseX;
-//         dragTower.y = mouseY;
-//         dragTower.hover = false;
-//         dragTower = null;
-//     }
-// }
-
 window.mouseMoved = function () {
     // Change cursor if mouse is inside a tower
     for (let t of towers) {
         if (t.mouseInside()) {
             t.hover = true;
-            // if(uiHandler.towerTool == 0) {
             cursor('grab');
-            // }
-            // if (uiHandler.towerTool == 1 || uiHandler.towerTool == 2 || uiHandler.towerTool == 3) {
-            //     cursor('crosshair');
-            // }
             return;
         }
     }
@@ -463,10 +440,6 @@ window.setup = function () {
         }
         beginGame = true;
     });
-
-    // uiHandler.nextWaveButton.mousePressed(function() {
-    //     spawnNextWave();
-    // });
 
     uiHandler.placeStandardButton.mousePressed(function(e) {
         console.log(!towerToPlace);
@@ -687,9 +660,6 @@ window.draw = function () {
                 initNextWave = 5;
             }
         }
-        //console.log(initNextWave);
-        // uiHandler.nextWaveButton.show();
-        // else uiHandler.nextWaveButton.hide();
 
         // draw currency holder
         push();
@@ -844,8 +814,9 @@ window.draw = function () {
     }
 }
 
-
-
+// ---------------------------------------------------------------------
+// SAVE AND LOAD
+// ---------------------------------------------------------------------
 function saveGame() {
     // Save game state
     let saveState = {
@@ -862,10 +833,6 @@ function saveGame() {
     };
     localStorage.setItem("saveState", JSON.stringify(saveState));
 }
-
-// ---------------------------------------------------------------------
-// SAVE AND LOAD
-// ---------------------------------------------------------------------
 
 function loadGame() {
     let saveState = JSON.parse(localStorage.getItem("saveState"));

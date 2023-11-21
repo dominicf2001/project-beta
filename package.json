@@ -5,7 +5,8 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start": "browser-sync start --server --files '*.html, *.css, *.js'"
+        "start": "browser-sync start --server --files '*.html, *.css, *.js'",
+        "docs": "jsdoc -c jsdoc.conf.json"
     },
     "repository": {
         "type": "git",
