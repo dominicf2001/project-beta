@@ -192,6 +192,8 @@ function spawnWave(waveData, PRIORITY_DATA, currentLevel) {
 // Assets
 let mapImg;
 let towerSprite;
+let freezerTowerSprite;
+let poisonerTowerSprite;
 let currentLevelMusic;
 let level1Music;
 let level2Music;
@@ -223,6 +225,8 @@ window.preload = function () {
 
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
+    freezerTowerSprite = loadImage('./assets/FreezerTower.png');
+    poisonerTowerSprite = loadImage('./assets/PoisonTower.png');
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.gif');
@@ -255,9 +259,9 @@ window.mousePressed = function (event) {
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > WINDOW_WIDTH - 50 || mouseY < 0 || mouseY + 50 > WINDOW_HEIGHT))) {
             try {
                 if (towerToPlace) {
-                    if (towers.length > towerLimit) {
-                        throw new Error("No more towers allowed!");
-                    }
+                    // if (towers.length > towerLimit) {
+                    //     throw new Error("No more towers allowed!");
+                    // }
 
                     if (MAPS[mapID].isColliding(mouseX, 30)) {
                         // throw new Error("Cannot place a tower on the path!");
@@ -635,12 +639,32 @@ window.draw = function () {
         
         if (towerToPlace) {
             push();
-            if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
-                tint(255, 0, 0, 200);
-            } else {
-                tint(255, 200);
+            switch(towerToPlace.constructor.name) {
+                case "Standard":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
+                case "Freezer":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 50) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(freezerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
+                case "Poisoner":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 10) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(poisonerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
             }
-            image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
             pop();
         }
         // Draw bullets first, so they appear behind towers
@@ -654,7 +678,20 @@ window.draw = function () {
 
         // Draw towers
         for (const t of towers) {
-            t.draw(towerSprite);
+            switch(t.type) {
+                case "standard":
+                    t.draw(towerSprite);
+                    break;
+                case "freezer":
+                    t.draw(freezerTowerSprite);
+                    break;
+                case "poisoner":
+                    t.draw(poisonerTowerSprite);
+                    break;
+                default:
+                    t.draw(towerSprite);
+                    break;
+            }
             if (t.isStunned()) t.drawStunned();
         }
 

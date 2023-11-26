@@ -155,6 +155,7 @@ export class UIHandler {
         this.placeStandardButton.addClass('ui_buttons');
         this.placeStandardButton.addClass('toolbar_buttons');
         this.placeStandardButton.addClass('place_tower_button');
+        this.placeStandardButton.id('place_standard_button');
         toolBar.child(this.placeStandardButton);
         
         // const towerImg = createImg("./assets/RedMoonTower.png");
@@ -162,6 +163,7 @@ export class UIHandler {
         this.placePoisonerButton.addClass('ui_buttons');
         this.placePoisonerButton.addClass('toolbar_buttons');
         this.placePoisonerButton.addClass('place_tower_button');
+        this.placePoisonerButton.id('place_poisoner_button');
         toolBar.child(this.placePoisonerButton);
         
         // const towerImg = createImg("./assets/RedMoonTower.png");
@@ -169,6 +171,7 @@ export class UIHandler {
         this.placeFreezerButton.addClass('ui_buttons');
         this.placeFreezerButton.addClass('toolbar_buttons');
         this.placeFreezerButton.addClass('place_tower_button');
+        this.placeFreezerButton.id('place_freezer_button');
         toolBar.child(this.placeFreezerButton);
 
         this.upgradeContainer = createDiv();
