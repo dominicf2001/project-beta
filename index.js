@@ -197,6 +197,8 @@ let deathSound;
 let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
+let tankEnemy;
+let stunEnmeny;
 let healthSprite;
 let coinSprite;
 let enemyDeathSound_default; 
@@ -413,6 +415,7 @@ window.setup = function () {
     });
     
     uiHandler.startButton.mousePressed(function() {
+        selectMap(mapID);
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -568,7 +571,21 @@ window.setup = function () {
     uiHandler.nextLevelButton.mousePressed(function() {
         switchMap();
         saveGame();
-    })
+    });
+    uiHandler.returnToMenuButton.mousePressed(function() {
+        // Return to main Menu
+        gameMode = 0;
+        beginGame = false;
+        playSound = false;
+        uiHandler.mapMenuOpen = false;
+        mapID = 0;
+        currentWave = 0;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        redraw();
+    });
 
     //Poll for bullets every 100ms
     setInterval(fireBullets, 100);
@@ -636,7 +653,8 @@ window.draw = function () {
                 uiHandler.nextLevelButton.show(); 
             }
             else {
-                // Return to main Menu button
+                // Return to main Menu Button
+                uiHandler.returnToMenuButton.show();
             }
         }
         

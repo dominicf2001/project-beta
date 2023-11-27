@@ -29,6 +29,7 @@ export class UIHandler {
         this.upgradeFireRateButton;
         this.upgradeFireSpeedButton;
         this.debugConsole;
+        this.returnToMenuButton;
         
         this.encyclopediaMenu;
         this.encyclopediaButton;
@@ -96,13 +97,11 @@ export class UIHandler {
         );
         this.mapExit.mousePressed(() =>
             this.#hideMaps()
-        );/*
-        this.level1Button.mousePressed(() =>
-            this.#loadLevel1()
         );
-        this.level2Button.mousePressed(() =>
-            this.#loadLevel2()
-        );*/
+        this.returnToMenuButton = createButton('Return to Main Menu');
+        this.returnToMenuButton.addClass('ui_buttons');
+        this.returnToMenuButton.size(300, 40);
+        this.returnToMenuButton.position(this.windowWidth - 325, this.windowHeight - 165);
 
         // draw "next wave" button
         // this.nextWaveButton = createButton('Next Wave')
@@ -359,6 +358,8 @@ export class UIHandler {
 
     updateUIForGameMode(gameMode) {
         if (gameMode === -1) {
+            this.returnToMenuButton.show();
+            this.gameOverScreen.show();
             this.upgradeRangeButton.hide();
             this.upgradeContainer.hide();
             this.upgradeFireRateButton.hide();
@@ -371,9 +372,12 @@ export class UIHandler {
             // this.nextWaveButton.hide();
             this.settingsButton.hide();
             this.muteButton.hide();
-            this.gameOverScreen.show();
             this.nextLevelButton.hide();
         } else if (gameMode === 0) {
+            image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2), this.windowWidth, this.windowHeight);
+            this.startButton.show();
+            this.loadButton.show();
+            this.mapSelectButton.show();
             this.upgradeContainer.hide();
             this.upgradeRangeButton.hide();
             this.upgradeFireRateButton.hide();
@@ -382,13 +386,13 @@ export class UIHandler {
             this.placeFreezerButton.hide();
             this.placePoisonerButton.hide();
             this.saveButton.hide();
-            this.mapSelectButton.show();
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
             this.nextLevelButton.hide();
             this.muteButton.hide();
             this.encyclopediaButton.hide();
+            this.returnToMenuButton.hide();
         } else if (gameMode === 1) {
             this.upgradeContainer.show();
             this.placeStandardButton.show();
@@ -405,6 +409,7 @@ export class UIHandler {
             this.level1Button.hide();
             this.level2Button.hide();
             this.level3Button.hide();
+            this.returnToMenuButton.hide();
             // this.nextWaveButton.show();
 
             this.nextLevelButton.show();
@@ -549,4 +554,5 @@ export class UIHandler {
         this.debugConsole.style('display', 'block');
         this.debugConsole.html(gameData);
     }
+    
 }
