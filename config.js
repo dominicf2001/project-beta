@@ -12,9 +12,9 @@ export const PRIMARY_COLOR = "color(237, 112, 192)";
 export const SECONDARY_COLOR = "color(81, 176, 101)";
 export const WINDOW_WIDTH = 1200;
 export const WINDOW_HEIGHT = 700;
-export const TOWER_LIMIT = 5;
-export const DEFAULT_CURRENCY = 800;
-export const DEFAULT_HEALTH = 50;
+export const TOWER_LIMIT = Infinity;
+export const DEFAULT_CURRENCY = 1200;
+export const DEFAULT_HEALTH = 25;
 export const DEFAULT_WAVE_INIT_TIME = 2;
 
 // LEVELS
@@ -22,10 +22,16 @@ export const LEVELS = [
     // level 1
     {
         LEVEL_DATA: [
-            [[], [1, 3], [2, 2], [], []]
+            [[], [1, 2], [1], [], []],
+            [[], [1, 1], [3, 2], [], []],
+            [[2, 1], [4, 2], [2], [], []],
+            [[], [2, 2, 2], [2, 1, 2], [1], []]
         ],
         PRIORITY_DATA: [
-            [e.standard, e.rapid, e.rapid, e.standard]
+            [e.standard, e.rapid, e.standard],
+            [e.standard, e.rapid, e.standard, e.rapid],
+            [e.standard, e.tank, e.rapid, e.tank, e.standard],
+            [e.standard, e.rapid, e.rapid, e.standard, e.rapid, e.standard, e.spawner],
         ]
     },
     // level 2
@@ -63,36 +69,36 @@ export const ENEMIES = [
     // enemy 0: TANK
     {
         APPEARANCE: "tank",
-        SPEED: 0.2,
-        HEALTH: 5,
-        CURRENCY: 10,
+        SPEED: .7,
+        HEALTH: 18,
+        CURRENCY: 250,
         DAMAGE: 2,
         DAMAGE_DISTANCE: 1
     },
     // enemy 1: STANDARD
     {
         APPEARANCE: "standard",
-        SPEED: 1,
-        HEALTH: 5,
-        CURRENCY: 10,
-        DAMAGE: 2,
-        DAMAGE_DISTANCE: 1
+        SPEED: 1.4,
+        HEALTH: 8,
+        CURRENCY: 125,
+        DAMAGE: 4,
+        DAMAGE_DISTANCE: 10
     },
     // enemy 2: RAPID
     {
         APPEARANCE: "rapid",
-        SPEED: 0.2,
-        HEALTH: 5,
-        CURRENCY: 10,
-        DAMAGE: 2,
+        SPEED: 2.2,
+        HEALTH: 6,
+        CURRENCY: 80,
+        DAMAGE: 1,
         DAMAGE_DISTANCE: 1
     },
     // enemy 3: SPAWNER
     {
         APPEARANCE: "spawner",
-        SPEED: 0.2,
-        HEALTH: 5,
-        CURRENCY: 10,
+        SPEED: 1.4,
+        HEALTH: 10,
+        CURRENCY: 175,
         DAMAGE: 2,
         DAMAGE_DISTANCE: 1
     },
