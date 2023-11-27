@@ -35,6 +35,11 @@ let totalHealth = DEFAULT_HEALTH;
 
 // MISC VARIABLES -----------
 
+// Tutorial States
+let tutorialTask = 0;
+let task3Currency = 1000000;
+let waitBeforeNextTask = 0;
+
 // let dragTower = null;
 let towerToPlace = null;
 const towerLimit = TOWER_LIMIT;
@@ -52,7 +57,7 @@ let stunCooldown = {
 const uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 let debug
 let game;
-var mapID = 0;
+var mapID = 3;
 // needs to be generalized for all levels
 var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
 
@@ -111,6 +116,12 @@ function dealDamage() {
 // Select Map Function
 function selectMap(mapID) {
     switch (mapID) {
+        case 3:
+            // Tutorial Map
+            mapImg = loadImage('Maps/Space Map 1.png');
+            currentLevelMusic = level1Music;
+            currentLevelMusic.setVolume(0.1);
+            break;
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
             currentLevelMusic = level1Music;
@@ -137,7 +148,17 @@ function selectMap(mapID) {
 
 // Reset the Map variables
 function switchMap() {
-    ++mapID;
+    if(mapID == 3) {
+        mapID = 0;
+        totalCurrency = DEFAULT_CURRENCY;
+        totalHealth = DEFAULT_HEALTH;
+        beginGame = false;
+        gameOver = false;
+        levelComplete = false;
+    } else {
+        ++mapID;
+    }
+    
     currentWave = 0;
     waveAmount = LEVELS[mapID].LEVEL_DATA.length;
     levelComplete = false;
@@ -405,6 +426,14 @@ window.setup = function () {
         saveGame();
     });
 
+    uiHandler.tutorialNextButton.mousePressed(function() {
+        if(tutorialTask == 6) {
+            switchMap();
+        }
+        tutorialTask++;
+        uiHandler.tutorialNextButton.hide();
+    });
+
     uiHandler.muteButton.mousePressed(function() {
         if (playSound) {
             currentLevelMusic.pause();
@@ -426,6 +455,7 @@ window.setup = function () {
             playSound = true;
         }
         beginGame = true;
+        mapID = 0;
     });
 
     uiHandler.loadButton.mousePressed(function() {
@@ -437,6 +467,17 @@ window.setup = function () {
         beginGame = true;
         loadGame();
     });
+
+    uiHandler.launchTutorialButton.mousePressed(function() {
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        beginGame = true;
+        mapID = 3;
+    });
+
     uiHandler.level1Button.mousePressed(function() {
         mapID = 0;
         selectMap(mapID);
@@ -695,8 +736,8 @@ window.draw = function () {
             if (t.isStunned()) t.drawStunned();
         }
 
-        // Handle waves automatically
-        if (nextWaveCheck.amount < 1) {
+        // Handle waves automatically, not needed for tutorial
+        if (nextWaveCheck.amount < 1 && mapID != 3) {
             if (currentWave == 0) {
                 push();
                 textSize(20);
@@ -754,13 +795,22 @@ window.draw = function () {
         }
 
          // draw Wave information
-        push();
-        textSize(20);
-        fill('white');
-        stroke(0);
-        strokeWeight(4);
-        text('Wave: ' + currentWave + '/' + LEVELS[mapID].LEVEL_DATA.length, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 25);
-        pop();
+        if(mapID != 3) {
+            push();
+            textSize(20);
+            fill('white');
+            stroke(0);
+            strokeWeight(4);
+            text('Wave: ' + currentWave + '/' + LEVELS[mapID].LEVEL_DATA.length, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 25);
+            pop();
+        }
+
+        // inject the tutorial
+        if (mapID == 3) {
+            tutorialHandler();
+        } else {
+            uiHandler.tutorialContainer.hide();
+        }
 
         // draw or remove enemies
         // iterate backwards to prevent flickering
@@ -782,16 +832,16 @@ window.draw = function () {
 
                     switch(enemies[i].appearance) {
                         case "standard":
-                            enemyDeathSound_zombie.play();
+                            if(playSound) { enemyDeathSound_zombie.play(); }
                             break;
                         case "spawner":
-                            enemyDeathSound_summoner.play();
+                            if(playSound) { enemyDeathSound_summoner.play(); }
                             break;
                         case "rapid":
-                            enemyDeathSound_squid.play();
+                            if(playSound) { enemyDeathSound_squid.play(); }
                             break;
                         default:
-                            enemyDeathSound_default.play();
+                            if(playSound) { enemyDeathSound_default.play(); }
                             break;
                     }
                 }
@@ -993,5 +1043,49 @@ function loadGame() {
         selectMap(mapID);
         currentLevelMusic.loop();
         redraw();
+    }
+}
+
+function tutorialHandler() {
+    switch(tutorialTask) {
+        case 0:
+            uiHandler.tutorialNextButton.show();
+            uiHandler.placeStandardButton.hide();
+            uiHandler.placeFreezerButton.hide();
+            uiHandler.placePoisonerButton.hide();
+            uiHandler.updateTutorial('<h1>Welcome to the Galatic Guardians Tutorial!</h1><p>The objective of the game is to place towers along the path to defeat all of the enemies.</p>', 400, 250, 135);
+            // Advancement handled in mousePressed
+            break;
+        case 1:
+            uiHandler.updateTutorial('<h1>Let\'s start by placing a tower.</h1><p>Click on the Standard Tower button to place a tower.</p>', 400, 250, 135);
+            uiHandler.placeStandardButton.show();
+            uiHandler.placeFreezerButton.show();
+            uiHandler.placePoisonerButton.show();
+            if(towerToPlace) { tutorialTask++; }
+            break;
+        case 2:
+            uiHandler.updateTutorial('<h1>Now place the tower on the map.</h1><p>Click on the map to place the tower. <br>Try to place your towers close to the path.</p>', 400, 250, 135);
+            if(towers.length > 0) { tutorialTask++; }
+            break;
+        case 3:
+            uiHandler.updateTutorial('<h1>Great! Now let\'s upgrade the tower.</h1><p>Click on the tower to upgrade it.<br>When playing make sure to watch your currency in the top left.</p>', 400, 250, 135);
+            task3Currency = totalCurrency;
+            if(getSelectedTower()) { tutorialTask++; }
+            break;
+        case 4:
+            uiHandler.updateTutorial('<h1>Now upgrade the tower\'s fire rate.</h1><p>Click on the range fire rate button.</p><br>Upgrades allow you to increase the power of your tower.', 400, 250, 135);
+            if(totalCurrency < task3Currency) { tutorialTask++; }
+            break;
+        case 5:
+            uiHandler.updateTutorial('<h1>Looks like some enemies are coming!</h1><p>Lets see how you did.</p>', 400, 250, 135);
+            spawnNextWave();
+            waitBeforeNextTask++;
+            if(enemies.length == 0 && waitBeforeNextTask >= 500) { tutorialTask++; }
+            break;
+        case 6:
+            uiHandler.tutorialNextButton.show();
+            uiHandler.updateTutorial('<h1>Great job!</h1><p>Now you are ready to play the game! Click next level in the bottom left to begin.</p>', 400, 250, 135);
+            break;
+
     }
 }

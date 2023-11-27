@@ -17,6 +17,7 @@ export class UIHandler {
         this.gameOverScreen;
         this.startButton;
         this.loadButton;
+        this.launchTutorialButton;
         //this.nextWaveButton;
         this.settingsButton;
         this.saveButton;
@@ -32,6 +33,11 @@ export class UIHandler {
         
         this.encyclopediaMenu;
         this.encyclopediaButton;
+
+        this.tutorialContainer;
+        this.tutorialNextButton;
+        this.tutorialTask = 0;
+
         // image variables
         this.enemyStandard;
         this.enemySummoner;
@@ -70,6 +76,8 @@ export class UIHandler {
 
         this.#initializeMapMenu();
 
+        this.#initializeTutorial();
+
         this.#initializeEncyclopedia();
 
         this.#initializeDebugConsole();
@@ -96,7 +104,14 @@ export class UIHandler {
         );
         this.mapExit.mousePressed(() =>
             this.#hideMaps()
-        );/*
+        );
+        
+        this.launchTutorialButton = createButton('Launch Tutorial');
+        this.launchTutorialButton.addClass('ui_buttons');
+        this.launchTutorialButton.size(200, 40);
+        this.launchTutorialButton.position(this.windowWidth - 325, this.windowHeight - 65);
+        
+        /*
         this.level1Button.mousePressed(() =>
             this.#loadLevel1()
         );
@@ -213,6 +228,21 @@ export class UIHandler {
         this.saveButton.addClass('ui_buttons');
         this.saveButton.size(100, 40);
         this.saveButton.position(this.windowWidth - 390, 10);
+    }
+
+
+    #initializeTutorial() {
+        this.tutorialContainer = createDiv();
+        this.tutorialContainer.id('tutorialContainer');
+        this.tutorialContainer.addClass("encyclopedia");
+        this.tutorialContainer.style("display:block;");
+
+        this.tutorialNextButton = createButton('Next');
+        this.tutorialNextButton.addClass('ui_buttons');
+        this.tutorialNextButton.size(100, 40);
+        this.tutorialNextButton.position(420, 350);
+        this.tutorialNextButton.hide();
+
     }
 
     /* Possible idea:
@@ -402,6 +432,7 @@ export class UIHandler {
             this.upgradeFireSpeedButton.show();
             this.startButton.hide();
             this.loadButton.hide();
+            this.launchTutorialButton.hide();
             this.mapSelectButton.hide();
             this.mapMenu.hide();
             this.mapExit.hide();
@@ -409,7 +440,6 @@ export class UIHandler {
             this.level2Button.hide();
             this.level3Button.hide();
             // this.nextWaveButton.show();
-
             this.nextLevelButton.show();
             this.gameOverScreen.hide();
             this.encyclopediaButton.show();
@@ -524,6 +554,17 @@ export class UIHandler {
             this.encyclopediaExit.show();
             this.encyclopediaOpen = true;
         }
+    }
+
+    updateTutorial(html, x, y, height) {
+        let tutorialContainer = select('#tutorialContainer');
+        tutorialContainer.show();
+        tutorialContainer.html(html + '<br><br><br>');
+        tutorialContainer.position(x, y);
+    }
+
+    closeTutorial() {
+        this.tutorialContainer.hide();
     }
 
     #hideEncyclopedia() {
