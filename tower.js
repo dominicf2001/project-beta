@@ -139,7 +139,7 @@ export class Tower {
      * @returns {void} upgrades the tower's firing rate
      */
     upgradeFireRate() {
-        this.fireRate += 2;
+        this.fireRate += 1;
     }
 
     upgradeFireSpeed() {
