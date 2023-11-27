@@ -123,13 +123,40 @@ body {
 }
 
 .place_tower_button {
+
+}
+
+#place_standard_button {
     height: 50px;
     user-select: none;
-    background-image: url(./assets/TransparentRedMoonTower.gif);
+    background-image: url(./assets/RedMoonTower.png);
+    user-select: none;
     background-size: 150px, 150px;
     background-repeat: no-repeat;
-    background-position: -25px -40px;
+    background-position: -25px -70px;
 }
+
+#place_freezer_button {
+    height: 50px;
+    user-select: none;
+    background-image: url(./assets/FreezerTower.png);
+    user-select: none;
+    background-size: 150px, 150px;
+    background-repeat: no-repeat;
+    background-position: -25px -70px;
+}
+
+#place_poisoner_button {
+    height: 50px;
+    user-select: none;
+    background-image: url(./assets/PoisonTower.png);
+    user-select: none;
+    background-size: 150px, 150px;
+    background-repeat: no-repeat;
+    background-position: -25px -70px;
+}
+
+
 
 .toolbar_upgrades {
     color: #51b065;
