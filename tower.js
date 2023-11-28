@@ -4,22 +4,45 @@
 var spriteSheet;
 var towerAnimation;
 
+// export values for visual display
+export const towerCosts = Object.freeze({
+    standard: {
+        placeTowerCost: 400,
+        fireRateCost: 200,
+        fireSpeedCost: 100,
+        rangeCost: 200
+    },
+    freezer: {
+        placeTowerCost: 50,
+        fireRateCost: 60,
+        fireSpeedCost: 50,
+        rangeCost: 50
+    },
+    poisoner: {
+        placeTowerCost: 10,
+        fireRateCost: 20,
+        fireSpeedCost: 30,
+        rangeCost: 40
+    }
+});
+
 export class Tower {
-    static TOWER_SIZE = 40;
+    static TOWER_SIZE = 90;
     
     /**
      * Constructs a tower with x and y coordinates
      * @param {number} x - x coordinate of tower
      * @param {number} y - y coordinate of tower
      */
-    constructor(x, y) {
+    constructor(x, y, towerCosts, type) {
         this.x = x;
         this.y = y;
-        this.range = 50;
-        this.damage = 1;
-        this.fireRate = 1;
-        this.coolDown = 5;
         this.hover = false;
+        this.stunAmmount = 0;
+        // merge the tower cost properties
+        console.log(towerCosts);
+        Object.assign(this, towerCosts);
+        this.type = type;
     }
     
     /**
@@ -29,23 +52,46 @@ export class Tower {
     draw(towerSprite) {
         
         push();
-        fill(152, 84, 235);
 
-        //tower as a rectangle
-        rect(this.x - (Tower.TOWER_SIZE / 4), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE/2, Tower.TOWER_SIZE, 10, 10, 0, 0);
-        
-        //tower as a sprite (DOESNT WORK)
-        //image(towerSprite, this.x - (Tower.TOWER_SIZE / 2), this.y - (Tower.TOWER_SIZE / 2), Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-        //img = loadImage('assets/RedMoonTower.png');
-        //image(img, 0, 0);
+        // Draw tower
+        image(towerSprite, this.x, this.y, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
 
         strokeWeight(2);
         stroke(255);
         noFill();
-        if(this.hover) {
+        if(this.hover || this.selected) {
             circle(this.x, this.y, this.range * 2);
         }
         noStroke();
+        // health bar
+        let healthBarWidth = 0;
+        if (this.health > 30) { // max width
+            healthBarWidth = 30 % this.health;
+        } else {
+            healthBarWidth = this.health;
+        }
+        fill(0, 200, 0);
+        stroke(0, 180, 0);
+        rectMode(CENTER);
+        rect(this.x, this.y + 60, healthBarWidth, 5);
+        //console.log(this.stunAmmount);
+        pop();
+    }
+    
+    /**
+     * Method to draw a stunned tower on the canvas
+     * @returns {void} draws the tower on the canvas, but in a stunned state
+     */
+
+    drawStunned() {
+        
+        push();
+
+        // draw stunned box (triangle for now)
+        fill(255);
+        noStroke();
+        triangle(this.x - 15, this.y + 15, this.x, this.y - 15, this.x + 15, this.y + 15);
+
         pop();
     }
 
@@ -62,8 +108,7 @@ export class Tower {
      * @returns {boolean} boolean that if true, indicates the tower can fire a bullet
      */
     canFire() {
-        
-
+        if (this.stunAmmount > 0) return false;
         if (this.coolDown > this.fireRate) {
             this.coolDown--;
             return false;
@@ -79,7 +124,7 @@ export class Tower {
      */
     fire(enemy) {
         this.coolDown = 5;
-        return new Bullet(this, enemy); 
+        return new Bullet(this, enemy, false, false); 
     }
 
     /**
@@ -98,28 +143,127 @@ export class Tower {
         this.fireRate += 1;
     }
 
+    upgradeFireSpeed() {
+        this.fireSpeed += 1;
+    }
+    
+    /**
+     * Method to stun the tower
+     * @returns {void} stun the tower by making it needed to be clicked 7 times
+     */
+    stun() {
+        // this.fireRate = 0;
+        this.stunAmmount = 5;
+    }
+    
+    /**
+     * Method to "unstun" the tower by clicking on it
+     * @returns {void} reduce the amount of clicks needed by 1
+     * PREREQUISITE: this.isStunned() == true
+     */
+    reduceStun(st) {
+        this.stunAmmount--;
+        if (this.stunAmmount == 0) st.amount = 0;
+    }
+
+    /**
+     * Method to check if tower is stunned
+     * @returns {boolean} true if tower is stunned, false otherwise
+     */
+    isStunned() {
+        return (this.stunAmmount > 0);
+    }
 };
 
+// Other tower types
+export class Standard extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, false, false);
+    }
+
+    constructor(x, y) {
+        super(x, y, towerCosts["standard"], "standard");
+        this.range = 100;
+        this.damage = 1;
+        this.health = 30;
+        this.fireRate = 1;
+        this.coolDown = 5;
+        this.fireSpeed = 1;
+    }
+}
+
+// Other tower types
+export class Freezer extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, true, false);
+    }
+
+    constructor(x, y) {
+        super(x, y, towerCosts["freezer"], "freezer");
+        this.range = 100;
+        this.damage = 1;
+        this.health = 30;
+        this.fireRate = 1;
+        this.coolDown = 5;
+        this.fireSpeed = 1;
+    }
+}
+
+export class Poisoner extends Tower {
+    /**
+    * Method to fire a bullet
+    * @param {Enemy} enemy - enemy that the bullet is targeting
+    * @returns {Bullet} bullet fired by the tower
+    */
+    fire(enemy) {
+        this.coolDown = 5;
+        return new Bullet(this, enemy, false, true);
+    }
+
+    constructor(x, y) {
+        super(x, y, towerCosts["poisoner"], "poisoner");
+        this.range = 100;
+        this.damage = 1;
+        this.health = 30;
+        this.fireRate = 1;
+        this.coolDown = 5;
+        this.fireSpeed = 1;
+    }
+}
+
+// Bullet class
 export class Bullet {
 
     /**
      * Constructs a bullet with a tower and target
      * @param {Tower} tower - tower that fired the bullet
      * @param {Enemy} target - enemy that the bullet is targeting
+     * @param {boolean} freeze - whether this bullet inflicts slow
+     * @param {boolean} poison - whether this bullet inflicts damage over time
      */
-    constructor(tower, target) {
+    constructor(tower, target, freeze, poison) {
         this.x = tower.x;
         this.y = tower.y;
         this.range = tower.range;
         this.damage = tower.damage;
+        this.fireSpeed = tower.fireSpeed;
         this.target = target;
+        this.freeze = freeze;
+        this.poison = poison;
         
-        let xDist = target.x - tower.x;
-        let yDist = target.y - tower.y;
-        this.angle = atan2(yDist, xDist);
-
-        this.xMove = Math.cos(this.angle);
-        this.yMove = Math.sin(this.angle);
+        this.updateDirection();
     }
 
     /**
@@ -134,10 +278,15 @@ export class Bullet {
         strokeWeight(2);
         fill(255, 0, 0);
         ellipse(this.x, this.y, 5, 5);
-        this.x += this.xMove;
-        this.y += this.yMove;
-        this.range--;
+        this.x += this.xMove * 2 * this.fireSpeed;
+        this.y += this.yMove * 2 * this.fireSpeed;
+        this.range -= this.fireSpeed;
         pop();
+
+        // update only every 15 frames to ease computation
+        if (this.range % 15 === 0){
+            this.updateDirection();   
+        }
     }
 
     /**
@@ -148,8 +297,7 @@ export class Bullet {
         return this.range <= 0;
     }
 
-    /**
-     * Method to check if bullet has hit its target
+    /**     * Method to check if bullet has hit its target
      * @returns {boolean} boolean that if true, indicates the bullet has hit its target
      */
     hasHitTarget() {
@@ -158,5 +306,14 @@ export class Bullet {
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         return distance <= 8;
+    }
+
+    updateDirection() {
+        const xDist = this.target.x - this.x;
+        const yDist = this.target.y - this.y;
+        
+        this.angle = Math.atan2(yDist, xDist);
+        this.xMove = Math.cos(this.angle);
+        this.yMove = Math.sin(this.angle);
     }
 }

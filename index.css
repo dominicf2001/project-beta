@@ -1,0 +1,178 @@
+body {
+    height:700;
+    width: 1200;
+    padding: 0;
+    margin: auto;
+    overflow: hidden;
+    background:#000;
+    position:relative;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size:13px;
+}
+
+.p5Canvas {
+    height:100%;
+    width: 100%;
+
+}
+
+.startButton {
+    left:auto;
+    top:65%;
+    position:absolute;
+
+}
+
+.gameOver {
+    position: absolute;
+}
+
+.encyclopedia {
+    background:#eee9b3;
+    stroke:#000 5px solid;
+    border-radius:10px;
+    position:absolute;
+    padding:0;
+    margin:0;
+}
+.mapMenu {
+    background:#afc2ea;
+    opacity: 0.9;
+    stroke:#000 5px solid;
+    border-radius:10px;
+    position:absolute;
+    padding:0;
+    margin:0;
+}
+.mapMenuButton {
+    font-family: 'Anton', sans-serif;
+    opacity: 0.9;
+    background-color: #51b065;
+    color:#b52b83;
+    font-size:22px;
+    text-transform: uppercase;
+    border:none;
+    border-radius:5px;
+    cursor: pointer;
+    text-shadow:1px 1px #00ecff;
+}
+
+.mapMenuButton:hover {
+    opacity: 0.6;
+}
+
+.encyclopedia-card {
+    color: #261c3f;
+    position:absolute;
+}
+
+.encyclopedia-exit {
+    position:absolute;
+    padding:5px 10px;
+    font-size:20px;
+    background-color: #aa3434;
+    border:none;
+    color:#FFFFFF;
+    border-radius: 5px;
+}
+
+.ui_buttons {
+    font-family: 'Anton', sans-serif;
+    background-color: #51b065;
+    color:#b52b83;
+    font-size:22px;
+    text-transform: uppercase;
+    border:none;
+    border-radius:5px;
+    cursor: pointer;
+    text-shadow:1px 1px #00ecff;
+}
+
+.toolbar {
+    width:150px;
+}
+
+.startButton {
+    cursor: pointer;
+}
+
+.startButton:hover {
+    opacity: 80%;
+}
+
+.ui_buttons:hover {
+    opacity: 80%;
+}
+
+.toolbar {
+    width:1000px;
+}
+
+.toolbar_title {
+    margin: auto;
+    width: min-content;
+    font-size: 20px;
+}
+
+.toolbar_buttons {
+    margin: 5px;
+    float: left;
+    user-select: none;
+}
+
+.place_tower_button {
+    height: 50px;
+    user-select: none;
+    background-image: url(./assets/TransparentRedMoonTower.gif);
+    background-size: 150px, 150px;
+    background-repeat: no-repeat;
+    background-position: -25px -40px;
+}
+
+.toolbar_upgrades {
+    color: #51b065;
+    background-color:#b52b82bb;
+    border:none;
+    text-transform: uppercase;
+    border-radius:5px;
+    width:150px;
+    cursor:default;
+    padding:0px 0px 0px 0px;
+    font-size:18px;
+    cursor:default;
+    margin-bottom: 20px;
+    font-weight:bold;
+    font-family: 'Courier New', Courier, monospace;
+    text-shadow:6px 1px #000000;
+}
+
+.toolbar_upgrades > .toolbar_buttons {
+    font-size: 16px;
+    width: 92%;
+}
+
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+    padding:0;
+    text-align:center;
+    font-size:30px;
+    line-height: 1.3;
+    background-color: #51b065;
+    color:#b52b83;
+    border:none;
+    border-radius:5px;
+    margin:0px 5px;
+    cursor: pointer;
+    text-shadow:1px 1px #00ecff;
+}
+
+#settingsButton:hover {
+    opacity: 80%;
+    user-select: none;
+}
