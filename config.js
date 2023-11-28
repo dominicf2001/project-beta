@@ -46,21 +46,12 @@ export const LEVELS = [
     // level 3
     {
         LEVEL_DATA: [
-            []
-        ],
-        PRIORITY_DATA: [
-            []
-        ]
-    },
-    // tutorial level
-    {
-        LEVEL_DATA: [
-            [[], [1, 1], [], [], []]
+            [[], [1, 3], [2, 2], [], []]
         ],
         PRIORITY_DATA: [
             [e.standard, e.rapid, e.rapid, e.standard]
         ]
-    },
+    }
 ];
 
 // ENEMIES
@@ -166,7 +157,16 @@ export const MAPS = [
         }
     },
     { // Third Map
-
+        isColliding: function(x, diameter) {
+            console.log(mouseX, mouseY);
+            return !((mouseY > 150 && mouseY < 200) && (x > 400 && x < 600)
+                || ((mouseY > 140 && mouseY < 185) && (x > 630 && x < 700))
+                || ((mouseY > 370 && mouseY < 415) && (x > 630 && x < 700))
+                || ((mouseY > 370 && mouseY < 415) && (x > 330 && x < 400))
+                || ((mouseY > 400 && mouseY < 440) && (x > 800 && x < 900))
+                || ((mouseY > 100 && mouseY < 190) && (x > 800 && x < 880))
+                || ((mouseY > 520 && mouseY < 570) && (x > 540 && x < 725)));
+        }
     },
     // Tutorial Map (first map)
     {
@@ -199,4 +199,5 @@ export const MAPS = [
             return mouseY < MAPS[0].bottomPath(x) && mouseY > MAPS[0].topPath(x) - diameter;
         }
     },
+    
 ];

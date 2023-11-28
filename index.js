@@ -133,12 +133,9 @@ function selectMap(mapID) {
             currentLevelMusic.setVolume(0.1);
             break;
         case 2:
-            //mapImg = loadImage('Maps/Boss Map.png');
+            mapImg = loadImage('Maps/Boss Map.png');
             currentLevelMusic = level3Music;
             currentLevelMusic.setVolume(0.1);
-            break;
-        case 3: 
-            //mapImg = loadImage('Maps/Bonus Level.png');
             break;
         default:
             break;
@@ -223,6 +220,8 @@ let deathSound;
 let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
+let tankEnemy;
+let stunEnmeny;
 let healthSprite;
 let coinSprite;
 let enemyDeathSound_default; 
@@ -441,6 +440,7 @@ window.setup = function () {
     });
     
     uiHandler.startButton.mousePressed(function() {
+        selectMap(mapID);
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -608,7 +608,21 @@ window.setup = function () {
     uiHandler.nextLevelButton.mousePressed(function() {
         switchMap();
         saveGame();
-    })
+    });
+    uiHandler.returnToMenuButton.mousePressed(function() {
+        // Return to main Menu
+        gameMode = 0;
+        beginGame = false;
+        playSound = false;
+        uiHandler.mapMenuOpen = false;
+        mapID = 0;
+        currentWave = 0;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        redraw();
+    });
 
     //Poll for bullets every 100ms
     setInterval(fireBullets, 100);
@@ -620,6 +634,7 @@ window.setup = function () {
 // ---------------------------------------------------------------------
 
 window.draw = function () {
+    
     fill(0);
 
     if (gameMode == 0) {
@@ -664,10 +679,21 @@ window.draw = function () {
             var lev = mapID + 1
             stroke(0);
             strokeWeight(4);
-            text('Level ' + lev + ' Complete', 600, 100);
+            if (lev == 3) {
+                text('Capt. DeLozier Defeated!', 600, 100);
+            }
+            else {
+                text('Level ' + lev + ' Complete', 600, 100);
+            }
             pop();
-            saveGame();
-            uiHandler.nextLevelButton.show(); 
+            if (lev < 3) {
+                saveGame();
+                uiHandler.nextLevelButton.show(); 
+            }
+            else {
+                // Return to main Menu Button
+                uiHandler.returnToMenuButton.show();
+            }
         }
         
         if (towerToPlace) {
