@@ -808,6 +808,11 @@ window.draw = function () {
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
             enemies[i].checkStatus();
+
+            if(mapID == 3){
+                if(enemies[i].health > 1){ enemies[i].health = 1; }
+            }
+
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
                 nextWaveCheck.amount -= 1;
