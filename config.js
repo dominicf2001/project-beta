@@ -37,7 +37,6 @@ export const LEVELS = [
     // level 2
     {
         LEVEL_DATA: [
-            [e.standard, e.rapid, e.rapid, e.standard]
             [[2, 1], [1, 2], [], [1], []],
             [[], [2], [2, 2], [2], []],
             [[6], [3, 5, 3], [2, 5], [1], []],
