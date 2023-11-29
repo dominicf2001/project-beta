@@ -57,10 +57,9 @@ let stunCooldown = {
 const uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 let debug
 let game;
-var mapID = 3;
+var mapID = 0;
 // needs to be generalized for all levels
 var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
-
 // ---------------------------------------------------------------------
 // HELPER FUNCTIONS
 // ---------------------------------------------------------------------
@@ -171,7 +170,6 @@ function switchMap() {
 // Spawns the next wave.
 function spawnNextWave() {
     try {
-        console.log(LEVELS[mapID].LEVEL_DATA.length);
         if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
             currentWave = currentWave + 1;
 
@@ -182,7 +180,6 @@ function spawnNextWave() {
                 
             newWave.debugPrintWave();
             newWave.spawn();
-            console.log(newWave);
 
             enemies = newWave.getEnemies();
         } else {
@@ -291,7 +288,6 @@ window.mousePressed = function (event) {
                     if (mouseX >= WINDOW_WIDTH - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
-                        console.log(towerToPlace);
                         if (totalCurrency < towerToPlace.placeTowerCost) {
                             throw new Error("Not enough money!");
                         }
@@ -409,6 +405,9 @@ window.keyPressed = function (e) {
 
 
 window.setup = function () {
+
+    console.log("Wave amount",LEVELS[mapID]);
+
     game = createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     uiHandler.initializeUI();
@@ -488,8 +487,9 @@ window.setup = function () {
             currentLevelMusic.loop();
             playSound = true;
         }
-        beginGame = true;
         mapID = 3;
+        selectMap(mapID);
+        beginGame = true;
     });
 
     uiHandler.level1Button.mousePressed(function() {
@@ -785,6 +785,7 @@ window.draw = function () {
 
         // Handle waves automatically, not needed for tutorial
         if (nextWaveCheck.amount < 1 && mapID != 3) {
+            console.log(currentWave);
             if (currentWave == 0) {
                 push();
                 textSize(20);
