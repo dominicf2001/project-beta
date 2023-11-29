@@ -36,6 +36,15 @@ export const LEVELS = [
         PRIORITY_DATA: [
             []
         ]
+    },
+    // level 3
+    {
+        LEVEL_DATA: [
+            [[], [1], [], [], []]
+        ],
+        PRIORITY_DATA: [
+            [e.standard]
+        ]
     }
 ];
 
@@ -142,7 +151,29 @@ export const MAPS = [
         }
     },
     { // Third Map
-
+        topPath: function (x) {
+            return 520;
+        },
+        middlePath: function (x, theta) {
+            if (x < 223) return 363;
+            else {
+                return {
+                    x: -28.72746723*theta*Math.cos(theta),
+                    y: -28.72746723*theta*Math.sin(theta)
+                }
+            }
+        },
+        bottomPath: function (x) {
+            if (x < 768) {
+                return 650;
+            }
+            else if (x >= 768) {
+                return 650;
+            }
+        },
+        isColliding: function (x, diameter) {
+            return mouseY < MAPS[1].bottomPath(x) && mouseY > MAPS[1].topPath(x) - diameter;
+        }
     },
     { // Bonus Map
 
