@@ -52,7 +52,7 @@ let stunCooldown = {
 const uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 let debug
 let game;
-var mapID = 0;
+export var mapID = 0;
 // needs to be generalized for all levels
 var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
 
@@ -122,7 +122,7 @@ function selectMap(mapID) {
             currentLevelMusic.setVolume(0.1);
             break;
         case 2:
-            mapImg = loadImage('Maps/Boss Map.png');
+            mapImg = loadImage('Maps/Boss Map no Path v3.png');
             currentLevelMusic = level3Music;
             currentLevelMusic.setVolume(0.1);
             break;
@@ -955,19 +955,19 @@ function loadGame() {
             let e;
             switch(enemyData[i].appearance) {
                 case "standard":
-                    e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "rapid":
-                    e = new Rapid(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Rapid(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "tank":
-                    e = new Tank(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Tank(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "spawner":
-                    e = new Spawner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Spawner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "stunner":
-                    e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
             }
             e.health = enemyData[i].health;

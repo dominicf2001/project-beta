@@ -151,6 +151,27 @@ export const MAPS = [
         }
     },
     { // Third Map
+    //TODO: implement topPath, bottomPath, and isColliding
+        topPath: function (x) {
+            return 520;
+        },
+        middlePath: function (x, theta) {
+            if (x < 223) return 363;
+            else {
+                return {
+                    x: -28.72746723*theta*Math.cos(theta),
+                    y: -28.72746723*theta*Math.sin(theta)
+                }
+            }
+        },
+        bottomPath: function (x) {
+            if (x < 768) {
+                return 650;
+            }
+            else if (x >= 768) {
+                return 650;
+            }
+        },       
         isColliding: function(x, diameter) {
             console.log(mouseX, mouseY);
             return !((mouseY > 150 && mouseY < 200) && (x > 400 && x < 600)

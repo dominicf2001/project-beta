@@ -3,6 +3,7 @@ const canvasWidth = 1200;
 const canvasHeight = 700;
 
 import { ENEMIES, MAPS } from "./config.js";
+import { mapID } from "./index.js"
 
 // Generate offset within the bounds of the path
 function getOffset() {
@@ -47,8 +48,6 @@ class Enemy {
         this.path = path;
         this.offset = offset ?? 0;
         this.pathIndex = 0;
-        this.x = x ?? 0;
-        this.y = y ?? this.path(0) + this.offset;
         this.currency = currency;
         this.damage = damage;
         this.damageDistance = damageDistance ?? 0;
@@ -56,9 +55,14 @@ class Enemy {
         this.unFreeze = -1;
         this.unPoison = -1;
         this.dead = false; 
+        this.mapID = mapID;
+        this.x = x ?? 0;
+        this.y = y ?? this.path(0) + this.offset;
+        this.theta = 4*Math.PI;
     }
 
     draw(sprite) {
+        console.log(this.mapID);
         // draw enemy
         push();
         image(sprite, this.x, this.y, 60, 60);
@@ -75,8 +79,23 @@ class Enemy {
         rectMode(CENTER);
         rect(this.x, this.y + 40, healthBarWidth, 5);
 
-        this.x += this.speed;
-        this.y = this.path(this.x) + this.offset;
+        if (this.mapID == 2) {
+            if (this.x < 223) {
+                this.x += this.speed;
+                this.y = this.path(this.x) + this.offset;
+            } else {
+                let t = this.speed / 100;
+                let obj = this.path(this.x, this.theta);
+                this.x = 584 + obj.x;
+                this.y = 348 + obj.y;
+                console.log(obj);
+                console.log(this.theta);
+                this.theta -= t;
+            }
+        } else {
+            this.x += this.speed;
+            this.y = this.path(this.x) + this.offset;
+        }
         pop();
 
     }
@@ -129,7 +148,8 @@ class Enemy {
      * @returns {boolean} boolean that if true, indicates the enemy is at the end of the path
      */
     hasReachedEnd() {
-        return this.x >= canvasWidth;
+        if (mapID != 2) return this.x >= canvasWidth;
+        else return this.theta <= 0;
     }
     
     damageTowers(towers) {
@@ -170,7 +190,7 @@ class Enemy {
 
 /** The Tank */
 class Tank extends Enemy {
-    constructor(path, offset, x, y) {
+    constructor(path, offset, x, y, mapID) {
         const e = ENEMIES[0];
         // TODO: take in the entire object instead?
         super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
@@ -184,7 +204,7 @@ class Tank extends Enemy {
 
 /** The Standard */
 class Standard extends Enemy {
-    constructor(path, offset, x, y) {
+    constructor(path, offset, x, y, mapID) {
         const e = ENEMIES[1];
         super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
@@ -197,7 +217,7 @@ class Standard extends Enemy {
 
 /** The Rapid */
 class Rapid extends Enemy {
-    constructor(path, offset, x, y) {
+    constructor(path, offset, x, y, mapID) {
         const e = ENEMIES[2];
         super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
@@ -210,7 +230,7 @@ class Rapid extends Enemy {
 
 /** The Spawner */
 class Spawner extends Enemy {    
-    constructor(path, offset, x, y) {
+    constructor(path, offset, x, y, mapID) {
         const e = ENEMIES[3];
         super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
         
@@ -256,7 +276,7 @@ class Spawner extends Enemy {
 
 /** The Stunner */
 class Stunner extends Enemy {
-    constructor(path, offset, x, y) {
+    constructor(path, offset, x, y, mapID) {
         const e = ENEMIES[4];
         super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
