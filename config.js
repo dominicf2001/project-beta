@@ -51,6 +51,15 @@ export const LEVELS = [
         PRIORITY_DATA: [
             [e.standard, e.rapid, e.rapid, e.standard]
         ]
+    },
+    // Tutorial Level
+    {
+        LEVEL_DATA: [
+            [[], [1, 1], [2, 1], [], []]
+        ],
+        PRIORITY_DATA: [
+            [e.standard, e.rapid, e.rapid, e.standard]
+        ]
     }
 ];
 

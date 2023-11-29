@@ -116,6 +116,7 @@ export class UIHandler {
         this.level1Button.mousePressed(() =>
             this.#loadLevel1()
         );
+        */
         this.returnToMenuButton = createButton('Return to Main Menu');
         this.returnToMenuButton.addClass('ui_buttons');
         this.returnToMenuButton.size(300, 40);
