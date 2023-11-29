@@ -37,10 +37,13 @@ export const LEVELS = [
     // level 2
     {
         LEVEL_DATA: [
-            []
+            [[], [2, 2, 2], [2, 1, 2], [1], []]
         ],
         PRIORITY_DATA: [
-            []
+            [e.standard, e.rapid, e.standard],
+            [e.standard, e.rapid, e.standard, e.rapid],
+            [e.standard, e.tank, e.rapid, e.tank, e.standard],
+            [e.standard, e.rapid, e.rapid, e.standard, e.rapid, e.standard, e.spawner],
         ]
     },
     // level 3
