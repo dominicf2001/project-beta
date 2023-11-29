@@ -37,6 +37,31 @@ body {
     padding:0;
     margin:0;
 }
+.mapMenu {
+    background:#afc2ea;
+    opacity: 0.9;
+    stroke:#000 5px solid;
+    border-radius:10px;
+    position:absolute;
+    padding:0;
+    margin:0;
+}
+.mapMenuButton {
+    font-family: 'Anton', sans-serif;
+    opacity: 0.9;
+    background-color: #51b065;
+    color:#b52b83;
+    font-size:22px;
+    text-transform: uppercase;
+    border:none;
+    border-radius:5px;
+    cursor: pointer;
+    text-shadow:1px 1px #00ecff;
+}
+
+.mapMenuButton:hover {
+    opacity: 0.6;
+}
 
 .encyclopedia-card {
     color: #261c3f;
@@ -69,14 +94,6 @@ body {
     width:150px;
 }
 
-.toolbar_upgrades {
-    width:140px;
-    color: #51b065;
-    background:none;
-    width: 200px;
-    text-shadow:1px 1px #00ecff;
-}
-
 .startButton {
     cursor: pointer;
 }
@@ -96,7 +113,7 @@ body {
 .toolbar_title {
     margin: auto;
     width: min-content;
-    font-size: 15px;
+    font-size: 20px;
 }
 
 .toolbar_buttons {
@@ -108,30 +125,32 @@ body {
 .place_tower_button {
     height: 50px;
     user-select: none;
+    background-image: url(./assets/TransparentRedMoonTower.gif);
+    background-size: 150px, 150px;
+    background-repeat: no-repeat;
+    background-position: -25px -40px;
 }
 
 .toolbar_upgrades {
-    float: left;
-    width:max-content;
     color: #51b065;
-    background:none;
-    display: flex;
-    background-color:#b52b83;
-    text-shadow:none;
+    background-color:#b52b82bb;
     border:none;
     text-transform: uppercase;
     border-radius:5px;
-    width:480px;
-    height:60px;
-    font-size:10px;
+    width:150px;
     cursor:default;
-    padding:0px 0px 40px 0px;
-    margin:0;
-    font-weight:bold;
-    font-size:10px;
+    padding:0px 0px 0px 0px;
+    font-size:18px;
     cursor:default;
     margin-bottom: 20px;
     font-weight:bold;
+    font-family: 'Courier New', Courier, monospace;
+    text-shadow:6px 1px #000000;
+}
+
+.toolbar_upgrades > .toolbar_buttons {
+    font-size: 16px;
+    width: 92%;
 }
 
 .material-symbols-outlined {

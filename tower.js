@@ -34,14 +34,15 @@ export class Tower {
      * @param {number} x - x coordinate of tower
      * @param {number} y - y coordinate of tower
      */
-    constructor(x, y, towerCosts) {
+    constructor(x, y, towerCosts, type) {
         this.x = x;
         this.y = y;
         this.hover = false;
         this.stunAmmount = 0;
         // merge the tower cost properties
         console.log(towerCosts);
-         Object.assign(this, towerCosts);
+        Object.assign(this, towerCosts);
+        this.type = type;
     }
     
     /**
@@ -187,7 +188,7 @@ export class Standard extends Tower {
     }
 
     constructor(x, y) {
-        super(x, y, towerCosts["standard"]);
+        super(x, y, towerCosts["standard"], "standard");
         this.range = 100;
         this.damage = 1;
         this.health = 30;
@@ -210,7 +211,7 @@ export class Freezer extends Tower {
     }
 
     constructor(x, y) {
-        super(x, y, towerCosts["freezer"]);
+        super(x, y, towerCosts["freezer"], "freezer");
         this.range = 100;
         this.damage = 1;
         this.health = 30;
@@ -232,7 +233,7 @@ export class Poisoner extends Tower {
     }
 
     constructor(x, y) {
-        super(x, y, towerCosts["poisoner"]);
+        super(x, y, towerCosts["poisoner"], "poisoner");
         this.range = 100;
         this.damage = 1;
         this.health = 30;
