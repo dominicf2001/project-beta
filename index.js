@@ -1,4 +1,9 @@
+<<<<<<< Updated upstream
 import { Wave } from "./enemy.js";
+=======
+
+import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner, Delozier } from "./enemy.js";
+>>>>>>> Stashed changes
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 
@@ -214,6 +219,7 @@ let level2Music;
 let level3Music;
 let deathSound;
 let basicEnemy;
+let delozierEnemy;
 let summonerEnemy;
 let summoneeEnemy;
 let healthSprite;
@@ -230,6 +236,7 @@ window.preload = function () {
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.png');
     summonerEnemy = loadImage('./assets/Summoner.png');
+    delozierEnemy = loadImage('./assets/Summoner.png');
     summoneeEnemy = loadImage('./assets/Summonee.png');
 
     healthSprite = loadImage('./assets/heart.png');
@@ -583,7 +590,11 @@ window.draw = function () {
         
         if (towerToPlace) {
             push();
+<<<<<<< Updated upstream
             if (maps[0].isColliding(mouseX, 30) || totalCurrency < 400) {
+=======
+            if (MAPS[mapID].isColliding(mouseX, 30) || totalCurrency < 400) {
+>>>>>>> Stashed changes
                 tint(255, 0, 0, 200);
             } else {
                 tint(255, 200);
@@ -706,6 +717,9 @@ window.draw = function () {
                         // TODO: Add custom sprite
                         enemies[i].draw(summonerEnemy);
                         break;
+                    case "delozier":
+                        enemies[i].draw(delozierEnemy);
+                        break;
                     default:
                         enemies[i].drawBasic();
                         break;
@@ -788,8 +802,63 @@ function spawnNextWave() {
         } else {
 
         }
+<<<<<<< Updated upstream
     } catch (e) {
         alert(e);
+=======
+        
+        // Load Bullets
+        let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
+        for (let i = 0; i < bulletData.length; i++) {
+            let b = new Bullet(bulletData[i].tower, bulletData[i].target, bulletData[i].freeze, bulletData[i].poison)
+            b.x = bulletData[i].x
+            b.y = bulletData[i].y
+            b.range = bulletData[i].range
+            b.damage = bulletData[i].damage
+            b.fireSpeed = bulletData[i].fireSpeed
+            b.target = bulletData[i].target
+            b.freeze = bulletData[i].freeze
+            b.poison = bulletData[i].poison
+            bullets.push(b);
+        }
+
+        // Load Enemies
+        let enemyData = JSON.parse(localStorage.getItem("saveState")).enemies;
+        for (let i = 0; i < enemyData.length; i++) {
+            let e;
+            switch(enemyData[i].appearance) {
+                case "standard":
+                    e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "rapid":
+                    e = new Rapid(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "tank":
+                    e = new Tank(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "spawner":
+                    e = new Spawner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "stunner":
+                    e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+                case "delozier":
+                    e = new Delozier(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    break;
+            }
+            e.health = enemyData[i].health;
+            e.speed = enemyData[i].speed;
+            e.currency = enemyData[i].currency;
+            e.damage = enemyData[i].damage;
+
+            enemies.push(e);
+        }
+
+        currentLevelMusic.stop();
+        selectMap(mapID);
+        currentLevelMusic.loop();
+        redraw();
+>>>>>>> Stashed changes
     }
 }
 

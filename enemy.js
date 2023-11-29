@@ -19,7 +19,8 @@ const ENEMY_BUILDERS = [
     (path, offset, x, y) => new Standard(path, offset, x, y),
     (path, offset, x, y) => new Rapid(path, offset, x, y),
     (path, offset, x, y) => new Spawner(path, offset, x, y),
-    (path, offset, x, y) => new Stunner(path, offset, x, y)
+    (path, offset, x, y) => new Stunner(path, offset, x, y),
+    (path, offset, x, y) => new Delozier(path, offset, x, y)
 ];
 
 /** Class representing an enemy */
@@ -261,6 +262,19 @@ class Stunner extends Enemy {
         } else return -1;
     }
 }
+
+/** The BOSS */
+class Delozier extends Enemy {
+    constructor(path, offset, x, y) {
+        const e = ENEMIES[5];
+        super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
+    }
+    drawAppearance() {
+        fill(75);
+        noStroke();
+        triangle(this.x - 10, this.y + 10, this.x, this.y - 10, this.x + 10, this.y + 10);
+    }
+}
     
 
 /** @module wave */
@@ -279,6 +293,10 @@ class Wave {
         this.path = path;
         this.delay = delay; 
         this.enemies = []; 
+<<<<<<< Updated upstream
+=======
+        this.waveAmount = [0, 0, 0, 0, 0, 0]; // Counts how many times which enemy types are called.
+>>>>>>> Stashed changes
     }
 
     /** Prints wave spawnData and spawnPriority
@@ -325,4 +343,8 @@ class Wave {
 };
 
 // ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
+<<<<<<< Updated upstream
 export { Enemy, Tank, Standard, Rapid, Wave, Stunner }
+=======
+export { Enemy, Tank, Standard, Rapid, Wave, Stunner, Spawner, Delozier }
+>>>>>>> Stashed changes
