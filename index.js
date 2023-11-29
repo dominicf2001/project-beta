@@ -633,17 +633,20 @@ window.setup = function () {
     });
     uiHandler.returnToMenuButton.mousePressed(function() {
         // Return to main Menu
-        gameMode = 0;
-        beginGame = false;
-        playSound = false;
-        uiHandler.mapMenuOpen = false;
-        mapID = 0;
-        currentWave = 0;
-        levelComplete = false;
-        currentLevelMusic.stop();
-        enemies = []; // Reset Enemies
-        towers = []; // resets towers
-        redraw();
+        // gameMode = 0;
+        // beginGame = false;
+        // playSound = false;
+        // uiHandler.mapMenuOpen = false;
+        // mapID = 0;
+        // currentWave = 0;
+        // levelComplete = false;
+        // currentLevelMusic.stop();
+        // enemies = []; // Reset Enemies
+        // towers = []; // resets towers
+        // gameOver = false;
+        // uiHandler.updateUIForGameMode(gameMode);
+        location.reload();
+        //redraw();
     });
 
     //Poll for bullets every 100ms

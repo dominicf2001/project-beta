@@ -477,6 +477,7 @@ export class UIHandler {
             this.toggleCoinsDecrease.hide();
             this.toggleHealthIncrease.hide();
             this.toggleHealthDecrease.hide();
+            this.encyclopediaButton.hide();
 
         } else if (gameMode === 0) {
             image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2), this.windowWidth, this.windowHeight);
@@ -494,6 +495,7 @@ export class UIHandler {
             this.mapSelectButton.show();
             this.loadButton.show();
             this.startButton.show();
+            this.launchTutorialButton.show();
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
@@ -521,10 +523,10 @@ export class UIHandler {
             this.upgradeRangeButton.show();
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
-            this.toggleCoinsIncrease.show();
-            this.toggleCoinsDecrease.show();
-            this.toggleHealthIncrease.show();
-            this.toggleHealthDecrease.show();
+            // this.toggleCoinsIncrease.hide();
+            // this.toggleCoinsDecrease.hide();
+            // this.toggleHealthIncrease.hide();
+            // this.toggleHealthDecrease.hide();
             this.startButton.hide();
             this.loadButton.hide();
             this.launchTutorialButton.hide();
@@ -696,6 +698,11 @@ export class UIHandler {
     showDebugConsole(gameData) {
         this.debugConsole.style('display', 'block');
         this.debugConsole.html(gameData);
+
+        this.toggleCoinsIncrease.show();
+        this.toggleCoinsDecrease.show();
+        this.toggleHealthIncrease.show();
+        this.toggleHealthDecrease.show();
     }
     
 }
