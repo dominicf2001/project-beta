@@ -725,12 +725,32 @@ window.draw = function () {
 
         if (towerToPlace) {
             push();
-            if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
-                tint(255, 0, 0, 200);
-            } else {
-                tint(255, 200);
+            switch(towerToPlace.constructor.name) {
+                case "Standard":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
+                case "Freezer":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 50) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(freezerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
+                case "Poisoner":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 10) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(poisonerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
             }
-            image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
             pop();
         }
         // Draw bullets first, so they appear behind towers
