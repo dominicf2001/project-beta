@@ -227,9 +227,9 @@ window.preload = function () {
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.gif');
-    summonerEnemy = loadImage('./assets/Summoner.png');
-    delozierEnemy = loadImage('./assets/Summoner.png');
-    summoneeEnemy = loadImage('./assets/Summonee.png');
+    summonerEnemy = loadImage('./assets/Summoner_Animated.gif');
+    delozierEnemy = loadImage('./assets/Boss_Boat.gif');
+    summoneeEnemy = loadImage('./assets/Summonee_Animated.gif');
 
     healthSprite = loadImage('./assets/heart.png');
     coinSprite = loadImage('./assets/coin.png');
