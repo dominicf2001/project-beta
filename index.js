@@ -122,7 +122,7 @@ function selectMap(mapID) {
             currentLevelMusic.setVolume(0.1);
             break;
         case 2:
-            mapImg = loadImage('Maps/Boss Map.png');
+            mapImg = loadImage('Maps/Boss Map no Path v3.png');
             currentLevelMusic = level3Music;
             currentLevelMusic.setVolume(0.1);
             break;
