@@ -1,7 +1,7 @@
 /** @module ui-handler */
 
 export class UIHandler {
-    constructor(windowWidth, windowHeight){
+    constructor(windowWidth, windowHeight) {
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
 
@@ -11,6 +11,8 @@ export class UIHandler {
         this.ignoreNextClick = false;
         this.placeTowerButtonSelected = false;
         this.mapMenuOpen = false;
+
+        this.audioLevel;
         
         // UI IMAGE VARIABLES
         this.titleImg;
@@ -19,8 +21,6 @@ export class UIHandler {
         this.loadButton;
         this.launchTutorialButton;
         //this.nextWaveButton;
-        this.settingsButton;
-        this.saveButton;
         this.muteButton;
         this.placeStandardButton;
         this.placeFreezerButton;
@@ -32,6 +32,17 @@ export class UIHandler {
         this.debugConsole;
         this.returnToMenuButton;
         
+
+        // SETTINGS
+        this.settingsButton;
+        this.settingsWindow;
+        this.returnToGame;
+        this.saveButton;
+        this.gameExit;
+        this.muteButton;
+        this.audioSlider;
+        this.saveText;
+
         this.encyclopediaMenu;
         this.encyclopediaButton;
 
@@ -73,13 +84,15 @@ export class UIHandler {
 
         this.#initializeToolbar();
 
-        this.#initializeLoadAndSave();
+        /*this.#initializeLoadAndSave();*/
 
         this.#initializeMapMenu();
 
         this.#initializeTutorial();
 
         this.#initializeEncyclopedia();
+
+        this.#initializeSettings();
 
         this.#initializeDebugConsole();
 
@@ -141,15 +154,25 @@ export class UIHandler {
         this.settingsButton.addClass('material-symbols-outlined');
         this.settingsButton.position(this.windowWidth - 50, 10);
         this.settingsButton.size(40, 40);
-        this.settingsButton.mousePressed(() =>
-            this.#toggleSettings()
-        );
-        
-        this.muteButton = createSpan('volume_up');
-        this.muteButton.id('audioButton');
-        this.muteButton.addClass('material-symbols-outlined');
-        this.muteButton.position(this.windowWidth - 50, 60);
-        this.muteButton.size(40, 40);
+
+        this.toggleCoinsIncrease = createButton("Increase Currency");
+        this.toggleCoinsIncrease.id("toggleCoinsIncrease");
+        this.toggleCoinsIncrease.position(this.windowWidth - 250, this.windowHeight + 45);
+
+
+        this.toggleCoinsDecrease = createButton("Decrease Currency");
+        this.toggleCoinsDecrease.id("toggleCoinsDecrease");
+        this.toggleCoinsDecrease.position(this.windowWidth - 400, this.windowHeight + 45);
+
+
+        this.toggleHealthIncrease = createButton("Increase Health");
+        this.toggleHealthIncrease.id("toggleHealthIncrease");
+        this.toggleHealthIncrease.position(this.windowWidth - 550, this.windowHeight + 45);
+
+
+        this.toggleHealthDecrease = createButton("Decrease Health");
+        this.toggleHealthDecrease.id("toggleHealthDecrease");
+        this.toggleHealthDecrease.position(this.windowWidth - 700, this.windowHeight + 45);
 
         this.encyclopediaButton = createButton('Encyclopedia');
         this.encyclopediaButton.addClass('ui_buttons');
@@ -167,7 +190,7 @@ export class UIHandler {
         const toolBar = createDiv();
         toolBar.addClass('toolbar');
         toolBar.position(10, this.windowHeight - 65);
-        
+
         // const towerImg = createImg("./assets/RedMoonTower.png");
         this.placeStandardButton = createButton();
         this.placeStandardButton.addClass('ui_buttons');
@@ -175,7 +198,7 @@ export class UIHandler {
         this.placeStandardButton.addClass('place_tower_button');
         this.placeStandardButton.id('place_standard_button');
         toolBar.child(this.placeStandardButton);
-        
+
         // const towerImg = createImg("./assets/RedMoonTower.png");
         this.placePoisonerButton = createButton();
         this.placePoisonerButton.addClass('ui_buttons');
@@ -183,7 +206,7 @@ export class UIHandler {
         this.placePoisonerButton.addClass('place_tower_button');
         this.placePoisonerButton.id('place_poisoner_button');
         toolBar.child(this.placePoisonerButton);
-        
+
         // const towerImg = createImg("./assets/RedMoonTower.png");
         this.placeFreezerButton = createButton();
         this.placeFreezerButton.addClass('ui_buttons');
@@ -199,39 +222,40 @@ export class UIHandler {
         const upgradeText = createP('Upgrades');
         upgradeText.addClass('toolbar_title');
         this.upgradeContainer.child(upgradeText);
-        
+
         this.upgradeRangeButton = createButton('Range');
         this.upgradeRangeButton.addClass('ui_buttons');
         this.upgradeRangeButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeRangeButton);
 
-        this.upgradeFireRateButton = createButton('Fire Rate')        
+        this.upgradeFireRateButton = createButton('Fire Rate')
         this.upgradeFireRateButton.addClass('ui_buttons');
         this.upgradeFireRateButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeFireRateButton);
-        
+
         this.upgradeFireSpeedButton = createButton('Bullet Speed');
         this.upgradeFireSpeedButton.addClass('ui_buttons');
         this.upgradeFireSpeedButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeFireSpeedButton);
-        
+
         push();
         const toolbarColor = color(51, 51, 51);
         toolbarColor.setAlpha(200);
-        
+
         fill(toolbarColor);
         noStroke();
         rect(0, this.windowHeight, this.windowWidth, 50);
         pop();
     }
 
+    /*
     #initializeLoadAndSave() {
         this.saveButton = createButton('Save');
         this.saveButton.id('saveButton');
         this.saveButton.addClass('ui_buttons');
         this.saveButton.size(100, 40);
         this.saveButton.position(this.windowWidth - 390, 10);
-    }
+    }*/
 
 
     #initializeTutorial() {
@@ -263,20 +287,20 @@ export class UIHandler {
         this.encyclopediaExit.addClass('encyclopedia-exit');
         this.encyclopediaExit.position(this.windowWidth - 145, 60);
         this.encyclopediaMenu.textSize(15);
-        
+
         // STANDARD ENEMY CARD
         this.encyclopediaMenu.image(this.enemyStandard, 35, 30, 200, 250);
-            // title
+        // title
         this.encyclopediaMenu.textSize(17);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
         this.encyclopediaMenu.text("Void Crawler", 250, 50, 200, 250);
-            //description
+        //description
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(0);
         this.encyclopediaMenu.strokeWeight(0);
         this.encyclopediaMenu.text("This enemy is a creepy, rotting astronaut who's come back from the dead in the darkest corners of the universe, and it wants to nibble on your space snacks!", 250, 80, 200, 250);
-            // stats
+        // stats
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
@@ -284,17 +308,17 @@ export class UIHandler {
 
         // SUMMONER ENEMY CARD
         this.encyclopediaMenu.image(this.enemySummoner, 35, 310, 200, 250);
-            // title
+        // title
         this.encyclopediaMenu.textSize(17);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
         this.encyclopediaMenu.text("Cosmic Conjuror", 250, 320, 200, 250);
-            // description
+        // description
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(0);
         this.encyclopediaMenu.strokeWeight(0);
         this.encyclopediaMenu.text("The alien summoner is a mysterious foe wielding otherworldly powers, conjuring strange and formidable creatures to do its bidding in intergalactic battles.", 250, 350, 200, 250);
-            // stats
+        // stats
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
@@ -308,17 +332,17 @@ export class UIHandler {
 
         // SUMMONEE ENEMY CARD
         this.encyclopediaMenu.image(this.enemySummonee, 525, 310, 200, 250);
-            // title
+        // title
         this.encyclopediaMenu.textSize(17);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
         this.encyclopediaMenu.text("Astrocephalopod", 750, 320, 200, 250);
-            // description
+        // description
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(0);
         this.encyclopediaMenu.strokeWeight(0);
         this.encyclopediaMenu.text("A tentacled extraterrestrial monstrosity summoned from the depths of space, this enemy uses its otherworldly appendages to ensnare and confound its adversaries in intergalactic encounters.", 750, 350, 200, 250);
-            // stats
+        // stats
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
@@ -393,6 +417,45 @@ export class UIHandler {
         }
     }
 
+    #initializeSettings() {
+        this.settingsWindow = createGraphics(350, 375);
+        this.settingsWindow.addClass("settings");
+        this.settingsWindow.style("display:block;");
+
+        this.returnToGame = createButton('Return To Game');
+        this.returnToGame.id('returnToGame');
+        this.returnToGame.addClass('ui_buttons');
+        this.returnToGame.size(200, 70);
+        this.returnToGame.position(this.windowWidth / 2 - 100, 200);
+        this.returnToGame.mousePressed(() =>
+            this.toggleSettings()
+        );
+
+        this.saveButton = createButton('Save');
+        this.saveButton.id('saveButton');
+        this.saveButton.addClass('ui_buttons');
+        this.saveButton.size(200, 70);
+        this.saveButton.position(this.windowWidth / 2 - 100, 280);
+
+        this.gameExit = createButton('Main Menu');
+        this.gameExit.addClass('ui_buttons');
+        this.gameExit.size(200, 70);
+        this.gameExit.position(this.windowWidth / 2 - 100, 360);
+
+        this.muteButton = createSpan('volume_up');
+        this.muteButton.id('audioButton');
+        this.muteButton.addClass('material-symbols-outlined');
+        this.muteButton.size(75, 50);
+        this.muteButton.position(this.windowWidth / 2 - 100, 450);
+
+        this.audioSlider = createGraphics(this.windowWidth - 200, this.windowHeight - 100);
+        this.audioSlider = createSlider(0, 1, 1, 0);
+        this.audioSlider.addClass('audioSlider');
+        this.audioSlider.position(this.windowWidth / 2, 465);
+        this.audioSlider.style('width', '100px');
+
+    }
+
     updateUIForGameMode(gameMode) {
         if (gameMode === -1) {
             this.returnToMenuButton.show();
@@ -410,6 +473,11 @@ export class UIHandler {
             this.settingsButton.hide();
             this.muteButton.hide();
             this.nextLevelButton.hide();
+            this.toggleCoinsIncrease.hide();
+            this.toggleCoinsDecrease.hide();
+            this.toggleHealthIncrease.hide();
+            this.toggleHealthDecrease.hide();
+
         } else if (gameMode === 0) {
             image(this.titleImg, this.windowWidth / 2, (this.windowHeight / 2), this.windowWidth, this.windowHeight);
             this.startButton.show();
@@ -423,13 +491,28 @@ export class UIHandler {
             this.placeFreezerButton.hide();
             this.placePoisonerButton.hide();
             this.saveButton.hide();
+            this.mapSelectButton.show();
+            this.loadButton.show();
+            this.startButton.show();
             // this.nextWaveButton.hide();
             this.gameOverScreen.hide();
             this.settingsButton.hide();
             this.nextLevelButton.hide();
-            this.muteButton.hide();
+            this.toggleCoinsIncrease.hide();
+            this.toggleCoinsDecrease.hide();
+            this.toggleHealthIncrease.hide();
+            this.toggleHealthDecrease.hide();
             this.encyclopediaButton.hide();
             this.returnToMenuButton.hide();
+
+            // SETTINGS
+            this.settingsWindow.hide();
+            this.returnToGame.hide();
+            this.saveButton.hide();
+            this.gameExit.hide();
+            this.muteButton.hide();
+            this.audioSlider.hide();
+
         } else if (gameMode === 1) {
             this.upgradeContainer.show();
             this.placeStandardButton.show();
@@ -438,6 +521,10 @@ export class UIHandler {
             this.upgradeRangeButton.show();
             this.upgradeFireRateButton.show();
             this.upgradeFireSpeedButton.show();
+            this.toggleCoinsIncrease.show();
+            this.toggleCoinsDecrease.show();
+            this.toggleHealthIncrease.show();
+            this.toggleHealthDecrease.show();
             this.startButton.hide();
             this.loadButton.hide();
             this.launchTutorialButton.hide();
@@ -460,7 +547,7 @@ export class UIHandler {
         if (selectedTower) {
             this.upgradeContainer.show();
 
-            if(selectedTower.y > this.windowHeight - 200) {
+            if (selectedTower.y > this.windowHeight - 200) {
                 this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y - 160);
             } else {
                 this.upgradeContainer.position(selectedTower.x - 75, selectedTower.y + 80);
@@ -544,17 +631,25 @@ export class UIHandler {
         }
     }
     */
-    
-    #toggleSettings() {
+
+    toggleSettings() {
         if (!this.settingsOpen) {
-            this.muteButton.show();
+            this.settingsWindow.show();
+            this.returnToGame.show();
             this.saveButton.show();
+            this.gameExit.show();
+            this.muteButton.show();
+            this.audioSlider.show();
             this.settingsOpen = true;
         } else {
-            this.muteButton.hide();
+            this.settingsWindow.hide();
+            this.returnToGame.hide();
             this.saveButton.hide();
+            this.gameExit.hide();
+            this.muteButton.hide();
+            this.audioSlider.hide();
             this.settingsOpen = false;
-        }   
+        }
     }
 
     #showEncyclopedia() {
@@ -593,7 +688,7 @@ export class UIHandler {
         this.debugConsole.style('font-family', 'Andale Mono');
         this.debugConsole.style('font-size', '18px');
         this.debugConsole.style('color', color(255, 255, 255));
-        this.debugConsole.style('background-color', color(81,176,101, 60));
+        this.debugConsole.style('background-color', color(81, 176, 101, 60));
         this.debugConsole.style('display', 'none');
         this.debugConsole.position(0, 0);
     }
