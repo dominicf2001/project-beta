@@ -57,10 +57,9 @@ let stunCooldown = {
 const uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 let debug
 let game;
-var mapID = 3;
+var mapID = 0;
 // needs to be generalized for all levels
 var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
-
 // ---------------------------------------------------------------------
 // HELPER FUNCTIONS
 // ---------------------------------------------------------------------
@@ -171,7 +170,6 @@ function switchMap() {
 // Spawns the next wave.
 function spawnNextWave() {
     try {
-        console.log(LEVELS[mapID].LEVEL_DATA.length);
         if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
             currentWave = currentWave + 1;
 
@@ -182,13 +180,10 @@ function spawnNextWave() {
                 
             newWave.debugPrintWave();
             newWave.spawn();
-            console.log(newWave);
-
             enemies = newWave.getEnemies();
-        } else {
-
         }
-    } catch (e) {
+    }
+    catch (e) {
         alert(e);
     }
 }
@@ -291,7 +286,6 @@ window.mousePressed = function (event) {
                     if (mouseX >= WINDOW_WIDTH - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
-                        console.log(towerToPlace);
                         if (totalCurrency < towerToPlace.placeTowerCost) {
                             throw new Error("Not enough money!");
                         }
@@ -409,6 +403,9 @@ window.keyPressed = function (e) {
 
 
 window.setup = function () {
+
+    console.log("Wave amount",LEVELS[mapID]);
+
     game = createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     uiHandler.initializeUI();
@@ -488,8 +485,9 @@ window.setup = function () {
             currentLevelMusic.loop();
             playSound = true;
         }
-        beginGame = true;
         mapID = 3;
+        selectMap(mapID);
+        beginGame = true;
     });
 
     uiHandler.level1Button.mousePressed(function() {
@@ -580,21 +578,21 @@ window.setup = function () {
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
                 if (totalCurrency >= towerCosts["standard"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["standard"].fireRateCost;
                 }
                 break;
 
             case "Poisoner":
                 if (totalCurrency >= towerCosts["poisoner"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["poisoner"].fireRateCost;
                 }
                 break;
 
             case "Freezer":
                 if (totalCurrency >= towerCosts["freezer"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["freezer"].fireRateCost;
                 }
                 break;
@@ -606,21 +604,21 @@ window.setup = function () {
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
                 if (totalCurrency >= towerCosts["standard"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["standard"].fireSpeedCost;
                 }
                 break;
 
             case "Poisoner":
                 if (totalCurrency >= towerCosts["poisoner"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["poisoner"].fireSpeedCost;
                 }
                 break;
 
             case "Freezer":
                 if (totalCurrency >= towerCosts["freezer"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["freezer"].fireSpeedCost;
                 }
                 break;
@@ -785,6 +783,7 @@ window.draw = function () {
 
         // Handle waves automatically, not needed for tutorial
         if (nextWaveCheck.amount < 1 && mapID != 3) {
+            console.log(currentWave);
             if (currentWave == 0) {
                 push();
                 textSize(20);
@@ -982,8 +981,6 @@ window.draw = function () {
         }
     }
 }
-
-
 
 function saveGame() {
     // Save game state
