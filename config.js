@@ -151,6 +151,7 @@ export const MAPS = [
         }
     },
     { // Third Map
+    //TODO: implement topPath, bottomPath, and isColliding
         topPath: function (x) {
             return 520;
         },
