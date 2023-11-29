@@ -37,13 +37,17 @@ export const LEVELS = [
     // level 2
     {
         LEVEL_DATA: [
-            [[], [2, 2, 2], [2, 1, 2], [1], []]
+            [e.standard, e.rapid, e.rapid, e.standard]
+            [[2, 1], [1, 2], [], [1], []],
+            [[], [2], [2, 2], [2], []],
+            [[6], [3, 5, 3], [2, 5], [1], []],
+            [[4, 2], [8, 8, 8, 4], [10], [2], []],
         ],
         PRIORITY_DATA: [
-            [e.standard, e.rapid, e.standard],
-            [e.standard, e.rapid, e.standard, e.rapid],
-            [e.standard, e.tank, e.rapid, e.tank, e.standard],
-            [e.standard, e.rapid, e.rapid, e.standard, e.rapid, e.standard, e.spawner],
+            [e.tank, e.standard, e.tank, e.standard, e.spawner],
+            [e.standard, e.spawner, e.stunner, e.rapid, e.rapid],
+            [e.tank, e.standard, e.standard, e.spawner, e.standard, e.rapid, e.rapid],
+            [e.standard, e.standard, e.tank, e.spawner, e.standard, e.standard, e.rapid, e.tank],
         ]
     },
     // level 3
@@ -154,7 +158,7 @@ export const MAPS = [
             return 520;
         },
         middlePath: function (x) {
-            return 570;
+            return 530;
         },
         bottomPath: function (x) {
             if (x < 768) {
@@ -165,7 +169,7 @@ export const MAPS = [
             }
         },
         isColliding: function (x, diameter) {
-            return mouseY < MAPS[1].bottomPath(x) && mouseY > MAPS[1].topPath(x) - diameter;
+            // return mouseY < MAPS[1].bottomPath(x) && mouseY > MAPS[1].topPath(x) - diameter;
         }
     },
     { // Third Map

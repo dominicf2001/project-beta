@@ -180,12 +180,10 @@ function spawnNextWave() {
                 
             newWave.debugPrintWave();
             newWave.spawn();
-
             enemies = newWave.getEnemies();
-        } else {
-
         }
-    } catch (e) {
+    }
+    catch (e) {
         alert(e);
     }
 }
@@ -580,21 +578,21 @@ window.setup = function () {
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
                 if (totalCurrency >= towerCosts["standard"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["standard"].fireRateCost;
                 }
                 break;
 
             case "Poisoner":
                 if (totalCurrency >= towerCosts["poisoner"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["poisoner"].fireRateCost;
                 }
                 break;
 
             case "Freezer":
                 if (totalCurrency >= towerCosts["freezer"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["freezer"].fireRateCost;
                 }
                 break;
@@ -606,21 +604,21 @@ window.setup = function () {
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
                 if (totalCurrency >= towerCosts["standard"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["standard"].fireSpeedCost;
                 }
                 break;
 
             case "Poisoner":
                 if (totalCurrency >= towerCosts["poisoner"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["poisoner"].fireSpeedCost;
                 }
                 break;
 
             case "Freezer":
                 if (totalCurrency >= towerCosts["freezer"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["freezer"].fireSpeedCost;
                 }
                 break;
@@ -727,32 +725,12 @@ window.draw = function () {
 
         if (towerToPlace) {
             push();
-            switch(towerToPlace.constructor.name) {
-                case "Standard":
-                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
-                        tint(255, 0, 0, 200);
-                    } else {
-                        tint(255, 200);
-                    }
-                    image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-                    break;
-                case "Freezer":
-                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 50) {
-                        tint(255, 0, 0, 200);
-                    } else {
-                        tint(255, 200);
-                    }
-                    image(freezerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-                    break;
-                case "Poisoner":
-                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 10) {
-                        tint(255, 0, 0, 200);
-                    } else {
-                        tint(255, 200);
-                    }
-                    image(poisonerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-                    break;
+            if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
+                tint(255, 0, 0, 200);
+            } else {
+                tint(255, 200);
             }
+            image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
             pop();
         }
         // Draw bullets first, so they appear behind towers
@@ -983,8 +961,6 @@ window.draw = function () {
         }
     }
 }
-
-
 
 function saveGame() {
     // Save game state
