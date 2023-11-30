@@ -115,12 +115,6 @@ function dealDamage() {
 // Select Map Function
 function selectMap(mapID) {
     switch (mapID) {
-        case 3:
-            // Tutorial Map
-            mapImg = loadImage('Maps/Space Map 1.png');
-            currentLevelMusic = level1Music;
-            currentLevelMusic.setVolume(0.1);
-            break;
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
             currentLevelMusic = level1Music;
@@ -134,6 +128,12 @@ function selectMap(mapID) {
         case 2:
             mapImg = loadImage('Maps/Boss Map no Path v3.png');
             currentLevelMusic = level3Music;
+            currentLevelMusic.setVolume(0.1);
+            break;
+        case 3:
+            // Tutorial Map
+            mapImg = loadImage('Maps/Space Map 1.png');
+            currentLevelMusic = level1Music;
             currentLevelMusic.setVolume(0.1);
             break;
         default:
@@ -154,7 +154,7 @@ function switchMap() {
     } else {
         ++mapID;
     }
-    
+    initNextWave = 10;
     currentWave = 0;
     waveAmount = LEVELS[mapID].LEVEL_DATA.length;
     levelComplete = false;
@@ -493,6 +493,13 @@ window.setup = function () {
     uiHandler.level1Button.mousePressed(function() {
         mapID = 0;
         selectMap(mapID);
+        currentWave = 0;
+        waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        uiHandler.nextLevelButton.hide();
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -503,6 +510,13 @@ window.setup = function () {
     uiHandler.level2Button.mousePressed(function() {
         mapID = 1;
         selectMap(mapID);
+        currentWave = 0;
+        waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        uiHandler.nextLevelButton.hide();
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -513,6 +527,13 @@ window.setup = function () {
     uiHandler.level3Button.mousePressed(function() {
         mapID = 2;
         selectMap(mapID);
+        currentWave = 0;
+        waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        uiHandler.nextLevelButton.hide();
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -630,21 +651,7 @@ window.setup = function () {
         saveGame();
     });
     uiHandler.returnToMenuButton.mousePressed(function() {
-        // Return to main Menu
-        // gameMode = 0;
-        // beginGame = false;
-        // playSound = false;
-        // uiHandler.mapMenuOpen = false;
-        // mapID = 0;
-        // currentWave = 0;
-        // levelComplete = false;
-        // currentLevelMusic.stop();
-        // enemies = []; // Reset Enemies
-        // towers = []; // resets towers
-        // gameOver = false;
-        // uiHandler.updateUIForGameMode(gameMode);
         location.reload();
-        //redraw();
     });
 
     //Poll for bullets every 100ms
@@ -719,8 +726,6 @@ window.draw = function () {
                 // Return to main Menu Button
                 uiHandler.returnToMenuButton.show();
             }
-            saveGame();
-            uiHandler.nextLevelButton.show();
         }
 
         if (towerToPlace) {
