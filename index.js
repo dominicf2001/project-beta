@@ -35,13 +35,18 @@ let totalHealth = DEFAULT_HEALTH;
 
 // MISC VARIABLES -----------
 
+// Tutorial States
+let tutorialTask = 0;
+let task3Currency = 1000000;
+let waitBeforeNextTask = 0;
+
 // let dragTower = null;
 let towerToPlace = null;
 const towerLimit = TOWER_LIMIT;
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
 let initNextWave = DEFAULT_WAVE_INIT_TIME;
-let nextWaveCheck = { 
+let nextWaveCheck = {
     amount: 0
 }
 // checks for stunned towers
@@ -55,7 +60,6 @@ let game;
 export var mapID = 0;
 // needs to be generalized for all levels
 var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
-
 // ---------------------------------------------------------------------
 // HELPER FUNCTIONS
 // ---------------------------------------------------------------------
@@ -96,7 +100,7 @@ function fireBullets() {
         }
     }
 }
-    
+
 function dealDamage() {
     for (let i = 0; i < enemies.length; i++) {
         enemies[i].damageTowers(towers);
@@ -111,6 +115,12 @@ function dealDamage() {
 // Select Map Function
 function selectMap(mapID) {
     switch (mapID) {
+        case 3:
+            // Tutorial Map
+            mapImg = loadImage('Maps/Space Map 1.png');
+            currentLevelMusic = level1Music;
+            currentLevelMusic.setVolume(0.1);
+            break;
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
             currentLevelMusic = level1Music;
@@ -134,7 +144,17 @@ function selectMap(mapID) {
 
 // Reset the Map variables
 function switchMap() {
-    ++mapID;
+    if(mapID == 3) {
+        mapID = 0;
+        totalCurrency = DEFAULT_CURRENCY;
+        totalHealth = DEFAULT_HEALTH;
+        beginGame = false;
+        gameOver = false;
+        levelComplete = false;
+    } else {
+        ++mapID;
+    }
+    
     currentWave = 0;
     waveAmount = LEVELS[mapID].LEVEL_DATA.length;
     levelComplete = false;
@@ -150,7 +170,6 @@ function switchMap() {
 // Spawns the next wave.
 function spawnNextWave() {
     try {
-        console.log(LEVELS[mapID].LEVEL_DATA.length);
         if (currentWave < LEVELS[mapID].LEVEL_DATA.length) {
             currentWave = currentWave + 1;
 
@@ -161,13 +180,10 @@ function spawnNextWave() {
                 
             newWave.debugPrintWave();
             newWave.spawn();
-            console.log(newWave);
-
             enemies = newWave.getEnemies();
-        } else {
-
         }
-    } catch (e) {
+    }
+    catch (e) {
         alert(e);
     }
 }
@@ -189,6 +205,8 @@ function spawnWave(waveData, PRIORITY_DATA, currentLevel) {
 // Assets
 let mapImg;
 let towerSprite;
+let freezerTowerSprite;
+let poisonerTowerSprite;
 let currentLevelMusic;
 let level1Music;
 let level2Music;
@@ -201,7 +219,7 @@ let tankEnemy;
 let stunEnmeny;
 let healthSprite;
 let coinSprite;
-let enemyDeathSound_default; 
+let enemyDeathSound_default;
 let enemyDeathSound_squid;
 let enemyDeathSound_summoner;
 let enemyDeathSound_zombie;
@@ -222,6 +240,8 @@ window.preload = function () {
 
     f_Andale = loadFont('./assets/Andale-Mono.ttf');
     towerSprite = loadImage('./assets/RedMoonTower.png');
+    freezerTowerSprite = loadImage('./assets/FreezerTower.png');
+    poisonerTowerSprite = loadImage('./assets/PoisonTower.png');
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.gif');
@@ -239,7 +259,7 @@ window.mousePressed = function (event) {
             if (towers[t].mouseInside()) {
                 towers[t].selected = true;
                 if (towers[t].isStunned()) towers[t].reduceStun(stunCooldown);
-                
+
                 // dragTower = towers.splice(t, 1)[0];
                 // dragTower.hover = true;
                 // towers.push(dragTower);
@@ -254,9 +274,9 @@ window.mousePressed = function (event) {
         if (((event.button === 0 /* && !dragTower*/) && !(mouseX < 0 || mouseX > WINDOW_WIDTH - 50 || mouseY < 0 || mouseY + 50 > WINDOW_HEIGHT))) {
             try {
                 if (towerToPlace) {
-                    if (towers.length > towerLimit) {
-                        throw new Error("No more towers allowed!");
-                    }
+                    // if (towers.length > towerLimit) {
+                    //     throw new Error("No more towers allowed!");
+                    // }
 
                     if (MAPS[mapID].isColliding(mouseX, 30)) {
                         // throw new Error("Cannot place a tower on the path!");
@@ -266,7 +286,6 @@ window.mousePressed = function (event) {
                     if (mouseX >= WINDOW_WIDTH - 15 && mouseY > 30 || mouseY < 70) {
                         // throw new Error("NO");
                     } else {
-                        console.log(towerToPlace);
                         if (totalCurrency < towerToPlace.placeTowerCost) {
                             throw new Error("Not enough money!");
                         }
@@ -329,15 +348,9 @@ window.mouseMoved = function () {
 
 window.keyPressed = function (e) {
     if (keyCode === ESCAPE) { // use escape to open/close settings
-        if (beginGame && !encyclopiaOpen)
-            openSettings();
-        if (encyclopiaOpen) {
-            encyclopedia.hide();
-            encyclopediaExit.hide();
-            encyclopiaOpen = false;
-        }
+        towerToPlace = null;
     }
-    if(e.key === 'd') { // use d to open/close debug console
+    if (e.key === 'd') { // use d to open/close debug console
         let gameData = {
             gameMode: gameMode,
             totalCurrency: totalCurrency,
@@ -351,8 +364,6 @@ window.keyPressed = function (e) {
         console.log(gameData);
         uiHandler.showDebugConsole(JSON.stringify(gameData));
     }
-
-    console.log(e);
     
     if (e.altKey) {
         if (e.key == 'z') {
@@ -392,12 +403,23 @@ window.keyPressed = function (e) {
 
 
 window.setup = function () {
+
+    console.log("Wave amount",LEVELS[mapID]);
+
     game = createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT);
-    
+
     uiHandler.initializeUI();
-    
-    uiHandler.saveButton.mousePressed(function() {
+
+    uiHandler.saveButton.mousePressed(function () {
         saveGame();
+    });
+
+    uiHandler.tutorialNextButton.mousePressed(function() {
+        if(tutorialTask == 6) {
+            switchMap();
+        }
+        tutorialTask++;
+        uiHandler.tutorialNextButton.hide();
     });
 
     uiHandler.muteButton.mousePressed(function() {
@@ -422,9 +444,32 @@ window.setup = function () {
             playSound = true;
         }
         beginGame = true;
+        mapID = 0;
     });
 
-    uiHandler.loadButton.mousePressed(function() {
+    uiHandler.settingsButton.mousePressed(function() {
+        uiHandler.toggleSettings();
+    })
+
+    uiHandler.gameExit.mousePressed(function() {
+        saveGame();
+        window.location.reload();
+    });
+
+    uiHandler.toggleCoinsIncrease.mousePressed(function () {
+        totalCurrency += 100;
+    });
+    uiHandler.toggleCoinsDecrease.mousePressed(function () {
+        totalCurrency -= 100;
+    });
+    uiHandler.toggleHealthIncrease.mousePressed(function () {
+        totalHealth += 5;
+    });
+    uiHandler.toggleHealthDecrease.mousePressed(function () {
+        totalHealth -= 5;
+    });
+
+    uiHandler.loadButton.mousePressed(function () {
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -433,6 +478,18 @@ window.setup = function () {
         beginGame = true;
         loadGame();
     });
+
+    uiHandler.launchTutorialButton.mousePressed(function() {
+        if (!playSound) {
+            currentLevelMusic.setVolume(0.1);
+            currentLevelMusic.loop();
+            playSound = true;
+        }
+        mapID = 3;
+        selectMap(mapID);
+        beginGame = true;
+    });
+
     uiHandler.level1Button.mousePressed(function() {
         mapID = 0;
         selectMap(mapID);
@@ -468,7 +525,7 @@ window.setup = function () {
     //     spawnNextWave();
     // });
 
-    uiHandler.placeStandardButton.mousePressed(function(e) {
+    uiHandler.placeStandardButton.mousePressed(function (e) {
         console.log(!towerToPlace);
         if (!towerToPlace && totalCurrency >= towerCosts["standard"].placeTowerCost) {
             e.stopPropagation();
@@ -490,7 +547,7 @@ window.setup = function () {
         }
     });
 
-    uiHandler.upgradeRangeButton.mousePressed(function() {
+    uiHandler.upgradeRangeButton.mousePressed(function () {
         let selectedUpgradeTower = getSelectedTower();
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
@@ -516,75 +573,78 @@ window.setup = function () {
         }
     });
 
-    uiHandler.upgradeFireRateButton.mousePressed(function() {
+    uiHandler.upgradeFireRateButton.mousePressed(function () {
         let selectedUpgradeTower = getSelectedTower();
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
                 if (totalCurrency >= towerCosts["standard"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["standard"].fireRateCost;
                 }
                 break;
 
             case "Poisoner":
                 if (totalCurrency >= towerCosts["poisoner"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["poisoner"].fireRateCost;
                 }
                 break;
 
             case "Freezer":
                 if (totalCurrency >= towerCosts["freezer"].fireRateCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireRate();
                     totalCurrency -= towerCosts["freezer"].fireRateCost;
                 }
                 break;
         }
     });
 
-    uiHandler.upgradeFireSpeedButton.mousePressed(function() {
+    uiHandler.upgradeFireSpeedButton.mousePressed(function () {
         let selectedUpgradeTower = getSelectedTower();
         switch (selectedUpgradeTower.constructor.name) {
             case "Standard":
                 if (totalCurrency >= towerCosts["standard"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["standard"].fireSpeedCost;
                 }
                 break;
 
             case "Poisoner":
                 if (totalCurrency >= towerCosts["poisoner"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["poisoner"].fireSpeedCost;
                 }
                 break;
 
             case "Freezer":
                 if (totalCurrency >= towerCosts["freezer"].fireSpeedCost) {
-                    selectedUpgradeTower.upgradeRange();
+                    selectedUpgradeTower.upgradeFireSpeed();
                     totalCurrency -= towerCosts["freezer"].fireSpeedCost;
                 }
                 break;
         }
     });
-    
-    uiHandler.nextLevelButton.mousePressed(function() {
+
+    uiHandler.nextLevelButton.mousePressed(function () {
         switchMap();
         saveGame();
     });
     uiHandler.returnToMenuButton.mousePressed(function() {
         // Return to main Menu
-        gameMode = 0;
-        beginGame = false;
-        playSound = false;
-        uiHandler.mapMenuOpen = false;
-        mapID = 0;
-        currentWave = 0;
-        levelComplete = false;
-        currentLevelMusic.stop();
-        enemies = []; // Reset Enemies
-        towers = []; // resets towers
-        redraw();
+        // gameMode = 0;
+        // beginGame = false;
+        // playSound = false;
+        // uiHandler.mapMenuOpen = false;
+        // mapID = 0;
+        // currentWave = 0;
+        // levelComplete = false;
+        // currentLevelMusic.stop();
+        // enemies = []; // Reset Enemies
+        // towers = []; // resets towers
+        // gameOver = false;
+        // uiHandler.updateUIForGameMode(gameMode);
+        location.reload();
+        //redraw();
     });
 
     //Poll for bullets every 100ms
@@ -600,19 +660,21 @@ window.draw = function () {
     
     fill(0);
 
+    currentLevelMusic.setVolume(uiHandler.audioSlider.value());
+
     if (gameMode == 0) {
         uiHandler.updateUIForGameMode(gameMode);
         uiHandler.nextLevelButton.hide();
 
-        if(!localStorage.getItem("saveState")) {
+        if (!localStorage.getItem("saveState")) {
             uiHandler.loadButton.hide();
         }
 
         // Switch to game mode
         if (beginGame) {
             gameMode = 1;
-            if(localStorage.getItem("mute")) {
-                if(localStorage.getItem("mute") == "true") {
+            if (localStorage.getItem("mute")) {
+                if (localStorage.getItem("mute") == "true") {
                     currentLevelMusic.pause();
                     playSound = false;
                     uiHandler.muteButton.html('volume_off');
@@ -624,14 +686,14 @@ window.draw = function () {
 
         uiHandler.updateUIForGameMode(gameMode);
         uiHandler.updateToolbarState(totalCurrency, getSelectedTower(), towerCosts);
-        
+
         // TODO
         // if (nextWaveCheck.amount < 1) uiHandler.nextWaveButton.show();
         // else uiHandler.nextWaveButton.hide();
 
         background(200);
         image(mapImg, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, WINDOW_WIDTH, WINDOW_HEIGHT);
-        
+
         // Displays Level Complete Text and button when all waves are done
         uiHandler.nextLevelButton.hide();
         if (levelComplete) {
@@ -657,16 +719,38 @@ window.draw = function () {
                 // Return to main Menu Button
                 uiHandler.returnToMenuButton.show();
             }
+            saveGame();
+            uiHandler.nextLevelButton.show();
         }
-        
+
         if (towerToPlace) {
             push();
-            if (MAPS[mapID].isColliding(mouseX, 30) || totalCurrency < 400) {
-                tint(255, 0, 0, 200);
-            } else {
-                tint(255, 200);
+            switch(towerToPlace.constructor.name) {
+                case "Standard":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
+                case "Freezer":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 50) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(freezerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
+                case "Poisoner":
+                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 10) {
+                        tint(255, 0, 0, 200);
+                    } else {
+                        tint(255, 200);
+                    }
+                    image(poisonerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                    break;
             }
-            image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
             pop();
         }
         // Draw bullets first, so they appear behind towers
@@ -680,12 +764,26 @@ window.draw = function () {
 
         // Draw towers
         for (const t of towers) {
-            t.draw(towerSprite);
+            switch(t.type) {
+                case "standard":
+                    t.draw(towerSprite);
+                    break;
+                case "freezer":
+                    t.draw(freezerTowerSprite);
+                    break;
+                case "poisoner":
+                    t.draw(poisonerTowerSprite);
+                    break;
+                default:
+                    t.draw(towerSprite);
+                    break;
+            }
             if (t.isStunned()) t.drawStunned();
         }
 
-        // Handle waves automatically
-        if (nextWaveCheck.amount < 1) {
+        // Handle waves automatically, not needed for tutorial
+        if (nextWaveCheck.amount < 1 && mapID != 3) {
+            console.log(currentWave);
             if (currentWave == 0) {
                 push();
                 textSize(20);
@@ -743,18 +841,32 @@ window.draw = function () {
         }
 
          // draw Wave information
-        push();
-        textSize(20);
-        fill('white');
-        stroke(0);
-        strokeWeight(4);
-        text('Wave: ' + currentWave + '/' + LEVELS[mapID].LEVEL_DATA.length, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 25);
-        pop();
+        if(mapID != 3) {
+            push();
+            textSize(20);
+            fill('white');
+            stroke(0);
+            strokeWeight(4);
+            text('Wave: ' + currentWave + '/' + LEVELS[mapID].LEVEL_DATA.length, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 25);
+            pop();
+        }
+
+        // inject the tutorial
+        if (mapID == 3) {
+            tutorialHandler();
+        } else {
+            uiHandler.tutorialContainer.hide();
+        }
 
         // draw or remove enemies
         // iterate backwards to prevent flickering
         for (let i = enemies.length - 1; i >= 0; i--) {
             enemies[i].checkStatus();
+
+            if(mapID == 3){
+                if(enemies[i].health > 1){ enemies[i].health = 1; }
+            }
+
             if (enemies[i].hasReachedEnd()) {
                 totalHealth -= enemies[i].damage;
                 nextWaveCheck.amount -= 1;
@@ -769,18 +881,18 @@ window.draw = function () {
                 if (enemies[i].isDead() == false) {
                     enemies[i].kill();
 
-                    switch(enemies[i].appearance) {
+                    switch (enemies[i].appearance) {
                         case "standard":
-                            enemyDeathSound_zombie.play();
+                            if(playSound) { enemyDeathSound_zombie.play(); }
                             break;
                         case "spawner":
-                            enemyDeathSound_summoner.play();
+                            if(playSound) { enemyDeathSound_summoner.play(); }
                             break;
                         case "rapid":
-                            enemyDeathSound_squid.play();
+                            if(playSound) { enemyDeathSound_squid.play(); }
                             break;
                         default:
-                            enemyDeathSound_default.play();
+                            if(playSound) { enemyDeathSound_default.play(); }
                             break;
                     }
                 }
@@ -791,7 +903,7 @@ window.draw = function () {
                 nextWaveCheck.amount -= 1;
                 enemies.splice(i, 1);
             } else {
-                switch(enemies[i].appearance) {
+                switch (enemies[i].appearance) {
                     case "standard":
                         enemies[i].draw(basicEnemy);
                         break;
@@ -808,8 +920,8 @@ window.draw = function () {
                     default:
                         enemies[i].drawBasic();
                         break;
-                }    
-                
+                }
+
                 // handle stunner type enemies
                 if (enemies[i].stunTower) {
                     if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
@@ -818,7 +930,7 @@ window.draw = function () {
                         let stunIndex = enemies[i].stunTower(n);
                         if (stunIndex != -1) {
                             while (stunIndex < n && towers[stunIndex].isStunned()) {
-                                stunIndex ++
+                                stunIndex++
                             }
                             if (stunIndex < n) towers[stunIndex].stun();
                         }
@@ -845,10 +957,10 @@ window.draw = function () {
                     bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
                     if (bullets[i].target.unFreeze == -1) {
                         bullets[i].target.speed /= 2;
-                    }                   
+                    }
                 }
                 if (bullets[i].poison) {
-                    bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed; 
+                    bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed;
                 }
                 bullets.splice(i, 1);
             } else {
@@ -860,17 +972,15 @@ window.draw = function () {
     if (gameMode == -1 && gameOver == true) {
 
         uiHandler.updateUIForGameMode(gameMode);
-        
+
         game.hide();
-        
+
         if (currentLevelMusic.isPlaying()) {
             currentLevelMusic.pause();
             deathSound.play();
         }
     }
 }
-
-
 
 function saveGame() {
     // Save game state
@@ -887,6 +997,7 @@ function saveGame() {
         enemies: enemies
     };
     localStorage.setItem("saveState", JSON.stringify(saveState));
+
 }
 
 // ---------------------------------------------------------------------
@@ -910,7 +1021,7 @@ function loadGame() {
         let towerData = JSON.parse(localStorage.getItem("saveState")).towers;
         for (let i = 0; i < towerData.length; i++) {
             let t;
-            switch(towerData[i].type) {
+            switch (towerData[i].type) {
                 case "standard":
                     t = new Standard(towerData[i].x, towerData[i].y);
                     break;
@@ -933,7 +1044,7 @@ function loadGame() {
 
             towers.push(t);
         }
-        
+
         // Load Bullets
         let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
         for (let i = 0; i < bulletData.length; i++) {
@@ -953,7 +1064,7 @@ function loadGame() {
         let enemyData = JSON.parse(localStorage.getItem("saveState")).enemies;
         for (let i = 0; i < enemyData.length; i++) {
             let e;
-            switch(enemyData[i].appearance) {
+            switch (enemyData[i].appearance) {
                 case "standard":
                     e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
@@ -982,5 +1093,49 @@ function loadGame() {
         selectMap(mapID);
         currentLevelMusic.loop();
         redraw();
+    }
+}
+
+function tutorialHandler() {
+    switch(tutorialTask) {
+        case 0:
+            uiHandler.tutorialNextButton.show();
+            uiHandler.placeStandardButton.hide();
+            uiHandler.placeFreezerButton.hide();
+            uiHandler.placePoisonerButton.hide();
+            uiHandler.updateTutorial('<h1>Welcome to the Galatic Guardians Tutorial!</h1><p>The objective of the game is to place towers along the path to defeat all of the enemies.</p>', 400, 250, 135);
+            // Advancement handled in mousePressed
+            break;
+        case 1:
+            uiHandler.updateTutorial('<h1>Let\'s start by placing a tower.</h1><p>Click on the Standard Tower button to place a tower.</p>', 400, 250, 135);
+            uiHandler.placeStandardButton.show();
+            uiHandler.placeFreezerButton.show();
+            uiHandler.placePoisonerButton.show();
+            if(towerToPlace) { tutorialTask++; }
+            break;
+        case 2:
+            uiHandler.updateTutorial('<h1>Now place the tower on the map.</h1><p>Click on the map to place the tower. <br>Try to place your towers close to the path.</p>', 400, 250, 135);
+            if(towers.length > 0) { tutorialTask++; }
+            break;
+        case 3:
+            uiHandler.updateTutorial('<h1>Great! Now let\'s upgrade the tower.</h1><p>Click on the tower to upgrade it.<br>When playing make sure to watch your currency in the top left.</p>', 400, 250, 135);
+            task3Currency = totalCurrency;
+            if(getSelectedTower()) { tutorialTask++; }
+            break;
+        case 4:
+            uiHandler.updateTutorial('<h1>Now upgrade the tower\'s fire rate.</h1><p>Click on the range fire rate button.</p><br>Upgrades allow you to increase the power of your tower.', 400, 250, 135);
+            if(totalCurrency < task3Currency) { tutorialTask++; }
+            break;
+        case 5:
+            uiHandler.updateTutorial('<h1>Looks like some enemies are coming!</h1><p>Lets see how you did.</p>', 400, 250, 135);
+            spawnNextWave();
+            waitBeforeNextTask++;
+            if(enemies.length == 0 && waitBeforeNextTask >= 500) { tutorialTask++; }
+            break;
+        case 6:
+            uiHandler.tutorialNextButton.show();
+            uiHandler.updateTutorial('<h1>Great job!</h1><p>Now you are ready to play the game! Click next level in the bottom left to begin.</p>', 400, 250, 135);
+            break;
+
     }
 }
