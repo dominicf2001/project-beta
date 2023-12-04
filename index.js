@@ -1,5 +1,5 @@
 
-import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner } from "./enemy.js";
+import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner, Boss } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 import { WINDOW_WIDTH, WINDOW_HEIGHT,
@@ -216,6 +216,7 @@ let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
 let tankEnemy;
+let bossEnemy;
 let stunEnmeny;
 let healthSprite;
 let coinSprite;
@@ -245,8 +246,11 @@ window.preload = function () {
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.gif');
-    summonerEnemy = loadImage('./assets/Summoner.png');
-    summoneeEnemy = loadImage('./assets/Summonee.png');
+    summonerEnemy = loadImage('./assets/Summoner_Animated.gif');
+    summoneeEnemy = loadImage('./assets/Summonee_Animated.gif');
+    tankEnemy = loadImage('./assets/Tank_Enemy.gif');
+    bossEnemy = loadImage('./assets/Boss_Boat.gif');
+
 
     healthSprite = loadImage('./assets/heart.png');
     coinSprite = loadImage('./assets/coin.png');
@@ -788,7 +792,6 @@ window.draw = function () {
 
         // Handle waves automatically, not needed for tutorial
         if (nextWaveCheck.amount < 1 && mapID != 3) {
-            console.log(currentWave);
             if (currentWave == 0) {
                 push();
                 textSize(20);
@@ -919,8 +922,10 @@ window.draw = function () {
                         enemies[i].draw(summoneeEnemy);
                         break;
                     case "tank":
-                        // TODO: Add custom sprite
-                        enemies[i].draw(summonerEnemy);
+                        enemies[i].draw(tankEnemy);
+                        break;
+                    case "boss":
+                        enemies[i].draw(bossEnemy);
                         break;
                     default:
                         enemies[i].drawBasic();
@@ -1084,6 +1089,9 @@ function loadGame() {
                     break;
                 case "stunner":
                     e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
+                    break;
+                case "boss":
+                    e = new Boss(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
             }
             e.health = enemyData[i].health;

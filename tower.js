@@ -188,7 +188,7 @@ export class Standard extends Tower {
 
     constructor(x, y) {
         super(x, y, towerCosts["standard"], "standard");
-        this.range = 100;
+        this.range = 125;
         this.damage = 1;
         this.health = 30;
         this.fireRate = 1;
@@ -211,7 +211,7 @@ export class Freezer extends Tower {
 
     constructor(x, y) {
         super(x, y, towerCosts["freezer"], "freezer");
-        this.range = 100;
+        this.range = 125;
         this.damage = 1;
         this.health = 30;
         this.fireRate = 1;
@@ -233,7 +233,7 @@ export class Poisoner extends Tower {
 
     constructor(x, y) {
         super(x, y, towerCosts["poisoner"], "poisoner");
-        this.range = 100;
+        this.range = 125;
         this.damage = 1;
         this.health = 30;
         this.fireRate = 1;

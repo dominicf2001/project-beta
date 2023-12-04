@@ -20,7 +20,8 @@ const ENEMY_BUILDERS = [
     (path, offset, x, y) => new Standard(path, offset, x, y),
     (path, offset, x, y) => new Rapid(path, offset, x, y),
     (path, offset, x, y) => new Spawner(path, offset, x, y),
-    (path, offset, x, y) => new Stunner(path, offset, x, y)
+    (path, offset, x, y) => new Stunner(path, offset, x, y),
+    (path, offset, x, y) => new Boss(path, offset, x, y)
 ];
 
 /** Class representing an enemy */
@@ -62,7 +63,6 @@ class Enemy {
     }
 
     draw(sprite) {
-        console.log(this.mapID);
         // draw enemy
         push();
         image(sprite, this.x, this.y, 60, 60);
@@ -88,8 +88,6 @@ class Enemy {
                 let obj = this.path(this.x, this.theta);
                 this.x = 584 + obj.x;
                 this.y = 348 + obj.y;
-                console.log(obj);
-                console.log(this.theta);
                 this.theta -= t;
             }
         } else {
@@ -193,6 +191,20 @@ class Tank extends Enemy {
     constructor(path, offset, x, y, mapID) {
         const e = ENEMIES[0];
         // TODO: take in the entire object instead?
+        super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
+    }
+    drawAppearance() {
+        fill(10);
+        noStroke();
+        ellipse(this.x, this.y, 20, 20);
+    }
+}
+
+/** The Boss */
+class Boss extends Enemy {
+    constructor(path, offset, x, y, mapID) {
+        const e = ENEMIES[5];
+        console.log("GREG IS HERE");
         super(e.APPEARANCE, e.SPEED, e.HEALTH, path, offset, e.CURRENCY, e.DAMAGE, e.DAMAGE_DISTANCE, x, y);
     }
     drawAppearance() {
@@ -314,7 +326,7 @@ class Wave {
         this.path = path;
         this.delay = delay; 
         this.enemies = []; 
-        this.waveAmount = [0, 0, 0, 0, 0]; // Counts how many times which enemy types are called.
+        this.waveAmount = [0, 0, 0, 0, 0, 0]; // Counts how many times which enemy types are called.
     }
 
     /** Prints wave spawnData and spawnPriority
@@ -329,6 +341,7 @@ class Wave {
 
     spawnLoopHelper(i, j, k) {
         setTimeout(() => {
+            console.log(i, j, k);
             var newEnemy = ENEMY_BUILDERS[k](this.path, getOffset());
             this.spawnData[k]--;
             this.enemies.push(newEnemy);
@@ -343,7 +356,6 @@ class Wave {
         {
             let k = this.spawnPriority[i];
             let max = this.spawnData[k][this.waveAmount[k]];
-            console.log(max);
             if (max > 0) {
                 this.waveAmount[k]++;
                 for (let j = 0; j < max; j++) {
@@ -363,4 +375,4 @@ class Wave {
 };
 
 // ADD TO EXPORT LIST WHEN CREATE NEW ENEMY TYPE.
-export { Enemy, Tank, Standard, Rapid, Wave, Stunner, Spawner }
+export { Enemy, Tank, Boss, Standard, Rapid, Wave, Stunner, Spawner }
