@@ -1,5 +1,5 @@
 
-import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner } from "./enemy.js";
+import { Wave, Standard as StandardEnemy, Rapid, Tank, Spawner, Stunner, Boss } from "./enemy.js";
 import { Tower, Standard, Freezer, Poisoner, Bullet, towerCosts } from "./tower.js";
 import { UIHandler } from "./ui-handler.js";
 import { WINDOW_WIDTH, WINDOW_HEIGHT,
@@ -57,7 +57,7 @@ let stunCooldown = {
 const uiHandler = new UIHandler(WINDOW_WIDTH, WINDOW_HEIGHT);
 let debug
 let game;
-var mapID = 0;
+export var mapID = 0;
 // needs to be generalized for all levels
 var waveAmount = LEVELS[mapID].LEVEL_DATA.length;
 // ---------------------------------------------------------------------
@@ -115,12 +115,6 @@ function dealDamage() {
 // Select Map Function
 function selectMap(mapID) {
     switch (mapID) {
-        case 3:
-            // Tutorial Map
-            mapImg = loadImage('Maps/Space Map 1.png');
-            currentLevelMusic = level1Music;
-            currentLevelMusic.setVolume(0.1);
-            break;
         case 0:
             mapImg = loadImage('Maps/Space Map 1.png');
             currentLevelMusic = level1Music;
@@ -132,8 +126,14 @@ function selectMap(mapID) {
             currentLevelMusic.setVolume(0.1);
             break;
         case 2:
-            mapImg = loadImage('Maps/Boss Map.png');
+            mapImg = loadImage('Maps/Boss Map no Path v3.png');
             currentLevelMusic = level3Music;
+            currentLevelMusic.setVolume(0.1);
+            break;
+        case 3:
+            // Tutorial Map
+            mapImg = loadImage('Maps/Space Map 1.png');
+            currentLevelMusic = level1Music;
             currentLevelMusic.setVolume(0.1);
             break;
         default:
@@ -154,7 +154,7 @@ function switchMap() {
     } else {
         ++mapID;
     }
-    
+    initNextWave = 10;
     currentWave = 0;
     waveAmount = LEVELS[mapID].LEVEL_DATA.length;
     levelComplete = false;
@@ -216,6 +216,7 @@ let basicEnemy;
 let summonerEnemy;
 let summoneeEnemy;
 let tankEnemy;
+let bossEnemy;
 let stunEnmeny;
 let healthSprite;
 let coinSprite;
@@ -245,8 +246,11 @@ window.preload = function () {
     selectMap(mapID); // Loads the Map
     uiHandler.preloadAssets();
     basicEnemy = loadImage('./assets/Basic_Enemy.gif');
-    summonerEnemy = loadImage('./assets/Summoner.png');
-    summoneeEnemy = loadImage('./assets/Summonee.png');
+    summonerEnemy = loadImage('./assets/Summoner_Animated.gif');
+    summoneeEnemy = loadImage('./assets/Summonee_Animated.gif');
+    tankEnemy = loadImage('./assets/Tank_Enemy.gif');
+    bossEnemy = loadImage('./assets/Boss_Boat.gif');
+
 
     healthSprite = loadImage('./assets/heart.png');
     coinSprite = loadImage('./assets/coin.png');
@@ -493,6 +497,13 @@ window.setup = function () {
     uiHandler.level1Button.mousePressed(function() {
         mapID = 0;
         selectMap(mapID);
+        currentWave = 0;
+        waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        uiHandler.nextLevelButton.hide();
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -503,6 +514,13 @@ window.setup = function () {
     uiHandler.level2Button.mousePressed(function() {
         mapID = 1;
         selectMap(mapID);
+        currentWave = 0;
+        waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        uiHandler.nextLevelButton.hide();
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -513,6 +531,13 @@ window.setup = function () {
     uiHandler.level3Button.mousePressed(function() {
         mapID = 2;
         selectMap(mapID);
+        currentWave = 0;
+        waveAmount = LEVELS[mapID].LEVEL_DATA.length;
+        levelComplete = false;
+        currentLevelMusic.stop();
+        enemies = []; // Reset Enemies
+        towers = []; // resets towers
+        uiHandler.nextLevelButton.hide();
         if (!playSound) {
             currentLevelMusic.setVolume(0.1);
             currentLevelMusic.loop();
@@ -630,21 +655,7 @@ window.setup = function () {
         saveGame();
     });
     uiHandler.returnToMenuButton.mousePressed(function() {
-        // Return to main Menu
-        // gameMode = 0;
-        // beginGame = false;
-        // playSound = false;
-        // uiHandler.mapMenuOpen = false;
-        // mapID = 0;
-        // currentWave = 0;
-        // levelComplete = false;
-        // currentLevelMusic.stop();
-        // enemies = []; // Reset Enemies
-        // towers = []; // resets towers
-        // gameOver = false;
-        // uiHandler.updateUIForGameMode(gameMode);
         location.reload();
-        //redraw();
     });
 
     //Poll for bullets every 100ms
@@ -719,8 +730,6 @@ window.draw = function () {
                 // Return to main Menu Button
                 uiHandler.returnToMenuButton.show();
             }
-            saveGame();
-            uiHandler.nextLevelButton.show();
         }
 
         if (towerToPlace) {
@@ -783,7 +792,6 @@ window.draw = function () {
 
         // Handle waves automatically, not needed for tutorial
         if (nextWaveCheck.amount < 1 && mapID != 3) {
-            console.log(currentWave);
             if (currentWave == 0) {
                 push();
                 textSize(20);
@@ -914,8 +922,10 @@ window.draw = function () {
                         enemies[i].draw(summoneeEnemy);
                         break;
                     case "tank":
-                        // TODO: Add custom sprite
-                        enemies[i].draw(summonerEnemy);
+                        enemies[i].draw(tankEnemy);
+                        break;
+                    case "boss":
+                        enemies[i].draw(bossEnemy);
                         break;
                     default:
                         enemies[i].drawBasic();
@@ -1066,19 +1076,22 @@ function loadGame() {
             let e;
             switch (enemyData[i].appearance) {
                 case "standard":
-                    e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "rapid":
-                    e = new Rapid(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Rapid(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "tank":
-                    e = new Tank(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Tank(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "spawner":
-                    e = new Spawner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Spawner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
                 case "stunner":
-                    e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y);
+                    e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
+                    break;
+                case "boss":
+                    e = new Boss(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
                     break;
             }
             e.health = enemyData[i].health;

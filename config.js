@@ -4,7 +4,8 @@ const e = Object.freeze({
     "standard": 1,
     "rapid": 2,
     "spawner": 3,
-    "stunner": 4
+    "stunner": 4,
+    "boss": 5,
 });
 
 // VARIABLES
@@ -15,17 +16,17 @@ export const WINDOW_HEIGHT = 700;
 export const TOWER_LIMIT = Infinity;
 export const DEFAULT_CURRENCY = 1200;
 export const DEFAULT_HEALTH = 25;
-export const DEFAULT_WAVE_INIT_TIME = 2;
+export const DEFAULT_WAVE_INIT_TIME = 5;
 
 // LEVELS
 export const LEVELS = [
     // level 1
     {
         LEVEL_DATA: [
-            [[], [1, 2], [1], [], []],
-            [[], [1, 1], [3, 2], [], []],
-            [[2, 1], [4, 2], [2], [], []],
-            [[], [2, 2, 2], [2, 1, 2], [1], []]
+            [[], [1, 2], [1], [], [], []],
+            [[], [1, 1], [3, 2], [], [], []],
+            [[2, 1], [4, 2], [2], [], [], []],
+            [[], [2, 2, 2], [2, 1, 2], [1], [], []]
         ],
         PRIORITY_DATA: [
             [e.standard, e.rapid, e.standard],
@@ -37,10 +38,10 @@ export const LEVELS = [
     // level 2
     {
         LEVEL_DATA: [
-            [[2, 1], [1, 2], [], [1], []],
-            [[], [2], [2, 2], [2], []],
-            [[6], [3, 5, 3], [2, 5], [1], []],
-            [[4, 2], [8, 8, 8, 4], [10], [2], []],
+            [[2, 1], [1, 2], [], [1], [], []],
+            [[], [2], [2, 2], [2], [], []],
+            [[6], [3, 5, 3], [2, 5], [1], [], []],
+            [[4, 2], [8, 8, 8, 4], [10], [2], [], []],
         ],
         PRIORITY_DATA: [
             [e.tank, e.standard, e.tank, e.standard, e.spawner],
@@ -52,16 +53,18 @@ export const LEVELS = [
     // level 3
     {
         LEVEL_DATA: [
-            [[], [1, 3], [2, 2], [], []]
+            [[], [1, 3], [2, 2], [], [], []],
+            [[], [], [], [], [], [1]],
         ],
         PRIORITY_DATA: [
-            [e.standard, e.rapid, e.rapid, e.standard]
+            [e.standard, e.rapid, e.rapid, e.standard, e.boss],
+            [e.boss]
         ]
     },
     // Tutorial Level
     {
         LEVEL_DATA: [
-            [[], [1, 1], [2, 1], [], []]
+            [[], [1, 1], [2, 1], [], [], []]
         ],
         PRIORITY_DATA: [
             [e.standard, e.rapid, e.rapid, e.standard]
@@ -117,6 +120,15 @@ export const ENEMIES = [
         DAMAGE: 2,
         DAMAGE_DISTANCE: 1
     },
+    // enemy 5: BOSS
+    {
+        APPEARANCE: "boss",
+        SPEED: 0.6,
+        HEALTH: 10,
+        CURRENCY: 1000,
+        DAMAGE: 50,
+        DAMAGE_DISTANCE: 1
+    }
 ];
 
 // MAPS
@@ -172,6 +184,27 @@ export const MAPS = [
         }
     },
     { // Third Map
+    //TODO: implement topPath, bottomPath, and isColliding
+        topPath: function (x) {
+            return 520;
+        },
+        middlePath: function (x, theta) {
+            if (x < 223) return 363;
+            else {
+                return {
+                    x: -28.72746723*theta*Math.cos(theta),
+                    y: -28.72746723*theta*Math.sin(theta)
+                }
+            }
+        },
+        bottomPath: function (x) {
+            if (x < 768) {
+                return 650;
+            }
+            else if (x >= 768) {
+                return 650;
+            }
+        },       
         isColliding: function(x, diameter) {
             console.log(mouseX, mouseY);
             return !((mouseY > 150 && mouseY < 200) && (x > 400 && x < 600)
