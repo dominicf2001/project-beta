@@ -16,7 +16,7 @@ export const WINDOW_HEIGHT = 700;
 export const TOWER_LIMIT = Infinity;
 export const DEFAULT_CURRENCY = 1200;
 export const DEFAULT_HEALTH = 25;
-export const DEFAULT_WAVE_INIT_TIME = 3;
+export const DEFAULT_WAVE_INIT_TIME = 5;
 
 // LEVELS
 export const LEVELS = [
