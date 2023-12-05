@@ -965,7 +965,6 @@ window.draw = function () {
         }
         // Draw bullets before towers
         for (const i in bullets) {
-            console.log(i.freeze);
             if (bullets[i].isOutOfRange()) {
                 bullets.splice(i, 1);
                 continue;
@@ -1028,12 +1027,11 @@ function loadGame() {
     let saveState = JSON.parse(localStorage.getItem("saveState"));
 
     mapID = saveState.mapID;
-    nextWaveCheck.amount = saveState.nextWaveCheck;
     levelComplete = saveState.levelComplete;
     totalCurrency = saveState.totalCurrency;
     totalHealth = saveState.totalHealth;
     waveAmount = saveState.waveAmount;
-    currentWave = saveState.currentWave;
+    currentWave = saveState.currentWave - 1;
 
     if (saveState) {
 
@@ -1063,53 +1061,6 @@ function loadGame() {
             t.fireSpeed = towerData[i].fireSpeed;
 
             towers.push(t);
-        }
-
-        // Load Bullets
-        let bulletData = JSON.parse(localStorage.getItem("saveState")).bullets;
-        for (let i = 0; i < bulletData.length; i++) {
-            let b = new Bullet(bulletData[i].tower, bulletData[i].target, bulletData[i].freeze, bulletData[i].poison)
-            b.x = bulletData[i].x
-            b.y = bulletData[i].y
-            b.range = bulletData[i].range
-            b.damage = bulletData[i].damage
-            b.fireSpeed = bulletData[i].fireSpeed
-            b.target = bulletData[i].target
-            b.freeze = bulletData[i].freeze
-            b.poison = bulletData[i].poison
-            bullets.push(b);
-        }
-
-        // Load Enemies
-        let enemyData = JSON.parse(localStorage.getItem("saveState")).enemies;
-        for (let i = 0; i < enemyData.length; i++) {
-            let e;
-            switch (enemyData[i].appearance) {
-                case "standard":
-                    e = new StandardEnemy(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
-                    break;
-                case "rapid":
-                    e = new Rapid(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
-                    break;
-                case "tank":
-                    e = new Tank(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
-                    break;
-                case "spawner":
-                    e = new Spawner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
-                    break;
-                case "stunner":
-                    e = new Stunner(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
-                    break;
-                case "boss":
-                    e = new Boss(maps[mapID].middlePath, enemyData[i].offset, enemyData[i].x, enemyData[i].y, mapID);
-                    break;
-            }
-            e.health = enemyData[i].health;
-            e.speed = enemyData[i].speed;
-            e.currency = enemyData[i].currency;
-            e.damage = enemyData[i].damage;
-
-            enemies.push(e);
         }
 
         currentLevelMusic.stop();

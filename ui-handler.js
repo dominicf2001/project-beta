@@ -1,5 +1,6 @@
-/** @module ui-handler */
+import { ENEMIES } from "./config.js";
 
+/** @module ui-handler */
 export class UIHandler {
     constructor(windowWidth, windowHeight) {
         this.windowWidth = windowWidth;
@@ -54,6 +55,7 @@ export class UIHandler {
         this.enemyStandard;
         this.enemySummoner;
         this.enemySummonee;
+        this.enemyTank;
         this.spaceWalkMap;
         this.spaceshipMap;
         this.bossMap;
@@ -72,6 +74,7 @@ export class UIHandler {
         this.enemyStandard = loadImage('./assets/Basic_Enemy.png');
         this.enemySummoner = loadImage('./assets/Summoner.png');
         this.enemySummonee = loadImage('./assets/Summonee.png');
+        this.enemyTank = loadImage('./assets/Tank_Enemy.gif');
         this.spaceWalkMap = loadImage('./Maps/Space Map 1.png');
         this.spaceshipMap = loadImage('./Maps/Space Ship Map.png');
         this.bossMap = loadImage('./assets/RainbowRoad Question Mark.png');
@@ -307,7 +310,25 @@ export class UIHandler {
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
-        this.encyclopediaMenu.text("Damage: 3", 250, 210, 200, 250);
+        this.encyclopediaMenu.text("Damage: " + ENEMIES[1].DAMAGE, 250, 210, 200, 250);
+
+        // Tank ENEMY CARD
+        this.encyclopediaMenu.image(this.enemyTank, 525, 30, 200, 250);
+        // title
+        this.encyclopediaMenu.textSize(17);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Flying Machine", 750, 50, 200, 250);
+        //description
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(0);
+        this.encyclopediaMenu.strokeWeight(0);
+        this.encyclopediaMenu.text("A formidable space-faring adversary, the enemy ship glides through the cosmos striking fear into the hearts of interstellar travelers.", 750, 80, 200, 250);
+        // stats
+        this.encyclopediaMenu.textSize(15);
+        this.encyclopediaMenu.stroke(1);
+        this.encyclopediaMenu.strokeWeight(1);
+        this.encyclopediaMenu.text("Damage: " + ENEMIES[0].DAMAGE, 750, 210, 200, 250);
 
         // SUMMONER ENEMY CARD
         this.encyclopediaMenu.image(this.enemySummoner, 35, 310, 200, 250);
@@ -325,13 +346,7 @@ export class UIHandler {
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
-        this.encyclopediaMenu.text("Damage: 1", 250, 500, 200, 250);
-
-        // enemy info #3
-        //this.encyclopediaMenu.image(this.enemySummoner, 525, 30, 200, 250);
-        //this.encyclopediaMenu.text("Tank", 750, 50, 200, 250);
-        //this.encyclopediaMenu.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 750, 80, 200, 250);
-        //this.encyclopediaMenu.text("Damage: 1", 750, 210, 200, 250);
+        this.encyclopediaMenu.text("Damage: " + ENEMIES[3].DAMAGE, 250, 500, 200, 250);
 
         // SUMMONEE ENEMY CARD
         this.encyclopediaMenu.image(this.enemySummonee, 525, 310, 200, 250);
@@ -349,7 +364,7 @@ export class UIHandler {
         this.encyclopediaMenu.textSize(15);
         this.encyclopediaMenu.stroke(1);
         this.encyclopediaMenu.strokeWeight(1);
-        this.encyclopediaMenu.text("Damage: 1", 750, 500, 200, 250);
+        this.encyclopediaMenu.text("Damage: " + ENEMIES[2].DAMAGE, 750, 500, 200, 250);
 
 
         this.encyclopediaMenu.hide();
