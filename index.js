@@ -208,6 +208,7 @@ let towerSprite;
 let freezerTowerSprite;
 let poisonerTowerSprite;
 let currentLevelMusic;
+let titleScreenMusic;
 let level1Music;
 let level2Music;
 let level3Music;
@@ -225,6 +226,7 @@ let enemyDeathSound_squid;
 let enemyDeathSound_summoner;
 let enemyDeathSound_zombie;
 let f_Andale;
+let playTitleScreenMusic = false;
 
 window.preload = function () {
     // Loads the Level Music
@@ -232,6 +234,7 @@ window.preload = function () {
     level2Music = loadSound('./assets/Project_Beta_Song2.mp3');
     level3Music = loadSound('./assets/Project_Beta_Boat_Song.mp3');
     deathSound = loadSound('./assets/gta-v-wasted-death-sound.mp3');
+    titleScreenMusic = loadSound('./assets/Galactic_Guardians_Title_Song.mp3');
 
     // Enemy sounds
     enemyDeathSound_default = loadSound('./assets/enemyDeathSound_default.mp3');
@@ -676,6 +679,12 @@ window.draw = function () {
     if (gameMode == 0) {
         uiHandler.updateUIForGameMode(gameMode);
         uiHandler.nextLevelButton.hide();
+        
+        if (!playTitleScreenMusic) {
+            titleScreenMusic.loop();
+            playTitleScreenMusic = true;
+        }
+
 
         if (!localStorage.getItem("saveState")) {
             uiHandler.loadButton.hide();
@@ -684,6 +693,7 @@ window.draw = function () {
         // Switch to game mode
         if (beginGame) {
             gameMode = 1;
+            titleScreenMusic.pause();
             if (localStorage.getItem("mute")) {
                 if (localStorage.getItem("mute") == "true") {
                     currentLevelMusic.pause();
