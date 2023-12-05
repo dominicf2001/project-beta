@@ -5,7 +5,8 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start": "browser-sync start --server --files '*.html, *.css, *.js'"
+        "start": "browser-sync start --server --files '*.html, *.css, *.js'",
+        "test": "mocha"
     },
     "repository": {
         "type": "git",
@@ -20,6 +21,7 @@
     "dependencies": {
         "browser-sync": "^2.29.3",
         "eslint": "^8.48.0",
-        "jsdoc": "^4.0.2"
+        "jsdoc": "^4.0.2",
+        "mocha": "^10.2.0"
     }
 }
