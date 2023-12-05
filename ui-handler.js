@@ -224,16 +224,19 @@ export class UIHandler {
         this.upgradeContainer.child(upgradeText);
 
         this.upgradeRangeButton = createButton('Range');
+        this.upgradeRangeButton.id('upgradeRangeButton');
         this.upgradeRangeButton.addClass('ui_buttons');
         this.upgradeRangeButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeRangeButton);
 
         this.upgradeFireRateButton = createButton('Fire Rate')
+        this.upgradeFireRateButton.id('upgradeFireRateButton');
         this.upgradeFireRateButton.addClass('ui_buttons');
         this.upgradeFireRateButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeFireRateButton);
 
         this.upgradeFireSpeedButton = createButton('Bullet Speed');
+        this.upgradeFireSpeedButton.id('upgradeFireSpeedButton');
         this.upgradeFireSpeedButton.addClass('ui_buttons');
         this.upgradeFireSpeedButton.addClass('toolbar_buttons');
         this.upgradeContainer.child(this.upgradeFireSpeedButton);
