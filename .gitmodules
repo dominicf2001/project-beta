@@ -1,0 +1,3 @@
+[submodule "path_to_submodule"] 
+  path = project-beta
+  url = git://https://github.com/dominicf2001/project-beta.git
