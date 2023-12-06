@@ -1035,7 +1035,12 @@ function loadGame() {
     totalCurrency = saveState.totalCurrency;
     totalHealth = saveState.totalHealth;
     waveAmount = saveState.waveAmount;
-    currentWave = saveState.currentWave;
+    if (saveState.currentWave == 0) {
+        currentWave = saveState.currentWave;
+    }
+    else {
+        currentWave = saveState.currentWave - 1;
+    }
 
     if (saveState) {
 
