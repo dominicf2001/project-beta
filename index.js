@@ -976,10 +976,12 @@ window.draw = function () {
                 if (bullets[i].hasHitTarget()) {
                     bullets[i].target.health -= bullets[i].damage;
                     if (bullets[i].freeze) {
-                        bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
                         if (bullets[i].target.unFreeze == -1) {
                             bullets[i].target.speed /= 2;
-                        }
+                        } 
+                        bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
+                    
+                        
                     }
                     if (bullets[i].poison) {
                         bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed;
