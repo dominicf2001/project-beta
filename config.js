@@ -14,7 +14,7 @@ export const SECONDARY_COLOR = "color(81, 176, 101)";
 export const WINDOW_WIDTH = 1200;
 export const WINDOW_HEIGHT = 700;
 export const TOWER_LIMIT = Infinity;
-export const DEFAULT_CURRENCY = 1200;
+export const DEFAULT_CURRENCY = 1500;
 export const DEFAULT_HEALTH = 25;
 export const DEFAULT_WAVE_INIT_TIME = 5;
 
@@ -123,8 +123,8 @@ export const ENEMIES = [
     // enemy 5: BOSS
     {
         APPEARANCE: "boss",
-        SPEED: 0.6,
-        HEALTH: 10,
+        SPEED: 0.3,
+        HEALTH: 100,
         CURRENCY: 1000,
         DAMAGE: 50,
         DAMAGE_DISTANCE: 1
@@ -207,13 +207,13 @@ export const MAPS = [
         },       
         isColliding: function(x, diameter) {
             console.log(mouseX, mouseY);
-            return !((mouseY > 150 && mouseY < 200) && (x > 400 && x < 600)
+            /*return !((mouseY > 150 && mouseY < 200) && (x > 400 && x < 600)
                 || ((mouseY > 140 && mouseY < 185) && (x > 630 && x < 700))
                 || ((mouseY > 370 && mouseY < 415) && (x > 630 && x < 700))
                 || ((mouseY > 370 && mouseY < 415) && (x > 330 && x < 400))
                 || ((mouseY > 400 && mouseY < 440) && (x > 800 && x < 900))
                 || ((mouseY > 100 && mouseY < 190) && (x > 800 && x < 880))
-                || ((mouseY > 520 && mouseY < 570) && (x > 540 && x < 725)));
+                || ((mouseY > 520 && mouseY < 570) && (x > 540 && x < 725)));*/
         }
     },
     // Tutorial Map (first map)

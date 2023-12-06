@@ -45,7 +45,7 @@ let towerToPlace = null;
 const towerLimit = TOWER_LIMIT;
 // checks if wave is over
 // can cause error if new ways that enemies disapear arise so keep in mind
-let initNextWave = DEFAULT_WAVE_INIT_TIME;
+let initNextWave = DEFAULT_WAVE_INIT_TIME + 5;
 let nextWaveCheck = {
     amount: 0
 }
@@ -154,6 +154,7 @@ function switchMap() {
     } else {
         ++mapID;
     }
+    totalCurrency = DEFAULT_CURRENCY;
     initNextWave = 10;
     currentWave = 0;
     waveAmount = LEVELS[mapID].LEVEL_DATA.length;
@@ -483,6 +484,7 @@ window.setup = function () {
             playSound = true;
         }
         beginGame = true;
+        currentWave = 0;
         loadGame();
     });
 
@@ -1031,7 +1033,7 @@ function loadGame() {
     totalCurrency = saveState.totalCurrency;
     totalHealth = saveState.totalHealth;
     waveAmount = saveState.waveAmount;
-    currentWave = saveState.currentWave - 1;
+    currentWave = saveState.currentWave;
 
     if (saveState) {
 
