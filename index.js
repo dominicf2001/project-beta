@@ -719,273 +719,275 @@ window.draw = function () {
 
         // Displays Level Complete Text and button when all waves are done
         uiHandler.nextLevelButton.hide();
-        if (levelComplete) {
-            push();
-            textAlign(CENTER);
-            textSize(40)
-            fill('red');
-            var lev = mapID + 1
-            stroke(0);
-            strokeWeight(4);
-            if (lev == 3) {
-                text('Capt. DeLozier Defeated!', 600, 100);
-            }
-            else {
-                text('Level ' + lev + ' Complete', 600, 100);
-            }
-            pop();
-            if (lev < 3) {
-                saveGame();
-                uiHandler.nextLevelButton.show(); 
-            }
-            else {
-                // Return to main Menu Button
-                uiHandler.returnToMenuButton.show();
-            }
-        }
-
-        if (towerToPlace) {
-            push();
-            switch(towerToPlace.constructor.name) {
-                case "Standard":
-                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
-                        tint(255, 0, 0, 200);
-                    } else {
-                        tint(255, 200);
-                    }
-                    image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-                    break;
-                case "Freezer":
-                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 50) {
-                        tint(255, 0, 0, 200);
-                    } else {
-                        tint(255, 200);
-                    }
-                    image(freezerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-                    break;
-                case "Poisoner":
-                    if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 10) {
-                        tint(255, 0, 0, 200);
-                    } else {
-                        tint(255, 200);
-                    }
-                    image(poisonerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
-                    break;
-            }
-            pop();
-        }
-        // Draw bullets first, so they appear behind towers
-        for (const i in bullets) {
-            if (bullets[i].isOutOfRange()) {
-                bullets.splice(i, 1);
-            } else {
-                bullets[i].draw();
-            }
-        }
-
-        // Draw towers
-        for (const t of towers) {
-            switch(t.type) {
-                case "standard":
-                    t.draw(towerSprite);
-                    break;
-                case "freezer":
-                    t.draw(freezerTowerSprite);
-                    break;
-                case "poisoner":
-                    t.draw(poisonerTowerSprite);
-                    break;
-                default:
-                    t.draw(towerSprite);
-                    break;
-            }
-            if (t.isStunned()) t.drawStunned();
-        }
-
-        // Handle waves automatically, not needed for tutorial
-        if (nextWaveCheck.amount < 1 && mapID != 3) {
-            if (currentWave == 0) {
+        if (!uiHandler.settingsOpen && !uiHandler.encyclopediaOpen) {
+            if (levelComplete) {
                 push();
-                textSize(20);
-                fill('white');
+                textAlign(CENTER);
+                textSize(40)
+                fill('red');
+                var lev = mapID + 1
                 stroke(0);
                 strokeWeight(4);
-                text("Game starts in: " + initNextWave, WINDOW_WIDTH - 200, WINDOW_HEIGHT - 50);
+                if (lev == 3) {
+                    text('Capt. DeLozier Defeated!', 600, 100);
+                }
+                else {
+                    text('Level ' + lev + ' Complete', 600, 100);
+                }
                 pop();
+                if (lev < 3) {
+                    saveGame();
+                    uiHandler.nextLevelButton.show(); 
+                }
+                else {
+                    // Return to main Menu Button
+                    uiHandler.returnToMenuButton.show();
+                }
             }
-            else if (currentWave < waveAmount) {
+
+            if (towerToPlace) {
                 push();
-                textSize(20);
-                fill('white');
-                stroke(0);
-                strokeWeight(4);
-                text("Next wave in: " + initNextWave, WINDOW_WIDTH - 185, WINDOW_HEIGHT - 50);
+                switch(towerToPlace.constructor.name) {
+                    case "Standard":
+                        if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 400) {
+                            tint(255, 0, 0, 200);
+                        } else {
+                            tint(255, 200);
+                        }
+                        image(towerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                        break;
+                    case "Freezer":
+                        if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 50) {
+                            tint(255, 0, 0, 200);
+                        } else {
+                            tint(255, 200);
+                        }
+                        image(freezerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                        break;
+                    case "Poisoner":
+                        if (MAPS[0].isColliding(mouseX, 30) || totalCurrency < 10) {
+                            tint(255, 0, 0, 200);
+                        } else {
+                            tint(255, 200);
+                        }
+                        image(poisonerTowerSprite, mouseX, mouseY, Tower.TOWER_SIZE, Tower.TOWER_SIZE);
+                        break;
+                }
                 pop();
             }
-            else {
-                levelComplete = true;
+            // Draw bullets first, so they appear behind towers
+            for (const i in bullets) {
+                if (bullets[i].isOutOfRange()) {
+                    bullets.splice(i, 1);
+                } else {
+                    bullets[i].draw();
+                }
             }
-            if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
-            if (initNextWave == 0) {
-                if (currentWave < waveAmount) spawnNextWave();
-                initNextWave = 5;
+
+            // Draw towers
+            for (const t of towers) {
+                switch(t.type) {
+                    case "standard":
+                        t.draw(towerSprite);
+                        break;
+                    case "freezer":
+                        t.draw(freezerTowerSprite);
+                        break;
+                    case "poisoner":
+                        t.draw(poisonerTowerSprite);
+                        break;
+                    default:
+                        t.draw(towerSprite);
+                        break;
+                }
+                if (t.isStunned()) t.drawStunned();
             }
-        }
-        //console.log(initNextWave);
-        // uiHandler.nextWaveButton.show();
-        // else uiHandler.nextWaveButton.hide();
 
-        // draw currency holder
-        push();
-        image(coinSprite, 90, 35, 20, 20);
-        textSize(20);
-        fill('white');
-        stroke(0);
-        strokeWeight(4);
-        text(totalCurrency, 105, 40);
-        pop();
+            // Handle waves automatically, not needed for tutorial
+            if (nextWaveCheck.amount < 1 && mapID != 3) {
+                if (currentWave == 0) {
+                    push();
+                    textSize(20);
+                    fill('white');
+                    stroke(0);
+                    strokeWeight(4);
+                    text("Game starts in: " + initNextWave, WINDOW_WIDTH - 200, WINDOW_HEIGHT - 50);
+                    pop();
+                }
+                else if (currentWave < waveAmount) {
+                    push();
+                    textSize(20);
+                    fill('white');
+                    stroke(0);
+                    strokeWeight(4);
+                    text("Next wave in: " + initNextWave, WINDOW_WIDTH - 185, WINDOW_HEIGHT - 50);
+                    pop();
+                }
+                else {
+                    levelComplete = true;
+                }
+                if (frameCount % 60 == 0 && initNextWave > 0) initNextWave--;
+                if (initNextWave == 0) {
+                    if (currentWave < waveAmount) spawnNextWave();
+                    initNextWave = 5;
+                }
+            }
+            //console.log(initNextWave);
+            // uiHandler.nextWaveButton.show();
+            // else uiHandler.nextWaveButton.hide();
 
-        // draw current health
-        push();
-        image(healthSprite, 25, 35, 20, 20);
-        textSize(20);
-        fill('white');
-        stroke(0);
-        strokeWeight(4);
-        text(totalHealth, 40, 40);
-        pop();
-
-        if (totalHealth <= 0) {
-            gameMode = -1;
-            gameOver = true;
-        }
-
-         // draw Wave information
-        if(mapID != 3) {
+            // draw currency holder
             push();
+            image(coinSprite, 90, 35, 20, 20);
             textSize(20);
             fill('white');
             stroke(0);
             strokeWeight(4);
-            text('Wave: ' + currentWave + '/' + LEVELS[mapID].LEVEL_DATA.length, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 25);
+            text(totalCurrency, 105, 40);
             pop();
-        }
 
-        // inject the tutorial
-        if (mapID == 3) {
-            tutorialHandler();
-        } else {
-            uiHandler.tutorialContainer.hide();
-        }
+            // draw current health
+            push();
+            image(healthSprite, 25, 35, 20, 20);
+            textSize(20);
+            fill('white');
+            stroke(0);
+            strokeWeight(4);
+            text(totalHealth, 40, 40);
+            pop();
 
-        // draw or remove enemies
-        // iterate backwards to prevent flickering
-        for (let i = enemies.length - 1; i >= 0; i--) {
-            enemies[i].checkStatus();
-
-            if(mapID == 3){
-                if(enemies[i].health > 1){ enemies[i].health = 1; }
+            if (totalHealth <= 0) {
+                gameMode = -1;
+                gameOver = true;
             }
 
-            if (enemies[i].hasReachedEnd()) {
-                totalHealth -= enemies[i].damage;
-                nextWaveCheck.amount -= 1;
+            // draw Wave information
+            if(mapID != 3) {
+                push();
+                textSize(20);
+                fill('white');
+                stroke(0);
+                strokeWeight(4);
+                text('Wave: ' + currentWave + '/' + LEVELS[mapID].LEVEL_DATA.length, WINDOW_WIDTH - 120, WINDOW_HEIGHT - 25);
+                pop();
+            }
 
-                // Implement game over screen if needed
-                enemies.splice(i, 1);
-            } else if (enemies[i].health <= 0) {
-                totalCurrency += enemies[i].currency;
-                // handle spawner type enemies
+            // inject the tutorial
+            if (mapID == 3) {
+                tutorialHandler();
+            } else {
+                uiHandler.tutorialContainer.hide();
+            }
 
-                // Mark an enemy as dead if its health is below 0
-                if (enemies[i].isDead() == false) {
-                    enemies[i].kill();
+            // draw or remove enemies
+            // iterate backwards to prevent flickering
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                enemies[i].checkStatus();
 
+                if(mapID == 3){
+                    if(enemies[i].health > 1){ enemies[i].health = 1; }
+                }
+
+                if (enemies[i].hasReachedEnd()) {
+                    totalHealth -= enemies[i].damage;
+                    nextWaveCheck.amount -= 1;
+
+                    // Implement game over screen if needed
+                    enemies.splice(i, 1);
+                } else if (enemies[i].health <= 0) {
+                    totalCurrency += enemies[i].currency;
+                    // handle spawner type enemies
+
+                    // Mark an enemy as dead if its health is below 0
+                    if (enemies[i].isDead() == false) {
+                        enemies[i].kill();
+
+                        switch (enemies[i].appearance) {
+                            case "standard":
+                                if(playSound) { enemyDeathSound_zombie.play(); }
+                                break;
+                            case "spawner":
+                                if(playSound) { enemyDeathSound_summoner.play(); }
+                                break;
+                            case "rapid":
+                                if(playSound) { enemyDeathSound_squid.play(); }
+                                break;
+                            default:
+                                if(playSound) { enemyDeathSound_default.play(); }
+                                break;
+                        }
+                    }
+
+                    if (enemies[i].spawn) {
+                        enemies[i].spawn(enemies, nextWaveCheck);
+                    }
+                    nextWaveCheck.amount -= 1;
+                    enemies.splice(i, 1);
+                } else {
                     switch (enemies[i].appearance) {
                         case "standard":
-                            if(playSound) { enemyDeathSound_zombie.play(); }
+                            enemies[i].draw(basicEnemy);
                             break;
                         case "spawner":
-                            if(playSound) { enemyDeathSound_summoner.play(); }
+                            enemies[i].draw(summonerEnemy);
                             break;
                         case "rapid":
-                            if(playSound) { enemyDeathSound_squid.play(); }
+                            enemies[i].draw(summoneeEnemy);
+                            break;
+                        case "tank":
+                            enemies[i].draw(tankEnemy);
+                            break;
+                        case "boss":
+                            enemies[i].draw(bossEnemy);
                             break;
                         default:
-                            if(playSound) { enemyDeathSound_default.play(); }
+                            enemies[i].drawBasic();
                             break;
                     }
-                }
 
-                if (enemies[i].spawn) {
-                    enemies[i].spawn(enemies, nextWaveCheck);
-                }
-                nextWaveCheck.amount -= 1;
-                enemies.splice(i, 1);
-            } else {
-                switch (enemies[i].appearance) {
-                    case "standard":
-                        enemies[i].draw(basicEnemy);
-                        break;
-                    case "spawner":
-                        enemies[i].draw(summonerEnemy);
-                        break;
-                    case "rapid":
-                        enemies[i].draw(summoneeEnemy);
-                        break;
-                    case "tank":
-                        enemies[i].draw(tankEnemy);
-                        break;
-                    case "boss":
-                        enemies[i].draw(bossEnemy);
-                        break;
-                    default:
-                        enemies[i].drawBasic();
-                        break;
-                }
-
-                // handle stunner type enemies
-                if (enemies[i].stunTower) {
-                    if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
-                    else {
-                        let n = towers.length;
-                        let stunIndex = enemies[i].stunTower(n);
-                        if (stunIndex != -1) {
-                            while (stunIndex < n && towers[stunIndex].isStunned()) {
-                                stunIndex++
+                    // handle stunner type enemies
+                    if (enemies[i].stunTower) {
+                        if (stunCooldown.amount < stunCooldown.trigger) stunCooldown.amount++;
+                        else {
+                            let n = towers.length;
+                            let stunIndex = enemies[i].stunTower(n);
+                            if (stunIndex != -1) {
+                                while (stunIndex < n && towers[stunIndex].isStunned()) {
+                                    stunIndex++
+                                }
+                                if (stunIndex < n) towers[stunIndex].stun();
                             }
-                            if (stunIndex < n) towers[stunIndex].stun();
+                            stunCooldown.amount = 0;
                         }
-                        stunCooldown.amount = 0;
+                    }
+                    // handle spawner type enemies
+                    if (enemies[i].spawn && !enemies[i].onCooldown) {
+                        enemies[i].spawn(enemies);
                     }
                 }
-                // handle spawner type enemies
-                if (enemies[i].spawn && !enemies[i].onCooldown) {
-                    enemies[i].spawn(enemies);
+            }
+            // Draw bullets before towers
+            for (const i in bullets) {
+                if (bullets[i].isOutOfRange()) {
+                    bullets.splice(i, 1);
+                    continue;
                 }
-            }
-        }
-        // Draw bullets before towers
-        for (const i in bullets) {
-            if (bullets[i].isOutOfRange()) {
-                bullets.splice(i, 1);
-                continue;
-            }
 
-            if (bullets[i].hasHitTarget()) {
-                bullets[i].target.health -= bullets[i].damage;
-                if (bullets[i].freeze) {
-                    bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
-                    if (bullets[i].target.unFreeze == -1) {
-                        bullets[i].target.speed /= 2;
+                if (bullets[i].hasHitTarget()) {
+                    bullets[i].target.health -= bullets[i].damage;
+                    if (bullets[i].freeze) {
+                        bullets[i].target.unFreeze = bullets[i].target.x + 300 * bullets[i].target.speed;
+                        if (bullets[i].target.unFreeze == -1) {
+                            bullets[i].target.speed /= 2;
+                        }
                     }
+                    if (bullets[i].poison) {
+                        bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed;
+                    }
+                    bullets.splice(i, 1);
+                } else {
+                    bullets[i].draw();
                 }
-                if (bullets[i].poison) {
-                    bullets[i].target.unPoison = bullets[i].target.x + 300 * bullets[i].target.speed;
-                }
-                bullets.splice(i, 1);
-            } else {
-                bullets[i].draw();
             }
         }
     }
