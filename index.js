@@ -1117,7 +1117,7 @@ function tutorialHandler() {
             break;
         case 6:
             uiHandler.tutorialNextButton.show();
-            uiHandler.updateTutorial('<h1>Great job!</h1><p>Now you are ready to play the game! Click next level in the bottom left to begin.</p>', 400, 250, 135);
+            uiHandler.updateTutorial('<h1>Great job!</h1><p>Now you are ready to play the game! Click next to begin.</p>', 400, 250, 135);
             break;
 
     }
